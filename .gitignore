@@ -1,0 +1,43 @@
+# Data files (MUST NEVER BE COMMITTED per BFT65B submission rules)
+data_raw/
+data_processed/
+*.parquet
+*.feather
+*.arrow
+*.duckdb
+*.sqlite
+*.db
+
+# Python environments & caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter & Spark temporary artifacts
+.ipynb_checkpoints/
+spark-warehouse/
+metastore_db/
+derby.log
+
+# Secrets, OS & IDE files
+.env
+.env.*
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
+*.tmp

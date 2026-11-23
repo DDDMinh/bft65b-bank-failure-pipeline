@@ -1,0 +1,42 @@
+# BFT65B Pipeline Configuration (Single Source of Truth)
+project:
+  name: "bft65b-bank-failure-pipeline"
+  random_seed: 42
+
+paths:
+  raw_dir: "data_raw/fdic"
+  processed_dir: "data_processed"
+  outputs_dir: "outputs"
+  tables_dir: "outputs/tables"
+  figures_dir: "outputs/figures"
+  manifests_dir: "outputs/manifests"
+
+acquisition:
+  api_base_url: "https://api.fdic.gov/banks"
+  field_dictionary_url: "https://api.fdic.gov/banks/docs/risview_properties.yaml"
+  page_size: 10000
+  pause_seconds: 1.0
+  max_retries: 6
+  full_start_date: "1984-03-31"
+  full_end_date: "2026-06-30"
+  sample_start_date: "2023-03-31"
+  sample_end_date: "2023-12-31"
+  parquet_compression: "zstd"
+
+modelling:
+  label_horizon_quarters: 4
+  modelling_cutoff_date: "2025-06-30"   # Mandatory: later labels are incomplete
+  min_gap_quarters: 4                   # Mandatory: >= 4 quarters between dev and test
+  min_test_failures: 50                 # Mandatory: >= 50 failures in test period
+  # Confirm exact split dates after Phase 1 & Phase 2 empirical failure-by-year audit:
+  dev_start_date: "1984-03-31"
+  dev_end_date: "2008-12-31"
+  test_start_date: "2010-03-31"         # Leaves 2009Q1-2009Q4 (4 full quarters) gap
+  test_end_date: "2025-06-30"
+  cv_embargo_quarters: 4
+  test_evaluation_locked: false         # Set true after freezing model & threshold
+
+benchmark:
+  warmup_runs: 1
+  timed_runs: 5
+  spark_shuffle_partitions: 8
