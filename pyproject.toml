@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bft65b-bank-failure-pipeline"
+version = "0.1.0"
+description = "Reproducible big-data pipeline for FDIC bank-failure early warning (BFT65B)."
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+authors = [{ name = "BFT65B student" }]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+
+[project.scripts]
+bft65b = "bft65b.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+markers = [
+  "smoke: fast scaffolding and environment checks",
+  "spark: requires a working local Java/PySpark installation",
+  "slow: long-running benchmark or integration test",
+  "network: requires network access",
+  "integration: requires real downloaded data",
+  "leakage: leakage and point-in-time guardrails",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

@@ -1,0 +1,77 @@
+{
+  "config": {
+    "dev_period": [
+      "1984-03-31",
+      "2008-12-31"
+    ],
+    "label_horizon_quarters": 4,
+    "min_gap_quarters": 4,
+    "min_test_failures": 50,
+    "modelling_cutoff_date": "2025-06-30",
+    "seed": 42,
+    "test_evaluation_locked": false,
+    "test_period": [
+      "2010-03-31",
+      "2025-06-30"
+    ]
+  },
+  "generated_at_utc": "2026-11-23T19:09:57.223758+00:00",
+  "java": {
+    "available": true,
+    "returncode": 0,
+    "version": "java version \"21.0.1\" 2023-10-17 LTS"
+  },
+  "package_version": "0.1.0",
+  "packages": {
+    "matplotlib": {
+      "available": true,
+      "version": "3.11.2"
+    },
+    "numpy": {
+      "available": true,
+      "version": "2.5.5"
+    },
+    "pandas": {
+      "available": true,
+      "version": "2.3.3"
+    },
+    "polars": {
+      "available": true,
+      "version": "2.1.0"
+    },
+    "pyarrow": {
+      "available": true,
+      "version": "26.0.1"
+    },
+    "pyspark": {
+      "available": true,
+      "version": "4.3.0"
+    },
+    "pytest": {
+      "available": true,
+      "version": "9.2.0"
+    },
+    "requests": {
+      "available": true,
+      "version": "2.34.2"
+    },
+    "sklearn": {
+      "available": true,
+      "version": "1.9.1"
+    },
+    "yaml": {
+      "available": true,
+      "version": "6.0.4"
+    }
+  },
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": {
+    "executable": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\.venv\\Scripts\\python.exe",
+    "version": "3.14.0"
+  },
+  "spark": {
+    "available": true,
+    "smoke_rows": 1,
+    "version": "4.3.0"
+  }
+}

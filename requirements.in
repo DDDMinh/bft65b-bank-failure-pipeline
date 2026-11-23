@@ -1,0 +1,15 @@
+# Direct Python dependencies for the BFT65B pipeline.
+# The fully pinned, transitive lock file is requirements.txt.
+numpy
+pandas<3
+polars
+pyarrow
+pyspark
+scikit-learn
+PyYAML
+requests
+matplotlib
+pytest
+python-docx
+pypdf
+pip-tools

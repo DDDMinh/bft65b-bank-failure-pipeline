@@ -40,3 +40,10 @@ benchmark:
   warmup_runs: 1
   timed_runs: 5
   spark_shuffle_partitions: 8
+
+report:
+  # Page-1 identity fields are deliberately empty until the student supplies them.
+  # Never invent these values; README and reporting/page1_metadata.py read them here.
+  author_name: ""
+  student_id: ""
+  github_url: ""
