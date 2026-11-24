@@ -27,7 +27,7 @@ Legend: `[ ]` pending, `[x]` complete. Every code change in `src/` or `tests/` m
 - [x] Freeze explicit Arrow schemas in `configs/fdic_fields.yaml` (`REPDTE` as `date32`)
 - [x] Cache and verify the FDIC field dictionary; export `outputs/tables/field_dictionary.csv`
 - [x] Run the 4-quarter 2023 sample gate (18,798 rows; 4,117 failures; 27,838 institutions)
-- [ ] Run the full `1984Q1-2026Q2` Financials download plus complete Failures and Institutions
+- [x] Run the full `1984Q1-2026Q2` Financials download plus complete Failures and Institutions
 - [x] Verify API totals, row counts, duplicate keys, and missing quarters on the sample
 - [x] Write canonical Parquet with non-colliding `year`/`quarter` partitions and `zstd` compression
 - [x] Benchmark CSV versus Parquet for size, write time, read time, projected read, and memory
@@ -36,21 +36,23 @@ Legend: `[ ]` pending, `[x]` complete. Every code change in `src/` or `tests/` m
 - [x] Record Windows PySpark native-library setup and SHA-256 hashes in `README.md`
 
 **Gate:** sample gate passed; no duplicate `(CERT, REPDTE)`; benchmark artifacts generated from real
-data. The full download remains pending and must be run manually after review:
-`bft65b acquire download --scope full`.
+data. The full download was run after review and verified: `bft65b acquire verify --scope full
+--strict` passed on 1,682,738 financial rows, 4,117 failures, and 27,838 institutions.
 
 ## Phase 2 — Data quality and panel
 
-- [ ] Implement schema-drift and field-availability audit
-- [ ] Implement null, duplicate, outlier, and impossible-value rules
-- [ ] Write `docs/data_quality_decisions.md` with handling rationale
-- [ ] Implement failure-versus-merger/other-exit taxonomy
-- [ ] Build the clean bank–quarter panel
-- [ ] Build the point-in-time view and record its audit
-- [ ] Run the leakage reviewer on panel and exit code
+- [x] Implement schema-drift and field-availability audit
+- [x] Implement null, duplicate, outlier, and impossible-value rules
+- [x] Write `docs/data_quality.md` with handling rationale and the D5 sort-order tradeoff
+- [x] Implement failure-versus-merger/other-exit taxonomy in `docs/exit_taxonomy.md`
+- [x] Build the clean bank–quarter panel
+- [x] Build the point-in-time view and record its audit
+- [x] Run the leakage reviewer on panel and exit code
 
-**Gate:** DQ report complete; exit taxonomy tests pass; panel is point-in-time correct; leakage
-review clean.
+**Gate:** DQ report complete; exit taxonomy tests pass; panel is point-in-time correct. The leakage
+review found no temporal leakage. After hardening the forbidden-column guard, the sample gate passed
+18,798 panel rows in 0.7207 s and the full build passed 1,682,738 panel rows in 10.3901 s, both with
+all four checks true. `pytest -q` result after the final Phase 2 code change: 45 passed, 1 skipped.
 
 ## Phase 3 — Scalable processing
 

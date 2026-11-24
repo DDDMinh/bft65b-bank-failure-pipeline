@@ -1,0 +1,7 @@
+CERT,name,stname,ACTIVE,ENDEFYMD,CHANGEC1,exit_class,exit_subtype,canonical_failure_date,first_repdte,last_repdte,raw_event_count,raw_event_types,why_it_matters
+24735,Silicon Valley Bank,California,0,2023-03-10,211,failure,failure_failure_resolution,2023-03-10,1984-03-31,2022-12-31,1,FAILURE,Genuine failure: Failures row and CHANGEC1=211 agree.
+1421,CBC Bank,Missouri,0,2020-12-12,223,merger_absorption,merger_223,,1984-03-31,2020-09-30,0,,Stopped reporting in a merger (CHANGEC1=223); no Failures row.
+58804,Prime Bank,Oklahoma,0,2020-11-18,240,voluntary_closure,voluntary_closure_240,,2008-06-30,2020-06-30,0,,Voluntary closure (CHANGEC1=240); no Failures row.
+30387,FirstBank Puerto Rico,Puerto Rico,1,9999-12-31,,assistance_only,continued_active,,1984-03-31,2026-06-30,1,ASSISTANCE,Assistance without failure; bank remained active and reporting.
+29400,Platte Valley Federal Savings and Loan Association,Nebraska,0,1989-07-13,213,failure,failure_assisted_merger,1988-07-21,1984-03-31,1989-06-30,2,"FAILURE,FAILURE",CHANGEC1=213 assisted merger but two Failures rows; Failures wins.
+28244,"LaSalle Bank, F.S.B.",Illinois,0,2000-03-31,223,merger_absorption,stale_failure_ignored_merger_absorption,1982-02-20,1984-03-31,1999-12-31,1,FAILURE,Pre-panel stale failure of Talman Home; later reports belong to LaSalle Bank FSB.

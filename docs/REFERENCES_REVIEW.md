@@ -27,8 +27,14 @@ with the final report and `README.md`.
 
 ## AI assistance
 
-- OpenCode coding agent.
-- Model used: DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`).
+- OpenCode coding agent: `https://opencode.ai/`. Used for code, tests, and documentation under
+  human review.
+- DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`) — model used for earlier phases.
+- Big Pickle (`opencode/big-pickle`) — model used for Phase 2 implementation, verification, and
+  documentation.
+
+All numeric results attributed to these sessions were recomputed by deterministic local commands on
+the acquired FDIC data; no AI-generated result is presented as a measurement.
 
 ## Citation policy
 

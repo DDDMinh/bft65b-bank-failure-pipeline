@@ -1,0 +1,138 @@
+# Frozen FDIC CHANGEC1 taxonomy used by Phase 2.
+#
+# `description` is recorded only when the meaning was verified from the FDIC
+# change-code documentation. Undocumented codes are retained with
+# `documented: false` and are classified from observed table behaviour, never
+# from an invented definition. The failures table always overrides CHANGEC1.
+version: 1
+
+categories:
+  failure_resolution: "FDIC receivership, payoff, or other recorded failure resolution"
+  assisted_merger: "Assisted merger; failure status still comes from the Failures table"
+  merger_absorption: "Merger, absorption, consolidation, or affiliation without failure"
+  partial_or_unknown_exit: "Partial transaction or exit with no verified terminal meaning"
+  voluntary_closure: "Voluntary closing"
+  non_terminal_admin: "Administrative or structural change that does not end reporting"
+  unknown: "Code not documented in the cached FDIC change-code subset"
+
+codes:
+  "110":
+    description: null
+    category: unknown
+    documented: false
+    terminal_hint: false
+  "211":
+    description: "Failure - Whole Institution"
+    category: failure_resolution
+    documented: true
+    terminal_hint: true
+  "213":
+    description: "Merger - Assisted"
+    category: assisted_merger
+    documented: true
+    terminal_hint: true
+  "215":
+    description: "Failure - Multiple Acquirer"
+    category: failure_resolution
+    documented: true
+    terminal_hint: true
+  "216":
+    description: null
+    category: unknown
+    documented: false
+    terminal_hint: true
+  "217":
+    description: "Passthrough Receivorship/Conservatorship Resolution"
+    category: failure_resolution
+    documented: true
+    terminal_hint: true
+  "221":
+    description: "Absorbtion - Without Assistance"
+    category: merger_absorption
+    documented: true
+    terminal_hint: true
+  "222":
+    description: "Consolidated - Without Assistance"
+    category: merger_absorption
+    documented: true
+    terminal_hint: true
+  "223":
+    description: "Merger - Without Assistance"
+    category: merger_absorption
+    documented: true
+    terminal_hint: true
+  "224":
+    description: "Affiliated Institution Merger (Pooling)"
+    category: merger_absorption
+    documented: true
+    terminal_hint: true
+  "225":
+    description: "Partial Purchase & Assumption"
+    category: partial_or_unknown_exit
+    documented: true
+    terminal_hint: true
+  "230":
+    description: "Closing - Failure Payoff"
+    category: failure_resolution
+    documented: true
+    terminal_hint: true
+  "235":
+    description: "RTC Supervised Payoffs/Liquidations/Closings"
+    category: failure_resolution
+    documented: true
+    terminal_hint: true
+  "240":
+    description: "Closing - Voluntary"
+    category: voluntary_closure
+    documented: true
+    terminal_hint: true
+  "440":
+    description: null
+    category: unknown
+    documented: false
+    terminal_hint: true
+  "470":
+    description: "Regulatory Agency Change"
+    category: non_terminal_admin
+    documented: true
+    terminal_hint: false
+  "510":
+    description: "Legal Name Change"
+    category: non_terminal_admin
+    documented: true
+    terminal_hint: false
+  "520":
+    description: "Physical Location Change"
+    category: non_terminal_admin
+    documented: true
+    terminal_hint: false
+  "610":
+    description: "Trust Powers Granted"
+    category: non_terminal_admin
+    documented: true
+    terminal_hint: false
+  "810":
+    description: "Participated in Absorption/Consolidation/Merger"
+    category: merger_absorption
+    documented: true
+    terminal_hint: true
+  "811":
+    description: "Participated in FDIC Assisted Merger"
+    category: assisted_merger
+    documented: true
+    terminal_hint: true
+  "820":
+    description: "Phantom Corporate Reorganization"
+    category: partial_or_unknown_exit
+    documented: true
+    terminal_hint: true
+  "850":
+    description: null
+    category: unknown
+    documented: false
+    terminal_hint: true
+  "":
+    description: "No CHANGEC1 value reported"
+    category: unknown
+    documented: true
+    terminal_hint: false

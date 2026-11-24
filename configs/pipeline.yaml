@@ -54,6 +54,51 @@ benchmark:
   timed_runs: 5
   spark_shuffle_partitions: 8
 
+# Phase 2 rulebook and artifact paths. Audit statistics are report-only; none
+# of these outputs are model parameters or preprocessing state.
+quality:
+  exit_codes_config: "configs/exit_codes.yaml"
+  processed_quality_dir: "data_processed/quality"
+  processed_panel_dir: "data_processed/panel"
+  bank_exit_status_path: "data_processed/quality/bank_exit_status.parquet"
+  bank_event_log_path: "data_processed/quality/bank_event_log.parquet"
+  bank_failure_events_path: "data_processed/quality/bank_failure_events.parquet"
+  bank_quarter_exclusions_path: "data_processed/quality/bank_quarter_exclusions.parquet"
+  panel_path: "data_processed/panel/bank_quarter.parquet"
+  panel_schema_path: "outputs/manifests/panel_schema.json"
+  summary_path: "outputs/manifests/quality_summary.json"
+  audit_report_path: "outputs/tables/dq_audit_report.csv"
+  rule_catalogue_path: "outputs/tables/dq_rule_catalogue.csv"
+  missingness_field_path: "outputs/tables/dq_missingness_by_field.csv"
+  missingness_era_path: "outputs/tables/dq_missingness_by_era.csv"
+  accounting_examples_path: "outputs/tables/dq_accounting_examples.csv"
+  extremes_triage_path: "outputs/tables/dq_extremes_triage.csv"
+  exit_summary_path: "outputs/tables/exit_taxonomy_summary.csv"
+  exit_reconciliation_path: "outputs/tables/exit_reconciliation.csv"
+  exit_examples_path: "outputs/tables/exit_case_examples.csv"
+  duplicate_policy: "error"   # error | keep-first
+  parquet_compression: "zstd"
+  parquet_row_group_size: 65536
+  era_boundaries:
+    pre_risk_based_end: "1989-12-31"
+    risk_based_end: "2000-12-31"
+    past_due_available_end: "2009-12-31"
+    post_crisis_end: "2019-12-31"
+  missingness_flag_fields:
+    - RBCRWAJ
+    - RBC1RWAJ
+    - RBC1AAJ
+    - RBCT1J
+    - P3ASSET
+    - P9ASSET
+    - NAASSET
+    - NTLNLS
+    - NUMEMP
+    - OFFDOM
+    - DEPUNINS
+    - ELNATR
+    - TRADE
+
 report:
   # Page-1 identity fields are deliberately empty until the student supplies them.
   # Never invent these values; README and reporting/page1_metadata.py read them here.

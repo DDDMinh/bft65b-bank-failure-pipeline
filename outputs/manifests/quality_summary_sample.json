@@ -1,0 +1,159 @@
+{
+  "checks": {
+    "audit_hard_checks_passed": true,
+    "exit_reconciliation_passed": true,
+    "panel_contract_passed": true,
+    "panel_rows_preserved": true
+  },
+  "generated_at_utc": "2026-11-24T05:59:05.903120+00:00",
+  "memory": {
+    "note": "Process working set is best-effort and includes native Arrow/Polars buffers; it is not a precise allocator measurement.",
+    "rss_after_mib": 308.28,
+    "rss_before_mib": 144.88,
+    "rss_delta_mib": 163.4
+  },
+  "passed": true,
+  "rows": {
+    "canonical_failures": 3036,
+    "exit_status_rows": 27892,
+    "failures": 4117,
+    "financials": 18798,
+    "institutions": 27838,
+    "panel_rows": 18798,
+    "panel_unique_keys": 18798,
+    "post_failure_exclusions": 0
+  },
+  "runtimes_seconds": {
+    "audit": 0.3854,
+    "exits": 0.177,
+    "panel": 0.1583,
+    "total": 0.7207
+  },
+  "schema_version": 1,
+  "scope": "sample",
+  "stages": {
+    "audit": {
+      "artifacts": {
+        "accounting_examples": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\dq_accounting_examples.csv",
+        "audit_report": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\dq_audit_report.csv",
+        "extremes_triage": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\dq_extremes_triage.csv",
+        "missingness_by_era": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\dq_missingness_by_era.csv",
+        "missingness_by_field": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\dq_missingness_by_field.csv",
+        "rule_catalogue": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\dq_rule_catalogue.csv"
+      },
+      "hard_checks": {
+        "all_repdte_quarter_end": true,
+        "est_date_order_valid": true,
+        "failure_certs_link_to_institutions": true,
+        "failyr_matches_faildate": true,
+        "financial_keys_non_null": true,
+        "financial_keys_unique": true,
+        "institution_keys_unique": true,
+        "schemas_match_registry": true
+      },
+      "metrics": {
+        "ACC_ASSET_NONPOSITIVE": 0,
+        "ACC_BRO_NEGATIVE": 0,
+        "ACC_DEPDOM_GT_DEP": 0,
+        "ACC_DEP_NEGATIVE": 0,
+        "ACC_EQ_GT_ASSET": 0,
+        "ACC_IDENTITY_ABS": 0,
+        "ACC_IDENTITY_REL": 0,
+        "ACC_LNATRES_GT_GR": 0,
+        "ACC_LNATRES_NEGATIVE": 0,
+        "ACC_LNLSGR_NEGATIVE": 0,
+        "ACC_LNLSNET_GT_GR": 0,
+        "ACC_LNLSNET_NEGATIVE": 0,
+        "ACC_NCLNLS_GT_GR": 0,
+        "EXT_NIMY_HIGH": 3,
+        "EXT_RBC1AAJ_HIGH": 36,
+        "EXT_RBCRWAJ_HIGH": 258,
+        "EXT_ROA_HIGH": 5,
+        "EXT_ROA_LOW": 0,
+        "cblr_opt_out_rows": 6758,
+        "date_order_errors": 0,
+        "download_date_used": "2026-11-24",
+        "end_sentinel_rows": 4228,
+        "epoch_end_rows": 1,
+        "eras_measured": 1,
+        "failure_certs_missing_institutions": 0,
+        "failure_multi_event_certs": 44,
+        "failure_multi_event_rows": 88,
+        "failure_null_cert_rows": 488,
+        "failures_schema_ok": true,
+        "failyr_mismatch": 0,
+        "fields_measured": 37,
+        "financial_certs_missing_institutions": 54,
+        "financial_duplicate_groups": 0,
+        "financial_duplicate_rows": 0,
+        "financial_null_keys": 0,
+        "financial_schema_files": 170,
+        "financial_schema_mismatches": 0,
+        "future_end_rows": 0,
+        "highest_null_field": "RBC1RWAJ",
+        "highest_null_field_pct": 36.312374,
+        "inactive_institutions_without_panel_rows": 23121,
+        "ins_sentinel_rows": 8734,
+        "institution_duplicate_groups": 0,
+        "institutions_schema_ok": true,
+        "no_capital_reported_rows": 68,
+        "pre_risk_based_zero_rows": 0,
+        "repdte_non_quarter_end": 0,
+        "reports_after_end_certs": 0,
+        "total_null_cells": 7915,
+        "triage_distress_rows": 0,
+        "triage_rows": 302
+      },
+      "seconds": 0.3854
+    },
+    "exits": {
+      "csv_paths": {
+        "cases": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\exit_case_examples.csv",
+        "reconciliation": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\exit_reconciliation.csv",
+        "summary": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\exit_taxonomy_summary.csv"
+      },
+      "paths": {
+        "canonical": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\quality\\bank_failure_events.parquet",
+        "events": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\quality\\bank_event_log.parquet",
+        "exclusions": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\quality\\bank_quarter_exclusions.parquet",
+        "status": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\quality\\bank_exit_status.parquet"
+      },
+      "rows": {
+        "canonical_failures": 3036,
+        "events": 4117,
+        "exclusion_certs": 0,
+        "exit_status": 27892,
+        "failures": 4117,
+        "institutions": 27838,
+        "post_failure_exclusions": 0,
+        "unlinked_status": 54
+      },
+      "seconds": 0.177
+    },
+    "panel": {
+      "columns": 59,
+      "duplicate_groups": 0,
+      "duplicate_policy": "error",
+      "paths": {
+        "panel": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\panel\\bank_quarter.parquet",
+        "schema": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\manifests\\panel_schema.json"
+      },
+      "rows": 18798,
+      "seconds": 0.1583,
+      "transformations": [
+        "Add year and quarter from REPDTE.",
+        "Classify row-local capital_regime from REPDTE and reported capital fields.",
+        "Recode only structural regulatory zeros in RBC1AAJ, RBCRWAJ, RBC1RWAJ to null.",
+        "Add miss_* flags after recoding for era-sensitive fields.",
+        "Add leverage_ratio_available, rbc_ratio_available, and n_missing_core.",
+        "Sort by (CERT, REPDTE) and write one zstd Parquet file."
+      ]
+    }
+  },
+  "started_at_utc": "2026-11-24T05:59:05.181998+00:00",
+  "warnings": [
+    "Audit anomaly rows are report-only and are not model parameters.",
+    "Failure-proximity evidence is confined to audit.py outputs.",
+    "Exit/failure columns are stored only in separate data_processed/quality files."
+  ]
+}

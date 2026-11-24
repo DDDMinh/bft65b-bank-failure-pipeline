@@ -163,12 +163,52 @@ Known, documented data properties are **warnings**, not failures: 488 failure ro
   CSV is smaller than Parquet because text floats compress well, but Parquet is roughly an order of
   magnitude faster to read and to project.
 
-## 5. Later-phase command sequence
+## 5. Phase 2 — data quality, exits, and point-in-time panel
 
-These commands exit with status `2` until their phase is implemented:
+Validate on the four 2023 quarters before building the full panel:
+
+```powershell
+bft65b quality build --scope sample --strict
+```
+
+After reviewing `outputs/manifests/quality_summary_sample.json`, build the full panel:
+
+```powershell
+bft65b quality build --scope full --strict
+```
+
+Individual stages are available for debugging: `bft65b quality audit|exits|panel --scope sample|full`.
+`--strict` returns non-zero when a hard check fails. The default panel duplicate policy is `error`;
+`bft65b quality panel --scope full --on-duplicate keep-first` is an explicit override and is recorded
+in the panel schema manifest.
+
+Verified full run: 1,682,738 financial rows, 1,682,738 panel rows, 4,117 failures, 27,838
+institutions, 3,036 canonical failures, 1,095 post-failure rows across 268 CERTs, all four build
+checks passed, total runtime 10.3901 s. The sample gate passed with 18,798 panel rows in 0.7207 s.
+See `docs/data_quality.md` and `docs/exit_taxonomy.md` for decisions and measured findings.
+
+| Path | Content |
+|---|---|
+| `data_processed/panel/bank_quarter.parquet` | One zstd Parquet file, sorted by `(CERT, REPDTE)`, 65,536-row groups |
+| `outputs/manifests/panel_schema.json` | Panel schema, transformations, and point-in-time contract |
+| `outputs/manifests/quality_summary.json` | Full Phase 2 provenance, checks, counts, timings, and memory note |
+| `outputs/tables/dq_audit_report.csv` | 41 documented rules with counts, percentages, treatments, and justifications |
+| `outputs/tables/dq_rule_catalogue.csv` | Frozen rule definitions |
+| `outputs/tables/dq_missingness_by_field.csv`, `dq_missingness_by_era.csv` | Field and era availability |
+| `outputs/tables/dq_accounting_examples.csv`, `dq_extremes_triage.csv` | Report-only anomaly evidence |
+| `data_processed/quality/bank_exit_status.parquet` | One row per institution plus unlinked financial CERTs |
+| `data_processed/quality/bank_event_log.parquet` | All 4,117 raw events, including canonical markers |
+| `data_processed/quality/bank_failure_events.parquet` | One canonical `FAILURE` event per CERT |
+| `data_processed/quality/bank_quarter_exclusions.parquet` | Post-failure bank-quarters retained in the panel but excluded from labels |
+| `outputs/tables/exit_taxonomy_summary.csv`, `exit_reconciliation.csv`, `exit_case_examples.csv` | Human-readable taxonomy, checks, and real case examples |
+
+The panel contains no `ACTIVE`, `ENDEFYMD`, `CHANGEC1`, `FAILDATE`, `FAILYR`, event, cost, or
+failure-proximity columns. Failure proximity is computed only in `audit.py` and stored only in
+`dq_extremes_triage.csv`.
+
+These commands still exit with status `2` until their phases are implemented:
 
 ```text
-bft65b quality      # Phase 2: data-quality audit, exits, point-in-time panel
 bft65b transform    # Phase 3: Polars, pandas, and PySpark processing
 bft65b features     # Phase 4: leak-free features, labels, split, preprocessing
 bft65b model        # Phase 5: development-only tuning and single test evaluation
@@ -244,9 +284,14 @@ Data source:
 - FDIC field dictionary: `https://api.fdic.gov/banks/docs/`
 - FDIC bulk downloads: `https://banks.data.fdic.gov/bankfind-suite/bulkData`
 
+AI assistance used so far: the OpenCode coding agent (`https://opencode.ai/`), with
+DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`) for earlier phases and Big Pickle
+(`opencode/big-pickle`) for Phase 2 implementation and verification. These tools assisted with code,
+tests, and documentation; all reported numbers were produced by deterministic local runs on real
+FDIC data.
+
 The final report and `docs/REFERENCES_REVIEW.md` must cite every external repository, paper,
-documentation page, library, AI tool, and language model used, including OpenCode and the model
-used to assist with this project.
+documentation page, library, AI tool, and language model used.
 
 ## 11. Academic integrity
 

@@ -1,7 +1,8 @@
 """Command-line entry point for the BFT65B pipeline.
 
 Phase 1 adds acquisition, dictionary validation, completeness verification, and
-the storage benchmark. Later phases remain explicit placeholders.
+the storage benchmark. Phase 2 adds the data-quality audit, exit taxonomy, and
+point-in-time panel. Later phases remain explicit placeholders.
 """
 
 from __future__ import annotations
@@ -38,7 +39,6 @@ PACKAGE_CHECKS: tuple[tuple[str, str], ...] = (
 )
 
 PLACEHOLDER_COMMANDS = (
-    "quality",
     "transform",
     "features",
     "model",
@@ -314,6 +314,79 @@ def _command_storage_benchmark(args: argparse.Namespace) -> int:
     return 0
 
 
+# ----------------------------------------------------------------------
+# Phase 2 commands
+# ----------------------------------------------------------------------
+def _quality_config(args: argparse.Namespace) -> dict[str, Any]:
+    config = load_config(args.config)
+    duplicate_policy = getattr(args, "on_duplicate", None)
+    if duplicate_policy is not None:
+        config["quality"]["duplicate_policy"] = duplicate_policy
+    return config
+
+
+def _command_quality_audit(args: argparse.Namespace) -> int:
+    from bft65b.quality.audit import run_audit
+
+    result = run_audit(_quality_config(args), args.scope, root=PROJECT_ROOT)
+    print(json.dumps({
+        "scope": result["scope"],
+        "passed": result["passed"],
+        "hard_checks": result["hard_checks"],
+        "artifacts": result["artifacts"],
+    }, indent=2, sort_keys=True))
+    if args.strict and not result["passed"]:
+        LOGGER.error("Data-quality hard checks failed")
+        return 1
+    return 0
+
+
+def _command_quality_exits(args: argparse.Namespace) -> int:
+    from bft65b.quality.exits import build_exit_taxonomy
+
+    result = build_exit_taxonomy(_quality_config(args), args.scope, root=PROJECT_ROOT)
+    print(json.dumps({
+        "scope": result["scope"],
+        "rows": result["rows"],
+        "paths": result["paths"],
+        "csv_paths": result["csv_paths"],
+    }, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_quality_panel(args: argparse.Namespace) -> int:
+    from bft65b.quality.panel import build_panel
+
+    result = build_panel(_quality_config(args), args.scope, root=PROJECT_ROOT)
+    print(json.dumps({
+        "scope": result["scope"],
+        "rows": result["rows"],
+        "columns": result["columns"],
+        "unique_keys": result["unique_keys"],
+        "duplicate_policy": result["duplicate_policy"],
+        "paths": result["paths"],
+    }, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_quality_build(args: argparse.Namespace) -> int:
+    from bft65b.quality.build import run_quality_build
+
+    result = run_quality_build(_quality_config(args), args.scope, root=PROJECT_ROOT)
+    print(json.dumps({
+        "scope": result["scope"],
+        "passed": result["passed"],
+        "checks": result["checks"],
+        "rows": result["rows"],
+        "runtimes_seconds": result["runtimes_seconds"],
+        "summary_path": result["summary_path"],
+    }, indent=2, sort_keys=True))
+    if args.strict and not result["passed"]:
+        LOGGER.error("Phase 2 quality build checks failed")
+        return 1
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="bft65b",
@@ -418,6 +491,49 @@ def build_parser() -> argparse.ArgumentParser:
         "--runs", type=int, default=None, help="Timed runs per metric"
     )
     benchmark_parser.set_defaults(func=_command_storage_benchmark)
+
+    quality_parser = subparsers.add_parser(
+        "quality", help="Data-quality audit, exit taxonomy, and point-in-time panel"
+    )
+    quality_parser.set_defaults(
+        func=lambda _: (quality_parser.print_help(), 0)[1]
+    )
+    quality_subparsers = quality_parser.add_subparsers(dest="quality_command")
+
+    quality_audit = quality_subparsers.add_parser(
+        "audit", help="Write the automated data-quality audit tables"
+    )
+    quality_audit.add_argument("--scope", choices=["sample", "full"], required=True)
+    quality_audit.add_argument(
+        "--strict", action="store_true", help="Return non-zero if a hard check fails"
+    )
+    quality_audit.set_defaults(func=_command_quality_audit)
+
+    quality_exits = quality_subparsers.add_parser(
+        "exits", help="Build the exit taxonomy, event log, and exclusions"
+    )
+    quality_exits.add_argument("--scope", choices=["sample", "full"], required=True)
+    quality_exits.set_defaults(func=_command_quality_exits)
+
+    quality_panel = quality_subparsers.add_parser(
+        "panel", help="Build the point-in-time bank-quarter panel"
+    )
+    quality_panel.add_argument("--scope", choices=["sample", "full"], required=True)
+    quality_panel.add_argument(
+        "--on-duplicate",
+        choices=["error", "keep-first"],
+        help="Override the configured duplicate-key policy for this run",
+    )
+    quality_panel.set_defaults(func=_command_quality_panel)
+
+    quality_build = quality_subparsers.add_parser(
+        "build", help="Run audit, exits, and panel in order"
+    )
+    quality_build.add_argument("--scope", choices=["sample", "full"], required=True)
+    quality_build.add_argument(
+        "--strict", action="store_true", help="Return non-zero if any Phase 2 check fails"
+    )
+    quality_build.set_defaults(func=_command_quality_build)
 
     for name in PLACEHOLDER_COMMANDS:
         placeholder = subparsers.add_parser(name, help=f"Reserved for a later phase: {name}")

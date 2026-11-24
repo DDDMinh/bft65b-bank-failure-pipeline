@@ -70,11 +70,11 @@ test passes.
 Implement paging, retries, resumability, per-quarter manifests, field selection, completeness
 checks, canonical Parquet layout, and a CSV-versus-Parquet benchmark.
 
-**Status:** sample gate complete. The 4-quarter 2023 run downloaded 18,798 financial rows, 4,117
-failure rows, and 27,838 institution rows; verification passed with one schema, zero duplicate
-`(CERT, REPDTE)` pairs, and zero duplicate `(CERT, FAILDATE)` events. The benchmark and figure are
-generated from real sample data. The full `1984Q1–2026Q2` download is deliberately deferred until
-the sample is reviewed.
+**Status:** sample and full acquisition complete. The 4-quarter 2023 gate downloaded 18,798
+financial rows, 4,117 failure rows, and 27,838 institution rows; the full `1984Q1–2026Q2` run
+downloaded 1,682,738 financial rows and verified API totals with zero schema mismatches, zero
+duplicate `(CERT, REPDTE)` pairs, and zero missing quarters. The benchmark and figure are generated
+from real full data.
 
 Gate: the 4-quarter 2023 sample passes before the full `1984Q1–2026Q2` download. The full manifest
 has no incomplete quarters and no duplicate `(CERT, REPDTE)` pairs.
@@ -83,6 +83,12 @@ has no incomplete quarters and no duplicate `(CERT, REPDTE)` pairs.
 
 Build the automated DQ audit, schema-drift report, field-availability audit, exit taxonomy, and
 point-in-time bank–quarter panel.
+
+**Status:** implemented and gated. The 41-rule audit, exit taxonomy, and point-in-time panel were
+built first on 2023 sample data (18,798 rows, all checks passed) and then on the full data
+(1,682,738 rows, all checks passed). The panel is a single zstd Parquet file sorted by
+`(CERT, REPDTE)`; audit failure-proximity evidence is quarantined in report-only tables. Decisions
+are recorded in `docs/data_quality.md` and `docs/exit_taxonomy.md`.
 
 Gate: DQ report and handling decisions exist; failure-versus-merger tests pass; leakage review is
 clean.
