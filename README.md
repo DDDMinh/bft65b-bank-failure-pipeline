@@ -488,8 +488,11 @@ bft65b report build
 pytest -q
 ```
 
-The repository must remain public from the deadline until grades are released; local commands cannot
-verify GitHub visibility, so check the GitHub settings before submission.
+The complete tree, including the final PDF and reporting code, was pushed to
+`https://github.com/DDDMinh/bft65b-bank-failure-pipeline`. GitHub's repository API confirmed
+`private: false` and `visibility: public` on 2026-11-24, and the remote contains
+`reports/final_report_bft65b.pdf`. Keep the repository public from the deadline until grades are
+released.
 
 ## 10. Data policy
 

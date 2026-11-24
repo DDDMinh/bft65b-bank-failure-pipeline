@@ -129,4 +129,5 @@ day counts, limitations, and Vietnam/SBV adaptation. Final pinned-environment `p
 - [x] Seeds remain fixed in `configs/pipeline.yaml`
 - [x] No data files are tracked by Git
 - [x] AI tools and external sources are cited
-- [ ] Final repository is public until grades are released (verify in GitHub settings)
+- [x] Final repository is public until grades are released (GitHub API confirmed public on
+  2026-11-24; keep it public)

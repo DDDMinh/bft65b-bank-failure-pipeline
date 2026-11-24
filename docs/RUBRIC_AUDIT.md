@@ -122,8 +122,11 @@ course marker's judgement.
   saved in `outputs/manifests/pytest_final_summary.txt` and `outputs/manifests/pytest_final.xml`.
 - Dedicated report checks are in `tests/test_reporting.py`: build-manifest lock verification, page
   limits, five figures, PDF page count, Page-1 metadata, Q1–Q3 and appendix presence.
-- **External check still required by the student:** confirm the GitHub repository is public from the
-  deadline until grades are released. This cannot be verified from a local shell.
+- **Public-repository check:** the complete tree was pushed to
+  `https://github.com/DDDMinh/bft65b-bank-failure-pipeline`. GitHub's repository API returned
+  `private: false` and `visibility: public` on 2026-11-24, and the contents endpoint returned
+  `reports/final_report_bft65b.pdf`. Keep the repository public from the deadline until grades are
+  released.
 
 ## Page 1 and format
 
@@ -137,6 +140,6 @@ supplied name `Nguyen Duc Minh`, student ID `11230996`, public GitHub URL, downl
 
 - `leakage-reviewer`: **PASS** for temporal leakage and point-in-time correctness.
 - `rubric-auditor` final Phase 6 audit: Parts 1–6 **PASS**, leakage gate **PASS**, Page 1/format
-  **PASS**, no committed raw/processed data **PASS**. The submission-level finding (empty public
-  repository/uncommitted artifacts) is being closed by committing and pushing the final tree; the
+  **PASS**, no committed raw/processed data **PASS**. Its submission-level finding (empty public
+  repository/uncommitted artifacts) was closed by commit `a854ef9` and a successful push; its
   stale-README, test-evidence, and hash-clarity findings are closed in this revision.
