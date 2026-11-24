@@ -1,8 +1,7 @@
 """Command-line entry point for the BFT65B pipeline.
 
-Phase 0 exposes only environment/configuration checks and explicit placeholders
-for later phases. Data acquisition and modelling are intentionally not
-implemented yet.
+Phase 1 adds acquisition, dictionary validation, completeness verification, and
+the storage benchmark. Later phases remain explicit placeholders.
 """
 
 from __future__ import annotations
@@ -20,7 +19,7 @@ from typing import Any
 
 from bft65b.config import ConfigError, config_summary, load_config
 from bft65b.logging_config import configure_logging, get_logger
-from bft65b.paths import DEFAULT_CONFIG_PATH, resolve_path
+from bft65b.paths import DEFAULT_CONFIG_PATH, PROJECT_ROOT, resolve_path
 from bft65b.version import __version__
 
 LOGGER = get_logger("bft65b.cli")
@@ -39,7 +38,6 @@ PACKAGE_CHECKS: tuple[tuple[str, str], ...] = (
 )
 
 PLACEHOLDER_COMMANDS = (
-    "acquire",
     "quality",
     "transform",
     "features",
@@ -189,13 +187,131 @@ def _command_smoke(args: argparse.Namespace) -> int:
 def _placeholder(name: str):
     def command(_: argparse.Namespace) -> int:
         LOGGER.error(
-            "'%s' is not implemented in Phase 0. It belongs to a later phase.",
+            "'%s' is not implemented in Phase 1. It belongs to a later phase.",
             name,
         )
         return 2
 
     command.__name__ = f"_command_{name}"
     return command
+
+
+# ----------------------------------------------------------------------
+# Phase 1 commands
+# ----------------------------------------------------------------------
+def _registry(config: dict[str, Any]):
+    from bft65b.acquire.schema import FieldRegistry
+
+    return FieldRegistry.load(
+        PROJECT_ROOT / str(config["acquisition"]["fields_config"])
+    )
+
+
+def _command_acquire_fields(args: argparse.Namespace) -> int:
+    from bft65b.acquire.dictionary import DictionaryError, export_field_dictionary
+
+    config = load_config(args.config)
+    registry = _registry(config)
+    try:
+        rows, violations = export_field_dictionary(
+            config, registry, refresh=args.refresh, root=PROJECT_ROOT
+        )
+    except DictionaryError as exc:
+        LOGGER.error("Field dictionary gate failed: %s", exc)
+        return 1
+    if violations:
+        for violation in violations:
+            LOGGER.error("Field dictionary violation: %s", violation)
+        return 1
+    LOGGER.info(
+        "Field dictionary written for %s fields (%s tables)",
+        len(rows),
+        len({row["table"] for row in rows}),
+    )
+    print(f"field_dictionary_rows={len(rows)}")
+    return 0
+
+
+def _command_acquire_download(args: argparse.Namespace) -> int:
+    from bft65b.acquire.downloader import AcquisitionDownloader
+
+    config = load_config(args.config)
+    downloader = AcquisitionDownloader(config, registry=_registry(config))
+    results = downloader.download(args.scope, force=args.force, dry_run=args.dry_run)
+    if args.dry_run:
+        return 0
+    for result in results:
+        status = "skipped" if result.skipped else "downloaded"
+        print(
+            f"{result.table:<12} {result.key:<12} {status:<10} "
+            f"rows={result.rows:,} api_total={result.api_total:,} "
+            f"path={result.path}"
+        )
+    return 0
+
+
+def _command_acquire_verify(args: argparse.Namespace) -> int:
+    from bft65b.acquire.verify import verify_acquisition
+
+    config = load_config(args.config)
+    verification = verify_acquisition(
+        config, _registry(config), args.scope, root=PROJECT_ROOT
+    )
+    print(json.dumps(verification, indent=2, sort_keys=True, default=str))
+    if verification["passed"]:
+        LOGGER.info("Acquisition verification passed for scope=%s", args.scope)
+        return 0
+    LOGGER.error(
+        "Acquisition verification failed for scope=%s (%s violation(s))",
+        args.scope,
+        len(verification["violations"]),
+    )
+    return 1
+
+
+def _command_acquire_summary(args: argparse.Namespace) -> int:
+    from bft65b.acquire.downloader import Manifest
+    from bft65b.acquire.summary import (
+        build_acquisition_summary,
+        write_acquisition_summary,
+    )
+    from bft65b.acquire.verify import verify_acquisition
+
+    config = load_config(args.config)
+    registry = _registry(config)
+    verification = verify_acquisition(config, registry, args.scope, root=PROJECT_ROOT)
+    manifest = Manifest(
+        PROJECT_ROOT / str(config["acquisition"]["manifest_path"]), PROJECT_ROOT
+    )
+    summary = build_acquisition_summary(
+        config,
+        args.scope,
+        verification,
+        manifest.snapshot(),
+        root=PROJECT_ROOT,
+    )
+    path = write_acquisition_summary(config, summary, root=PROJECT_ROOT)
+    print(json.dumps(summary["report_page1"], indent=2, sort_keys=True))
+    LOGGER.info("Summary passed=%s; wrote %s", summary["passed"], path)
+    return 0 if summary["passed"] else 1
+
+
+def _command_storage_benchmark(args: argparse.Namespace) -> int:
+    from bft65b.benchmark.storage import run_storage_benchmark
+
+    config = load_config(args.config)
+    rows = run_storage_benchmark(
+        config, args.scope, runs=args.runs, root=PROJECT_ROOT
+    )
+    for row in rows:
+        print(
+            f"{row['layout']:<20} {row['mib']:>9.2f} MiB "
+            f"ratio={row['compression_ratio']:>6.2f} "
+            f"full={row['read_full_seconds']:.4f}s "
+            f"projected={row['read_projected_seconds']:.4f}s "
+            f"predicate={row['read_predicate_seconds']:.4f}s"
+        )
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -241,6 +357,68 @@ def build_parser() -> argparse.ArgumentParser:
     )
     smoke_parser.set_defaults(func=_command_smoke)
 
+    acquire_parser = subparsers.add_parser(
+        "acquire", help="FDIC acquisition, dictionary validation, and verification"
+    )
+    acquire_parser.set_defaults(
+        func=lambda _: (acquire_parser.print_help(), 0)[1]
+    )
+    acquire_subparsers = acquire_parser.add_subparsers(dest="acquire_command")
+
+    fields_parser = acquire_subparsers.add_parser(
+        "fields", help="Cache FDIC metadata and export the field dictionary"
+    )
+    fields_parser.add_argument(
+        "--refresh", action="store_true", help="Re-download the FDIC metadata YAML"
+    )
+    fields_parser.set_defaults(func=_command_acquire_fields)
+
+    download_parser = acquire_subparsers.add_parser(
+        "download", help="Download financials, failures, and institutions"
+    )
+    download_parser.add_argument(
+        "--scope", choices=["sample", "full"], required=True
+    )
+    download_parser.add_argument(
+        "--force", action="store_true", help="Re-download complete tables"
+    )
+    download_parser.add_argument(
+        "--dry-run", action="store_true", help="Print the plan without network access"
+    )
+    download_parser.set_defaults(func=_command_acquire_download)
+
+    verify_parser = acquire_subparsers.add_parser(
+        "verify", help="Verify totals, schema, duplicates, and units"
+    )
+    verify_parser.add_argument(
+        "--scope", choices=["sample", "full"], required=True
+    )
+    verify_parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Return a non-zero exit code when any check fails",
+    )
+    verify_parser.set_defaults(func=_command_acquire_verify)
+
+    summary_parser = acquire_subparsers.add_parser(
+        "summary", help="Write outputs/manifests/acquisition_summary.json"
+    )
+    summary_parser.add_argument(
+        "--scope", choices=["sample", "full"], required=True
+    )
+    summary_parser.set_defaults(func=_command_acquire_summary)
+
+    benchmark_parser = subparsers.add_parser(
+        "storage-benchmark", help="Benchmark CSV and Parquet on acquired data"
+    )
+    benchmark_parser.add_argument(
+        "--scope", choices=["sample", "full"], required=True
+    )
+    benchmark_parser.add_argument(
+        "--runs", type=int, default=None, help="Timed runs per metric"
+    )
+    benchmark_parser.set_defaults(func=_command_storage_benchmark)
+
     for name in PLACEHOLDER_COMMANDS:
         placeholder = subparsers.add_parser(name, help=f"Reserved for a later phase: {name}")
         placeholder.set_defaults(func=_placeholder(name))
@@ -262,6 +440,11 @@ def main(argv: list[str] | None = None) -> int:
     except ConfigError as exc:
         LOGGER.error("Configuration error: %s", exc)
         return 2
+    except Exception as exc:
+        if exc.__class__.__module__.startswith("bft65b."):
+            LOGGER.error("%s: %s", type(exc).__name__, exc)
+            return 1
+        raise
 
 
 if __name__ == "__main__":

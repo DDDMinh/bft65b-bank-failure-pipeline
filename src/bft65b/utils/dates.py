@@ -45,3 +45,20 @@ def add_quarters(value: str | date | datetime, quarters: int) -> date:
 def quarters_between(start: str | date | datetime, end: str | date | datetime) -> int:
     """Number of whole quarter steps from ``start`` to ``end``."""
     return quarter_index(end) - quarter_index(start)
+
+
+def quarter_ends_between(
+    start: str | date | datetime, end: str | date | datetime
+) -> list[date]:
+    """Return every quarter-end date in ``[start, end]`` inclusive."""
+    first = quarter_end(start)
+    last = quarter_end(end)
+    if first > last:
+        raise ValueError(f"Start quarter {first} is after end quarter {last}")
+    quarters: list[date] = []
+    current = first
+    while current <= last:
+        quarters.append(current)
+        current = add_quarters(current, 1)
+    return quarters
+

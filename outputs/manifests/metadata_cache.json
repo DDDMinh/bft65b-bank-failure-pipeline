@@ -1,0 +1,29 @@
+{
+  "generated_at_utc": "2026-11-24T04:03:17.901743+00:00",
+  "sources": {
+    "failures": {
+      "bytes": 14728,
+      "cache_path": "data_raw/fdic/_metadata/failure_properties.yaml",
+      "fetched_at_utc": "2026-11-23T19:40:36.475563+00:00",
+      "refreshed_this_run": false,
+      "sha256": "7e3137fb6fc93dd49371b4d032f48fad403efd3d9a7f5cc8ca5480c00807364c",
+      "url": "https://api.fdic.gov/banks/docs/failure_properties.yaml"
+    },
+    "financials": {
+      "bytes": 616633,
+      "cache_path": "data_raw/fdic/_metadata/risview_properties.yaml",
+      "fetched_at_utc": "2026-11-23T19:40:36.263965+00:00",
+      "refreshed_this_run": false,
+      "sha256": "b257457e4e821d6a0d9f88ffc4e6e0da80e4ccf67fa394cadb21587b50b23d59",
+      "url": "https://api.fdic.gov/banks/docs/risview_properties.yaml"
+    },
+    "institutions": {
+      "bytes": 94832,
+      "cache_path": "data_raw/fdic/_metadata/institution_properties.yaml",
+      "fetched_at_utc": "2026-11-23T19:40:36.692067+00:00",
+      "refreshed_this_run": false,
+      "sha256": "6ed1763c66a9e240904a45712b23d825c0f31beaadb6cd0213fc1bf00b2af1b9",
+      "url": "https://api.fdic.gov/banks/docs/institution_properties.yaml"
+    }
+  }
+}

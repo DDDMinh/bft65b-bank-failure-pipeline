@@ -70,6 +70,12 @@ test passes.
 Implement paging, retries, resumability, per-quarter manifests, field selection, completeness
 checks, canonical Parquet layout, and a CSV-versus-Parquet benchmark.
 
+**Status:** sample gate complete. The 4-quarter 2023 run downloaded 18,798 financial rows, 4,117
+failure rows, and 27,838 institution rows; verification passed with one schema, zero duplicate
+`(CERT, REPDTE)` pairs, and zero duplicate `(CERT, FAILDATE)` events. The benchmark and figure are
+generated from real sample data. The full `1984Q1–2026Q2` download is deliberately deferred until
+the sample is reviewed.
+
 Gate: the 4-quarter 2023 sample passes before the full `1984Q1–2026Q2` download. The full manifest
 has no incomplete quarters and no duplicate `(CERT, REPDTE)` pairs.
 

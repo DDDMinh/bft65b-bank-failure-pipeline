@@ -14,14 +14,27 @@ paths:
 acquisition:
   api_base_url: "https://api.fdic.gov/banks"
   field_dictionary_url: "https://api.fdic.gov/banks/docs/risview_properties.yaml"
+  failure_dictionary_url: "https://api.fdic.gov/banks/docs/failure_properties.yaml"
+  institution_dictionary_url: "https://api.fdic.gov/banks/docs/institution_properties.yaml"
+  fields_config: "configs/fdic_fields.yaml"
+  metadata_dir: "data_raw/fdic/_metadata"
+  manifest_path: "data_raw/fdic/_manifests/acquisition_manifest.json"
+  log_dir: "data_raw/fdic/_logs"
   page_size: 10000
   pause_seconds: 1.0
   max_retries: 6
+  request_timeout_seconds: 180
+  backoff_base_seconds: 2.0
+  backoff_cap_seconds: 60.0
+  backoff_jitter_seconds: 1.0
+  retry_quarter_attempts: 2
+  user_agent: "BFT65B-bank-failure-pipeline/0.1 (academic project)"
   full_start_date: "1984-03-31"
   full_end_date: "2026-06-30"
   sample_start_date: "2023-03-31"
   sample_end_date: "2023-12-31"
   parquet_compression: "zstd"
+  parquet_row_group_size: 65536
 
 modelling:
   label_horizon_quarters: 4

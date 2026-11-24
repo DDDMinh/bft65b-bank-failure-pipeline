@@ -18,6 +18,10 @@ with the final report and `README.md`.
 
 ## External repositories and papers
 
+- `cdarlint/winutils` — pre-compiled Hadoop Windows binaries (`winutils.exe`, `hadoop.dll`) used
+  only to run local PySpark file reads on Windows. URL:
+  `https://github.com/cdarlint/winutils`. Version used: `hadoop-3.3.6/bin`. Pinned SHA-256 hashes
+  are recorded in `README.md` §3.1. Not redistributed in this repository.
 - To be completed during the references review. Record title, author, URL, license, and how it was
   used.
 

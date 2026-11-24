@@ -19,20 +19,25 @@ Legend: `[ ]` pending, `[x]` complete. Every code change in `src/` or `tests/` m
 **Gate:** configuration hard rules pass; all required packages import; Java and local Spark start;
 `pytest` passes.
 
-## Phase 1 — Acquisition and storage
+## Phase 1 - Acquisition and storage
 
-- [ ] Implement FDIC API client with retries, paging, and polite pauses
-- [ ] Implement resumable per-quarter download manifests
-- [ ] Look up and justify the selected field list in `docs/field_selection.md`
-- [ ] Run the 4-quarter 2023 sample gate
-- [ ] Run the full `1984Q1–2026Q2` Financials download plus complete Failures and Institutions
-- [ ] Verify API totals, row counts, duplicate keys, and missing quarters
-- [ ] Write canonical Parquet with `REPDTE` partitioning and `zstd` compression
-- [ ] Benchmark CSV versus Parquet for size, write time, read time, projected read, and memory
-- [ ] Generate storage tables and figures under `outputs/`
+- [x] Implement FDIC API client with retries, paging, and polite pauses
+- [x] Implement resumable per-quarter download manifests
+- [x] Look up and justify the selected field list in `docs/field_selection.md`
+- [x] Freeze explicit Arrow schemas in `configs/fdic_fields.yaml` (`REPDTE` as `date32`)
+- [x] Cache and verify the FDIC field dictionary; export `outputs/tables/field_dictionary.csv`
+- [x] Run the 4-quarter 2023 sample gate (18,798 rows; 4,117 failures; 27,838 institutions)
+- [ ] Run the full `1984Q1-2026Q2` Financials download plus complete Failures and Institutions
+- [x] Verify API totals, row counts, duplicate keys, and missing quarters on the sample
+- [x] Write canonical Parquet with non-colliding `year`/`quarter` partitions and `zstd` compression
+- [x] Benchmark CSV versus Parquet for size, write time, read time, projected read, and memory
+- [x] Generate storage tables and figures under `outputs/`
+- [x] Add Polars and PySpark dataset-read checks in `tests/test_storage_schema.py`
+- [x] Record Windows PySpark native-library setup and SHA-256 hashes in `README.md`
 
-**Gate:** sample gate passed; full manifest complete; no duplicate `(CERT, REPDTE)`; benchmark
-artifacts generated from real data.
+**Gate:** sample gate passed; no duplicate `(CERT, REPDTE)`; benchmark artifacts generated from real
+data. The full download remains pending and must be run manually after review:
+`bft65b acquire download --scope full`.
 
 ## Phase 2 — Data quality and panel
 

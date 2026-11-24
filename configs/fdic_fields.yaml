@@ -1,0 +1,269 @@
+# Frozen Phase 1 field registry.
+#
+# The starter script's 33 financial fields are the mandatory core. Seven
+# reserve fields are retained for Phase 4 feature selection. Fields are typed
+# explicitly so that early-quarter nulls and pre-Basel zeroes can never change
+# the Parquet schema.
+#
+# Units are declared here because the FDIC RISVIEW dictionary does not publish
+# an x-number-unit for most financial fields. The dictionary gate reconciles
+# every declaration with metadata where metadata is available and records the
+# provenance in outputs/tables/field_dictionary.csv.
+version: 1
+
+tables:
+  financials:
+    endpoint: financials
+    sort_by: CERT
+    key_fields: [CERT, REPDTE]
+    fields:
+      CERT:
+        dtype: int64
+        role: key
+        unit: identifier
+      REPDTE:
+        dtype: date32
+        role: key
+        unit: date
+        source_format: "%Y%m%d"
+      STNAME:
+        dtype: string
+        role: context
+        unit: text
+      ASSET:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      DEP:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      DEPDOM:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      EQ:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      BRO:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      CHBAL:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      SC:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      LNLSGR:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      LNLSNET:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      LNRE:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      LNCI:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      LNCON:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      LNATRES:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      NCLNLS:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      P3ASSET:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      P9ASSET:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      NAASSET:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      NTLNLS:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      ORE:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      NETINC:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      INTINC:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      EINTEXP:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      NONII:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      NONIX:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      ELNATR:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      ROA:
+        dtype: float64
+        role: feature_candidate
+        unit: percent
+      ROE:
+        dtype: float64
+        role: feature_candidate
+        unit: percent
+      NIMY:
+        dtype: float64
+        role: feature_candidate
+        unit: percent
+      RBC1AAJ:
+        dtype: float64
+        role: feature_candidate
+        unit: percent
+      RBCRWAJ:
+        dtype: float64
+        role: feature_candidate
+        unit: percent
+      # Phase 4 reserve fields (verified against API and dictionary before use).
+      NUMEMP:
+        dtype: float64
+        role: feature_candidate
+        unit: count
+      OFFDOM:
+        dtype: float64
+        role: feature_candidate
+        unit: count
+      OFFFOR:
+        dtype: float64
+        role: feature_candidate
+        unit: count
+      DEPUNINS:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      RBCT1J:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+      RBC1RWAJ:
+        dtype: float64
+        role: feature_candidate
+        unit: percent
+      TRADE:
+        dtype: float64
+        role: feature_candidate
+        unit: usd_thousands
+
+  failures:
+    endpoint: failures
+    sort_by: FAILDATE
+    key_fields: [CERT, FAILDATE]
+    fields:
+      CERT:
+        dtype: int64
+        role: key
+        unit: identifier
+      NAME:
+        dtype: string
+        role: context
+        unit: text
+      CITYST:
+        dtype: string
+        role: context
+        unit: text
+      FAILDATE:
+        dtype: date32
+        role: label_source
+        unit: date
+        source_format: "%m/%d/%Y"
+      FAILYR:
+        dtype: int16
+        role: context
+        unit: year
+      COST:
+        dtype: float64
+        role: context
+        unit: usd_thousands
+      QBFASSET:
+        dtype: float64
+        role: context
+        unit: usd_thousands
+      QBFDEP:
+        dtype: float64
+        role: context
+        unit: usd_thousands
+      RESTYPE:
+        dtype: string
+        role: context
+        unit: code
+
+  institutions:
+    endpoint: institutions
+    sort_by: CERT
+    key_fields: [CERT]
+    fields:
+      CERT:
+        dtype: int64
+        role: key
+        unit: identifier
+      NAME:
+        dtype: string
+        role: context
+        unit: text
+      STNAME:
+        dtype: string
+        role: context
+        unit: text
+      BKCLASS:
+        dtype: string
+        role: context
+        unit: code
+      ACTIVE:
+        dtype: int8
+        role: context
+        unit: flag
+      ESTYMD:
+        dtype: date32
+        role: context
+        unit: date
+        source_format: "%m/%d/%Y"
+      ENDEFYMD:
+        dtype: date32
+        role: context
+        unit: date
+        source_format: "%m/%d/%Y"
+      CHANGEC1:
+        dtype: string
+        role: context
+        unit: code
+      INSDATE:
+        dtype: date32
+        role: context
+        unit: date
+        source_format: "%m/%d/%Y"

@@ -64,7 +64,13 @@ def test_cli_smoke() -> None:
 
 
 def test_placeholder_commands_are_not_implemented() -> None:
-    assert main(["acquire"]) == 2
+    for command in ("quality", "transform", "features", "model", "report"):
+        assert main([command]) == 2
+
+
+def test_acquire_help_without_subcommand(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["acquire"]) == 0
+    assert "fields" in capsys.readouterr().out
 
 
 def test_polars_and_pandas_basic_operations() -> None:

@@ -133,6 +133,39 @@ def validate_config(config: dict[str, Any]) -> None:
     if full_start > full_end:
         raise ConfigError("'acquisition.full_start_date' must not be after full_end_date")
 
+    sample_start = _require_date(acquisition, "sample_start_date", "acquisition")
+    sample_end = _require_date(acquisition, "sample_end_date", "acquisition")
+    if sample_start > sample_end:
+        raise ConfigError("'acquisition.sample_start_date' must not be after sample_end_date")
+    if not (full_start <= sample_start <= sample_end <= full_end):
+        raise ConfigError("Sample period must lie inside the full acquisition period")
+
+    page_size = acquisition.get("page_size")
+    if not isinstance(page_size, int) or not 1 <= page_size <= 10_000:
+        raise ConfigError("'acquisition.page_size' must be an integer in [1, 10000]")
+
+    max_retries = acquisition.get("max_retries")
+    if not isinstance(max_retries, int) or max_retries < 1:
+        raise ConfigError("'acquisition.max_retries' must be an integer >= 1")
+
+    pause_seconds = acquisition.get("pause_seconds")
+    if not isinstance(pause_seconds, (int, float)) or pause_seconds < 0:
+        raise ConfigError("'acquisition.pause_seconds' must be a non-negative number")
+
+    if acquisition.get("parquet_compression") not in {"zstd", "snappy"}:
+        raise ConfigError("'acquisition.parquet_compression' must be 'zstd' or 'snappy'")
+
+    for key in (
+        "fields_config",
+        "metadata_dir",
+        "manifest_path",
+        "log_dir",
+        "user_agent",
+    ):
+        value = acquisition.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise ConfigError(f"'acquisition.{key}' must be a non-empty string")
+
     report = _require_mapping(config, "report")
     for key in ("author_name", "student_id", "github_url"):
         value = report.get(key, "")

@@ -1,0 +1,5 @@
+quarter,status,rows,api_total,duplicate_keys,schema_ok
+2023-03-31,complete,4740,4740,0,True
+2023-06-30,complete,4714,4714,0,True
+2023-09-30,complete,4686,4686,0,True
+2023-12-31,complete,4658,4658,0,True
