@@ -63,6 +63,74 @@ class TrainQuantileClipper(BaseEstimator, TransformerMixin):
         return np.asarray(input_features, dtype=object)
 
 
+class TrainColumnImputer(BaseEstimator, TransformerMixin):
+    """Column-wise imputer with train-only statistics and bounded memory.
+
+    sklearn's dense median imputer materialises a full array of ``argsort``
+    indices, which exceeds laptop memory for the 1.26M x 102 full-Dev fit.
+    Computing one column statistic at a time is mathematically equivalent for
+    median/mean imputation while keeping peak extra memory to one column.
+    """
+
+    def __init__(
+        self,
+        strategy: str = "median",
+        *,
+        add_indicator: bool = False,
+        keep_empty_features: bool = True,
+        fill_value: float = 0.0,
+    ):
+        self.strategy = strategy
+        self.add_indicator = add_indicator
+        self.keep_empty_features = keep_empty_features
+        self.fill_value = fill_value
+
+    def fit(self, X: Any, y: Any = None) -> "TrainColumnImputer":
+        values = np.asarray(X, dtype=np.float64)
+        if values.ndim == 1:
+            values = values.reshape(-1, 1)
+        self.n_features_in_ = values.shape[1]
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            if self.strategy == "median":
+                statistics = np.array(
+                    [np.nanmedian(values[:, index]) for index in range(values.shape[1])]
+                )
+            elif self.strategy == "mean":
+                statistics = np.array(
+                    [np.nanmean(values[:, index]) for index in range(values.shape[1])]
+                )
+            elif self.strategy == "constant":
+                statistics = np.full(values.shape[1], float(self.fill_value))
+            else:
+                raise FeatureError(f"Unsupported imputation strategy: {self.strategy}")
+        self.statistics_ = np.where(np.isfinite(statistics), statistics, float(self.fill_value))
+        return self
+
+    def transform(self, X: Any) -> np.ndarray:
+        values = np.asarray(X, dtype=np.float64)
+        if values.ndim == 1:
+            values = values.reshape(-1, 1)
+        if values.shape[1] != self.n_features_in_:
+            raise FeatureError(
+                f"Imputer expects {self.n_features_in_} columns; received {values.shape[1]}"
+            )
+        result = np.array(values, dtype=np.float64, copy=True)
+        for index, statistic in enumerate(self.statistics_):
+            column = result[:, index]
+            missing = np.isnan(column)
+            if missing.any():
+                column[missing] = statistic
+        return result
+
+    def get_feature_names_out(self, input_features: Sequence[str] | None = None) -> np.ndarray:
+        if input_features is None:
+            return np.asarray(
+                [f"imputed_{index}" for index in range(self.n_features_in_)], dtype=object
+            )
+        return np.asarray(input_features, dtype=object)
+
+
 def build_preprocessor(
     config: Mapping[str, Any],
     *,
@@ -87,13 +155,13 @@ def build_preprocessor(
             ),
             (
                 "impute",
-                SimpleImputer(
+                TrainColumnImputer(
                     strategy=str(config["features"]["imputation_strategy"]),
                     add_indicator=False,
                     keep_empty_features=True,
                 ),
             ),
-            ("scale", StandardScaler()),
+            ("scale", StandardScaler(copy=False)),
         ]
     )
     categorical_pipeline = Pipeline(

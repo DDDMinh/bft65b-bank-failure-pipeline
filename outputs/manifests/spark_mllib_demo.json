@@ -1,0 +1,784 @@
+{
+  "baseline_comparison": {
+    "baseline_model": "unweighted",
+    "note": "In-sample Dev demo; not a validation performance estimate",
+    "sample_rows": 50000,
+    "spearman_rank_correlation": 0.656903681705177
+  },
+  "contract": {
+    "all_null_dev_columns_dropped": [],
+    "categorical_columns": [
+      "cat__capital_regime__0",
+      "cat__capital_regime__1",
+      "cat__capital_regime__2",
+      "cat__capital_regime__3"
+    ],
+    "categorical_values": {
+      "capital_regime": [
+        "cblr_opt_out",
+        "no_capital_reported",
+        "pre_risk_based",
+        "risk_based_reported"
+      ]
+    },
+    "classifier": "LogisticRegression(standardization=False, unweighted)",
+    "clipping_lower_quantile": 0.01,
+    "clipping_upper_quantile": 0.99,
+    "imputed_columns": [
+      "imp__equity_asset_pct",
+      "imp__rbc1aaj_pct",
+      "imp__rbcrwaj_pct",
+      "imp__rbc1rwaj_pct",
+      "imp__tier1_rbc_asset_pct",
+      "imp__nclnls_gross_pct",
+      "imp__allowance_gross_pct",
+      "imp__allowance_nclnls_pct",
+      "imp__p3_asset_pct",
+      "imp__p9_asset_pct",
+      "imp__na_asset_pct",
+      "imp__ntlnls_asset_pct",
+      "imp__ore_asset_pct",
+      "imp__nonix_asset_pct",
+      "imp__eintexp_asset_pct",
+      "imp__intinc_asset_pct",
+      "imp__nonii_asset_pct",
+      "imp__efficiency_ratio_pct",
+      "imp__employees_per_bn_asset",
+      "imp__domestic_offices_per_bn_asset",
+      "imp__roa_reported_pct",
+      "imp__roe_reported_pct",
+      "imp__nimy_reported_pct",
+      "imp__netinc_asset_pct",
+      "imp__elnatr_asset_pct",
+      "imp__dep_asset_pct",
+      "imp__depdom_dep_pct",
+      "imp__bro_asset_pct",
+      "imp__chbal_asset_pct",
+      "imp__sc_asset_pct",
+      "imp__depunins_dep_pct",
+      "imp__log_asset",
+      "imp__lnlsnet_asset_pct",
+      "imp__lnre_lnlsgr_pct",
+      "imp__lnci_lnlsgr_pct",
+      "imp__lncon_lnlsgr_pct",
+      "imp__trade_asset_pct",
+      "imp__rbc_ratio_available",
+      "imp__leverage_ratio_available",
+      "imp__miss_rbcrwaj",
+      "imp__miss_rbc1rwaj",
+      "imp__miss_rbc1aaj",
+      "imp__miss_rbct1j",
+      "imp__miss_p3asset",
+      "imp__miss_p9asset",
+      "imp__miss_naasset",
+      "imp__miss_ntlnls",
+      "imp__miss_numemp",
+      "imp__miss_offdom",
+      "imp__miss_depunins",
+      "imp__miss_elnatr",
+      "imp__miss_trade",
+      "imp__n_missing_core",
+      "imp__asset_lag1",
+      "imp__asset_lag4",
+      "imp__equity_lag1",
+      "imp__equity_lag4",
+      "imp__roa_lag1",
+      "imp__roa_lag4",
+      "imp__equity_ratio_lag1",
+      "imp__equity_ratio_lag4",
+      "imp__rbc1aaj_lag1",
+      "imp__rbc1aaj_lag4",
+      "imp__rbcrwaj_lag1",
+      "imp__rbcrwaj_lag4",
+      "imp__nclnls_ratio_lag1",
+      "imp__nclnls_ratio_lag4",
+      "imp__na_ratio_lag1",
+      "imp__na_ratio_lag4",
+      "imp__log_asset_lag1",
+      "imp__log_asset_lag4",
+      "imp__dep_asset_ratio_lag1",
+      "imp__dep_asset_ratio_lag4",
+      "imp__depunins_ratio_lag1",
+      "imp__depunins_ratio_lag4",
+      "imp__loan_intensity_lag1",
+      "imp__loan_intensity_lag4",
+      "imp__asset_growth_1q_pct",
+      "imp__asset_growth_4q_pct",
+      "imp__equity_growth_4q_pct",
+      "imp__equity_ratio_delta_4q",
+      "imp__rbc1aaj_delta_4q",
+      "imp__rbcrwaj_delta_4q",
+      "imp__nclnls_ratio_delta_4q",
+      "imp__roa_delta_1q",
+      "imp__roa_delta_4q",
+      "imp__dep_asset_delta_4q",
+      "imp__loan_intensity_delta_4q",
+      "imp__log_asset_delta_4q",
+      "imp__rolling_n_quarters",
+      "imp__roa_mean_4q",
+      "imp__roa_std_4q",
+      "imp__roa_slope_4q",
+      "imp__equity_ratio_mean_4q",
+      "imp__equity_ratio_std_4q",
+      "imp__equity_ratio_slope_4q",
+      "imp__nclnls_ratio_mean_4q",
+      "imp__nclnls_ratio_std_4q",
+      "imp__nclnls_ratio_slope_4q",
+      "imp__log_asset_mean_4q",
+      "imp__log_asset_std_4q",
+      "imp__log_asset_slope_4q"
+    ],
+    "imputer_strategy": "median",
+    "numeric_bounds": {
+      "allowance_gross_pct": [
+        0.0,
+        6.401289216245818
+      ],
+      "allowance_nclnls_pct": [
+        0.0,
+        10233.333333333334
+      ],
+      "asset_growth_1q_pct": [
+        -11.903529355585157,
+        38.30020588312184
+      ],
+      "asset_growth_4q_pct": [
+        -20.931496771275736,
+        135.53304498342266
+      ],
+      "asset_lag1": [
+        4832.0,
+        6188455.959999963
+      ],
+      "asset_lag4": [
+        4867.0,
+        5969416.939999993
+      ],
+      "bro_asset_pct": [
+        0.0,
+        19.89443565583574
+      ],
+      "chbal_asset_pct": [
+        0.28356469170970994,
+        33.23771935913751
+      ],
+      "dep_asset_delta_4q": [
+        -12.593923842097503,
+        15.899123786806824
+      ],
+      "dep_asset_pct": [
+        6.224940519416509,
+        96.9311934363193
+      ],
+      "dep_asset_ratio_lag1": [
+        7.052522535942636,
+        96.56130803523037
+      ],
+      "dep_asset_ratio_lag4": [
+        8.959930462154615,
+        95.98145445788666
+      ],
+      "depdom_dep_pct": [
+        98.34352129927032,
+        100.0
+      ],
+      "depunins_dep_pct": [
+        0.0,
+        64.22690982152457
+      ],
+      "depunins_ratio_lag1": [
+        0.0,
+        64.03497350648365
+      ],
+      "depunins_ratio_lag4": [
+        0.0,
+        63.091470298585605
+      ],
+      "domestic_offices_per_bn_asset": [
+        2.285636462825174,
+        246.43369410207873
+      ],
+      "efficiency_ratio_pct": [
+        12.575660940480509,
+        120.97061896998474
+      ],
+      "eintexp_asset_pct": [
+        0.09172654059376029,
+        7.40204753246919
+      ],
+      "elnatr_asset_pct": [
+        -0.10708357361953934,
+        2.960666808214579
+      ],
+      "employees_per_bn_asset": [
+        102.0891430776309,
+        1793.1413159589063
+      ],
+      "equity_asset_pct": [
+        -0.5473066668541189,
+        56.43002060364776
+      ],
+      "equity_growth_4q_pct": [
+        -54.65187150257582,
+        140.23086189384455
+      ],
+      "equity_lag1": [
+        40.0,
+        497879.9199999999
+      ],
+      "equity_lag4": [
+        285.0,
+        470602.4699999972
+      ],
+      "equity_ratio_delta_4q": [
+        -12.838904189720836,
+        5.372796988607331
+      ],
+      "equity_ratio_lag1": [
+        0.09332109031407401,
+        55.334025055845785
+      ],
+      "equity_ratio_lag4": [
+        1.0181143664359331,
+        52.49882114375255
+      ],
+      "equity_ratio_mean_4q": [
+        0.0003909874419872916,
+        60.24879572582118
+      ],
+      "equity_ratio_slope_4q": [
+        -7.1391994874719344,
+        1.6044494218838212
+      ],
+      "equity_ratio_std_4q": [
+        0.04355485472960445,
+        10.32529013195007
+      ],
+      "intinc_asset_pct": [
+        1.0527996189212427,
+        10.79925097656496
+      ],
+      "leverage_ratio_available": [
+        0.0,
+        1.0
+      ],
+      "lnci_lnlsgr_pct": [
+        0.0,
+        61.87382265856902
+      ],
+      "lncon_lnlsgr_pct": [
+        0.04259796020731928,
+        68.58130803932673
+      ],
+      "lnlsnet_asset_pct": [
+        0.20297125590208154,
+        90.06799413521773
+      ],
+      "lnre_lnlsgr_pct": [
+        1.7948927010228917,
+        103.33763051077173
+      ],
+      "loan_intensity_delta_4q": [
+        -16.68001104076919,
+        21.68573369842678
+      ],
+      "loan_intensity_lag1": [
+        0.3734027902505886,
+        90.03179011657846
+      ],
+      "loan_intensity_lag4": [
+        1.2426299208996743,
+        89.92315784434338
+      ],
+      "log_asset": [
+        8.47907586930311,
+        15.650693036075644
+      ],
+      "log_asset_delta_4q": [
+        -0.23485557978593882,
+        0.8566810355883026
+      ],
+      "log_asset_lag1": [
+        8.48301573961465,
+        15.638196171581722
+      ],
+      "log_asset_lag4": [
+        8.490233009833455,
+        15.602159815559974
+      ],
+      "log_asset_mean_4q": [
+        8.45058319989049,
+        15.608709065525401
+      ],
+      "log_asset_slope_4q": [
+        -0.0726412744449757,
+        0.30355761863280695
+      ],
+      "log_asset_std_4q": [
+        0.004213578391565691,
+        0.4038949055294531
+      ],
+      "miss_depunins": [
+        0.0,
+        1.0
+      ],
+      "miss_elnatr": [
+        0.0,
+        1.0
+      ],
+      "miss_naasset": [
+        0.0,
+        1.0
+      ],
+      "miss_ntlnls": [
+        0.0,
+        1.0
+      ],
+      "miss_numemp": [
+        0.0,
+        1.0
+      ],
+      "miss_offdom": [
+        -1e-06,
+        1e-06
+      ],
+      "miss_p3asset": [
+        0.0,
+        1.0
+      ],
+      "miss_p9asset": [
+        0.0,
+        1.0
+      ],
+      "miss_rbc1aaj": [
+        0.0,
+        1.0
+      ],
+      "miss_rbc1rwaj": [
+        0.0,
+        1.0
+      ],
+      "miss_rbcrwaj": [
+        0.0,
+        1.0
+      ],
+      "miss_rbct1j": [
+        0.0,
+        1.0
+      ],
+      "miss_trade": [
+        0.0,
+        1.0
+      ],
+      "n_missing_core": [
+        -1e-06,
+        1e-06
+      ],
+      "na_asset_pct": [
+        0.0,
+        5.843642083677919
+      ],
+      "na_ratio_lag1": [
+        0.0,
+        5.569952989748863
+      ],
+      "na_ratio_lag4": [
+        0.0,
+        5.108604965118484
+      ],
+      "nclnls_gross_pct": [
+        0.0,
+        14.466149744038349
+      ],
+      "nclnls_ratio_delta_4q": [
+        -5.714697372986149,
+        7.304202042030665
+      ],
+      "nclnls_ratio_lag1": [
+        0.0,
+        13.864428121656225
+      ],
+      "nclnls_ratio_lag4": [
+        0.0,
+        12.631662233704452
+      ],
+      "nclnls_ratio_mean_4q": [
+        0.0,
+        13.14327342030321
+      ],
+      "nclnls_ratio_slope_4q": [
+        -1.8653818508884432,
+        2.3341485006939737
+      ],
+      "nclnls_ratio_std_4q": [
+        0.0,
+        4.452836378705758
+      ],
+      "netinc_asset_pct": [
+        -3.734633554426601,
+        2.5044306410081116
+      ],
+      "nimy_reported_pct": [
+        0.1950356178466259,
+        7.949981402467798
+      ],
+      "nonii_asset_pct": [
+        0.01075132980513116,
+        7.642879902517599
+      ],
+      "nonix_asset_pct": [
+        0.35792550762939707,
+        10.137862211228194
+      ],
+      "ntlnls_asset_pct": [
+        -0.20153924333490755,
+        2.4634366051174204
+      ],
+      "ore_asset_pct": [
+        0.0,
+        5.931260704128224
+      ],
+      "p3_asset_pct": [
+        0.0,
+        4.412684081243279
+      ],
+      "p9_asset_pct": [
+        0.0,
+        3.176320398758717
+      ],
+      "rbc1aaj_delta_4q": [
+        -14.457641550240227,
+        4.433784754473502
+      ],
+      "rbc1aaj_lag1": [
+        2.936942799835309,
+        64.13511664823616
+      ],
+      "rbc1aaj_lag4": [
+        3.573195093679111,
+        61.717398536589464
+      ],
+      "rbc1aaj_pct": [
+        2.4918101268400847,
+        64.92046628011585
+      ],
+      "rbc1rwaj_pct": [
+        5.14,
+        146.85399999999908
+      ],
+      "rbc_ratio_available": [
+        0.0,
+        1.0
+      ],
+      "rbcrwaj_delta_4q": [
+        -31.444406946546138,
+        12.415872247962962
+      ],
+      "rbcrwaj_lag1": [
+        5.934574791276582,
+        144.91662578859862
+      ],
+      "rbcrwaj_lag4": [
+        7.2105150793123824,
+        139.57468807553417
+      ],
+      "rbcrwaj_pct": [
+        4.955700776866598,
+        147.08600632646943
+      ],
+      "roa_delta_1q": [
+        -2.8100422757229766,
+        2.689982912027384
+      ],
+      "roa_delta_4q": [
+        -4.470914327758168,
+        4.475347979967806
+      ],
+      "roa_lag1": [
+        -5.551863216329169,
+        3.70821441606836
+      ],
+      "roa_lag4": [
+        -4.762104513517974,
+        3.661346178776945
+      ],
+      "roa_mean_4q": [
+        -5.474885659649092,
+        3.506048211405028
+      ],
+      "roa_reported_pct": [
+        -5.993288546544706,
+        3.7217542406781163
+      ],
+      "roa_slope_4q": [
+        -1.6304749203499398,
+        1.5656058047770063
+      ],
+      "roa_std_4q": [
+        0.012692607206772306,
+        3.9161598186606876
+      ],
+      "roe_reported_pct": [
+        -66.2543,
+        40.48
+      ],
+      "rolling_n_quarters": [
+        1.0,
+        4.0
+      ],
+      "sc_asset_pct": [
+        0.0,
+        71.08921932697567
+      ],
+      "tier1_rbc_asset_pct": [
+        2.511132535350356,
+        54.38656510142559
+      ],
+      "trade_asset_pct": [
+        0.0,
+        0.8560634363051801
+      ]
+    },
+    "numeric_columns": [
+      "equity_asset_pct",
+      "rbc1aaj_pct",
+      "rbcrwaj_pct",
+      "rbc1rwaj_pct",
+      "tier1_rbc_asset_pct",
+      "nclnls_gross_pct",
+      "allowance_gross_pct",
+      "allowance_nclnls_pct",
+      "p3_asset_pct",
+      "p9_asset_pct",
+      "na_asset_pct",
+      "ntlnls_asset_pct",
+      "ore_asset_pct",
+      "nonix_asset_pct",
+      "eintexp_asset_pct",
+      "intinc_asset_pct",
+      "nonii_asset_pct",
+      "efficiency_ratio_pct",
+      "employees_per_bn_asset",
+      "domestic_offices_per_bn_asset",
+      "roa_reported_pct",
+      "roe_reported_pct",
+      "nimy_reported_pct",
+      "netinc_asset_pct",
+      "elnatr_asset_pct",
+      "dep_asset_pct",
+      "depdom_dep_pct",
+      "bro_asset_pct",
+      "chbal_asset_pct",
+      "sc_asset_pct",
+      "depunins_dep_pct",
+      "log_asset",
+      "lnlsnet_asset_pct",
+      "lnre_lnlsgr_pct",
+      "lnci_lnlsgr_pct",
+      "lncon_lnlsgr_pct",
+      "trade_asset_pct",
+      "rbc_ratio_available",
+      "leverage_ratio_available",
+      "miss_rbcrwaj",
+      "miss_rbc1rwaj",
+      "miss_rbc1aaj",
+      "miss_rbct1j",
+      "miss_p3asset",
+      "miss_p9asset",
+      "miss_naasset",
+      "miss_ntlnls",
+      "miss_numemp",
+      "miss_offdom",
+      "miss_depunins",
+      "miss_elnatr",
+      "miss_trade",
+      "n_missing_core",
+      "asset_lag1",
+      "asset_lag4",
+      "equity_lag1",
+      "equity_lag4",
+      "roa_lag1",
+      "roa_lag4",
+      "equity_ratio_lag1",
+      "equity_ratio_lag4",
+      "rbc1aaj_lag1",
+      "rbc1aaj_lag4",
+      "rbcrwaj_lag1",
+      "rbcrwaj_lag4",
+      "nclnls_ratio_lag1",
+      "nclnls_ratio_lag4",
+      "na_ratio_lag1",
+      "na_ratio_lag4",
+      "log_asset_lag1",
+      "log_asset_lag4",
+      "dep_asset_ratio_lag1",
+      "dep_asset_ratio_lag4",
+      "depunins_ratio_lag1",
+      "depunins_ratio_lag4",
+      "loan_intensity_lag1",
+      "loan_intensity_lag4",
+      "asset_growth_1q_pct",
+      "asset_growth_4q_pct",
+      "equity_growth_4q_pct",
+      "equity_ratio_delta_4q",
+      "rbc1aaj_delta_4q",
+      "rbcrwaj_delta_4q",
+      "nclnls_ratio_delta_4q",
+      "roa_delta_1q",
+      "roa_delta_4q",
+      "dep_asset_delta_4q",
+      "loan_intensity_delta_4q",
+      "log_asset_delta_4q",
+      "rolling_n_quarters",
+      "roa_mean_4q",
+      "roa_std_4q",
+      "roa_slope_4q",
+      "equity_ratio_mean_4q",
+      "equity_ratio_std_4q",
+      "equity_ratio_slope_4q",
+      "nclnls_ratio_mean_4q",
+      "nclnls_ratio_std_4q",
+      "nclnls_ratio_slope_4q",
+      "log_asset_mean_4q",
+      "log_asset_std_4q",
+      "log_asset_slope_4q"
+    ],
+    "scaler": "StandardScaler(withMean=True, withStd=True)",
+    "source_columns": [
+      "num__equity_asset_pct",
+      "num__rbc1aaj_pct",
+      "num__rbcrwaj_pct",
+      "num__rbc1rwaj_pct",
+      "num__tier1_rbc_asset_pct",
+      "num__nclnls_gross_pct",
+      "num__allowance_gross_pct",
+      "num__allowance_nclnls_pct",
+      "num__p3_asset_pct",
+      "num__p9_asset_pct",
+      "num__na_asset_pct",
+      "num__ntlnls_asset_pct",
+      "num__ore_asset_pct",
+      "num__nonix_asset_pct",
+      "num__eintexp_asset_pct",
+      "num__intinc_asset_pct",
+      "num__nonii_asset_pct",
+      "num__efficiency_ratio_pct",
+      "num__employees_per_bn_asset",
+      "num__domestic_offices_per_bn_asset",
+      "num__roa_reported_pct",
+      "num__roe_reported_pct",
+      "num__nimy_reported_pct",
+      "num__netinc_asset_pct",
+      "num__elnatr_asset_pct",
+      "num__dep_asset_pct",
+      "num__depdom_dep_pct",
+      "num__bro_asset_pct",
+      "num__chbal_asset_pct",
+      "num__sc_asset_pct",
+      "num__depunins_dep_pct",
+      "num__log_asset",
+      "num__lnlsnet_asset_pct",
+      "num__lnre_lnlsgr_pct",
+      "num__lnci_lnlsgr_pct",
+      "num__lncon_lnlsgr_pct",
+      "num__trade_asset_pct",
+      "num__rbc_ratio_available",
+      "num__leverage_ratio_available",
+      "num__miss_rbcrwaj",
+      "num__miss_rbc1rwaj",
+      "num__miss_rbc1aaj",
+      "num__miss_rbct1j",
+      "num__miss_p3asset",
+      "num__miss_p9asset",
+      "num__miss_naasset",
+      "num__miss_ntlnls",
+      "num__miss_numemp",
+      "num__miss_offdom",
+      "num__miss_depunins",
+      "num__miss_elnatr",
+      "num__miss_trade",
+      "num__n_missing_core",
+      "num__asset_lag1",
+      "num__asset_lag4",
+      "num__equity_lag1",
+      "num__equity_lag4",
+      "num__roa_lag1",
+      "num__roa_lag4",
+      "num__equity_ratio_lag1",
+      "num__equity_ratio_lag4",
+      "num__rbc1aaj_lag1",
+      "num__rbc1aaj_lag4",
+      "num__rbcrwaj_lag1",
+      "num__rbcrwaj_lag4",
+      "num__nclnls_ratio_lag1",
+      "num__nclnls_ratio_lag4",
+      "num__na_ratio_lag1",
+      "num__na_ratio_lag4",
+      "num__log_asset_lag1",
+      "num__log_asset_lag4",
+      "num__dep_asset_ratio_lag1",
+      "num__dep_asset_ratio_lag4",
+      "num__depunins_ratio_lag1",
+      "num__depunins_ratio_lag4",
+      "num__loan_intensity_lag1",
+      "num__loan_intensity_lag4",
+      "num__asset_growth_1q_pct",
+      "num__asset_growth_4q_pct",
+      "num__equity_growth_4q_pct",
+      "num__equity_ratio_delta_4q",
+      "num__rbc1aaj_delta_4q",
+      "num__rbcrwaj_delta_4q",
+      "num__nclnls_ratio_delta_4q",
+      "num__roa_delta_1q",
+      "num__roa_delta_4q",
+      "num__dep_asset_delta_4q",
+      "num__loan_intensity_delta_4q",
+      "num__log_asset_delta_4q",
+      "num__rolling_n_quarters",
+      "num__roa_mean_4q",
+      "num__roa_std_4q",
+      "num__roa_slope_4q",
+      "num__equity_ratio_mean_4q",
+      "num__equity_ratio_std_4q",
+      "num__equity_ratio_slope_4q",
+      "num__nclnls_ratio_mean_4q",
+      "num__nclnls_ratio_std_4q",
+      "num__nclnls_ratio_slope_4q",
+      "num__log_asset_mean_4q",
+      "num__log_asset_std_4q",
+      "num__log_asset_slope_4q"
+    ]
+  },
+  "dev_in_sample_metrics": {
+    "base_rate_pct": 0.721803,
+    "brier_score": 0.005873483877876521,
+    "f1": 0.0469282828812759,
+    "false_negative": 169,
+    "false_positive": 363161,
+    "positive_rows": 9114,
+    "pr_auc": 0.3119117081127486,
+    "precision": 0.024038849145136064,
+    "recall": 0.9814570989686197,
+    "roc_auc": 0.9685277936938506,
+    "rows": 1262671,
+    "threshold": 0.0037675561533959713,
+    "true_negative": 890396,
+    "true_positive": 8945
+  },
+  "schema_version": 1,
+  "split": "dev",
+  "stage_order": [
+    "Imputer",
+    "VectorAssembler",
+    "StandardScaler",
+    "LogisticRegression"
+  ],
+  "threshold": 0.0037675561533959713,
+  "threshold_source": "frozen_spark_model_artifact",
+  "training": {
+    "artifact_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\modelling\\spark_logistic_model",
+    "artifact_sha256": "7b564b4d33a61f20758685307f1049b013db57f705ef632b0140bed848317f36",
+    "executed_plan": "Loaded verified frozen Spark PipelineModel; no refit performed",
+    "training_rows": 1262671
+  }
+}

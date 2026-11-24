@@ -259,10 +259,9 @@ RSS of 1,827.8 MiB, 2,991.8 MiB, and 2,813.8 MiB respectively. The captured Spar
 See `docs/scalable_processing.md` for the full tables and interpretation. The final
 `pytest -q` result after Phase 3 was `55 passed, 1 skipped` (network-gated test).
 
-The following commands still exit with status `2` until their phases are implemented:
+The following command still exits with status `2` until its phase is implemented:
 
 ```text
-bft65b model        # Phase 5: development-only tuning and single test evaluation
 bft65b report       # Phase 6: tables, figures, Page-1 metadata, report
 ```
 
@@ -328,7 +327,84 @@ feature dictionary contract are in `docs/feature_pipeline.md` and
 
 Final Phase 4 test result: `73 passed, 1 skipped` (the skip is the network-gated acquisition test).
 
-## 8. Data policy
+## 8. Phase 5 — modelling and validation
+
+Run the Phase 5 gates in this order:
+
+```powershell
+bft65b model cv-audit --strict
+bft65b model train-dev
+bft65b model cost-sensitivity
+bft65b model spark-demo --split dev
+bft65b model evaluate-test --strict
+pytest -q
+```
+
+The modelling input is the frozen `data_processed/features/full/bank_quarter_features.parquet`
+table. `train-dev` verifies its SHA-256 against `outputs/manifests/feature_summary.json` before
+fitting anything. Development CV uses five expanding windows with a four-quarter embargo:
+
+| Fold | Train period | Validation period | Validation positives |
+|---:|---|---|---:|
+| 1 | 1984Q1–1986Q4 | 1988Q1–1991Q4 | 5,377 |
+| 2 | 1984Q1–1990Q4 | 1992Q1–1995Q4 | 533 |
+| 3 | 1984Q1–1994Q4 | 1996Q1–1999Q4 | 66 |
+| 4 | 1984Q1–1998Q4 | 2000Q1–2003Q4 | 95 |
+| 5 | 1984Q1–2002Q4 | 2004Q1–2007Q4 | 55 |
+
+Pooled Dev OOF has 942,327 rows, 6,126 positives, and 1,675 distinct failed banks. All folds use
+`split == "dev"` only; the 2009 gap and Test period are never read by CV, cost estimation, or
+thresholding.
+
+The frozen model suite is:
+
+- **Baseline:** `LogisticRegression(C=1.0, max_iter=2000, solver="lbfgs")` on a fixed 30-feature
+  CAMELS core subset.
+- **Primary:** `HistGradientBoostingClassifier` with fixed hyperparameters on all 103 frozen
+  features.
+- **Spark demo:** `Imputer -> VectorAssembler -> StandardScaler -> LogisticRegression`. Spark's
+  `Imputer` takes scalar numeric columns, so it necessarily precedes `VectorAssembler`; all-null Dev
+  columns are removed before fitting it.
+
+The shared numeric preprocessor clips to train-fold quantiles, fills missing values with train-fold
+column medians, and standardizes in place. A column-wise median imputer is used because sklearn's
+dense median path materialises a roughly 1 GB `argsort` array for the full 1.26M-row Dev fit.
+Probability quality is decided on Dev OOF only: unweighted and balanced variants are compared by
+Brier score, with PR-AUC as the deterministic tie-break. Heavy class weighting is therefore not
+assumed to yield calibrated probabilities. Cost inputs are strictly in **thousands of USD**:
+the primary `C_FN` is the median Dev canonical failure `COST`, the base `C_FP` is `50.0`, and
+`cost-sensitivity` includes the empirical `C_FN/C_FP` ratio alongside the `10x`, `25x`, `50x`, and
+`100x` grid. The chosen alarm threshold is computed on Dev OOF predictions only, using the constant
+base pair; an asset-scaled variant is reported separately as `asset_scaled_diagnostic` and is not
+used to freeze the threshold.
+
+`train-dev` writes `outputs/manifests/frozen_model_spec.json`, which records the feature-table hash,
+config fingerprint, fold windows, model artifacts, thresholds, cost evidence, and Dev OOF metrics.
+After that point no feature, hyperparameter, or threshold may change. `evaluate-test --strict`
+refuses to run without a frozen specification and refuses a second run. Its strict guard verifies the
+runtime config fingerprint, frozen feature lists, diagnostic CERT provenance, and every frozen model
+artifact hash. It claims the lock file atomically before reading any Test row, so a failed run also
+counts as the single evaluation. In that guarded run, the frozen Baseline, Primary, and Spark models
+all score Test, and their metrics are written together to `outputs/tables/test_metrics.csv`.
+Filing-lag sensitivity and notable-failure diagnostics are report-only and do not affect the frozen
+model or threshold.
+
+| Path | Content |
+|---|---|
+| `outputs/tables/cv_fold_audit.csv` | Five folds, embargo, row and failure counts |
+| `data_processed/modelling/dev_oof_predictions.parquet` | Dev-only OOF probabilities and ranks |
+| `outputs/tables/dev_oof_metrics.csv` | PR-AUC, ROC-AUC, Brier, threshold metrics, context-only accuracy |
+| `outputs/tables/dev_cost_sensitivity.csv` | Cost-ratio and threshold sensitivity on Dev OOF |
+| `outputs/manifests/frozen_model_spec.json` | Frozen model, feature, cost, and threshold contract |
+| `outputs/manifests/spark_mllib_demo.json` | Spark pipeline order, contract, plan, and Dev diagnostics |
+| `outputs/manifests/test_evaluation.json` | One-time Test evaluation manifest |
+| `outputs/tables/test_metrics.csv` | Side-by-side frozen Baseline/Primary/Spark Test metrics |
+
+All five Phase 5 gates exited 0 in the required order, including the one-time strict Test run. The
+Test manifest records 368,527 Test rows, 1,109 positives, and the three scored frozen models. Final
+`pytest -q` result after Phase 5: `86 passed, 1 skipped` (the network-gated acquisition test).
+
+## 9. Data policy
 
 All raw and processed data live under:
 
@@ -348,7 +424,7 @@ outputs/spark_plans/
 outputs/benchmarks/
 ```
 
-## 9. Modelling discipline
+## 10. Modelling discipline
 
 - Label: failure in `(q, q + 4 quarters]`; mergers are never positive labels.
 - Modelling cutoff: `REPDTE <= 2025-06-30`.
@@ -366,7 +442,7 @@ failed banks; the audit-only gap has 670 across 276; Test has 1,109 across 341. 
 counts are not used as label counts. Phase 5 must not change this split or evaluate Test more than
 once.
 
-## 10. Repository layout
+## 11. Repository layout
 
 ```text
 configs/pipeline.yaml     Single source of truth for paths, seeds, split, and benchmark settings
@@ -378,7 +454,7 @@ outputs/                  Report-ready tables, figures, manifests, and plans
 reports/                  Report source and final PDF/DOCX
 ```
 
-## 11. Report identity placeholders
+## 12. Report identity placeholders
 
 The Page-1 identity fields in `configs/pipeline.yaml` are intentionally empty:
 
@@ -391,7 +467,7 @@ report:
 
 They must be filled with real values by the student. Do not invent them.
 
-## 12. Data source and citations
+## 13. Data source and citations
 
 Data source:
 
@@ -406,20 +482,22 @@ Library documentation used for implementation choices: Polars lazy plans
 (`https://pandas.pydata.org/docs/`), scikit-learn pipelines and preprocessing
 (`https://scikit-learn.org/stable/modules/compose.html`), psutil
 (`https://psutil.readthedocs.io/`), and PyArrow Parquet
-(`https://arrow.apache.org/docs/python/parquet.html`). Exact versions are pinned in
+(`https://arrow.apache.org/docs/python/parquet.html`), Spark MLlib pipelines
+(`https://spark.apache.org/docs/latest/ml-pipeline.html`), and scikit-learn model evaluation
+(`https://scikit-learn.org/stable/modules/model_evaluation.html`). Exact versions are pinned in
 `requirements.txt`.
 
 AI assistance used so far: the OpenCode coding agent (`https://opencode.ai/`), with
 DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`) for earlier phases, Big Pickle
-(`opencode/big-pickle`) for Phase 2–4 implementation and verification, and the OpenCode
-`leakage-reviewer` subagent for the independent Phase 4 temporal-leakage audit. These tools assisted
+(`opencode/big-pickle`) for Phase 2–5 implementation and verification, and the OpenCode
+`leakage-reviewer` subagent for the independent Phase 4 and Phase 5 temporal-leakage audits. These tools assisted
 with code, tests, and documentation; all reported numbers were produced by deterministic local runs
 on real FDIC data.
 
 The final report and `docs/REFERENCES_REVIEW.md` must cite every external repository, paper,
 documentation page, library, AI tool, and language model used.
 
-## 13. Academic integrity
+## 14. Academic integrity
 
 This is an individual academic project. All copied or adapted code, data definitions, methodological
 choices, and AI assistance must be cited in the report and repository. Uncited copying is

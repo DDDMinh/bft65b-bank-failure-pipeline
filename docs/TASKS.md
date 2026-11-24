@@ -86,17 +86,21 @@ frozen columns. The final `pytest -q` result after Phase 4 was 73 passed, 1 skip
 
 ## Phase 5 — Modelling and validation
 
-- [ ] Implement the simple baseline
-- [ ] Implement regularized logistic regression and a tree-based model
-- [ ] Implement blocked temporal CV with a 4-quarter embargo
-- [ ] Implement PR-AUC, recall at fixed false-alarm budget, precision@k, Brier, and cost metrics
-- [ ] Estimate false-negative and false-alarm costs from development data
-- [ ] Select the threshold on development out-of-fold predictions
-- [ ] Freeze model, features, threshold, and configuration hashes
-- [ ] Evaluate the test period exactly once
-- [ ] Implement the Spark MLlib demo on development data
+- [x] Implement the simple baseline
+- [x] Implement regularized logistic regression and a tree-based model
+- [x] Implement blocked temporal CV with a 4-quarter embargo
+- [x] Implement PR-AUC, ROC-AUC, recall@k, Brier, calibration, and cost metrics
+- [x] Estimate false-negative and false-alarm costs from development data
+- [x] Select the threshold on development out-of-fold predictions
+- [x] Freeze model, features, threshold, and configuration hashes
+- [x] Implement the Spark MLlib demo on development data
+- [x] Run the single guarded Test evaluation exactly once
 
-**Gate:** freeze manifest exists before test metrics; test lock prevents reuse.
+**Gate passed:** `model cv-audit --strict`, `model train-dev`, `model cost-sensitivity`,
+`model spark-demo --split dev`, and `model evaluate-test --strict` all exited 0. The frozen spec was
+verified before Test scoring, the lock was claimed atomically, and the final manifest records three
+scored models (Baseline, Primary, Spark), 368,527 Test rows, and 1,109 Test positives. Final
+`pytest -q`: `86 passed, 1 skipped` (network-gated acquisition test).
 
 ## Phase 6 — Conclusions and report
 

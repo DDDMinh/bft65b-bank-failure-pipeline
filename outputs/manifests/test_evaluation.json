@@ -1,0 +1,121 @@
+{
+  "costs": [
+    {
+      "c_fn_thousands": 8426.644,
+      "c_fp_thousands": 50.0,
+      "cost_ratio": 168.53288,
+      "expected_cost_asset_scaled_thousands": 452881059.80401945,
+      "expected_cost_median_thousands": 967568.708,
+      "false_negative": 57,
+      "false_positive": 9745,
+      "model_name": "baseline_logistic"
+    },
+    {
+      "c_fn_thousands": 8426.644,
+      "c_fp_thousands": 50.0,
+      "cost_ratio": 168.53288,
+      "expected_cost_asset_scaled_thousands": 451401355.217889,
+      "expected_cost_median_thousands": 1706969.048,
+      "false_negative": 42,
+      "false_positive": 27061,
+      "model_name": "primary_hgb"
+    },
+    {
+      "c_fn_thousands": 8426.644,
+      "c_fp_thousands": 50.0,
+      "cost_ratio": 168.53288,
+      "expected_cost_asset_scaled_thousands": 453576692.5204061,
+      "expected_cost_median_thousands": 3939655.896,
+      "false_negative": 34,
+      "false_positive": 73063,
+      "model_name": "spark_logistic"
+    }
+  ],
+  "evaluated_at_utc": "2026-11-24T10:08:16.767676+00:00",
+  "feature_table_sha256": "6794efa4e170607d19da85cb5dd7238fcaa1b937dcf322d2bbb66879b6a96a3f",
+  "frozen_spec_sha256_before_run": "611e1b1aebd05cc732d95fac3dcba6a36c13df2ad284ca1e60c7eca16fe773fa",
+  "metrics": [
+    {
+      "accuracy_context_only": 0.9734022201901081,
+      "base_rate_pct": 0.300928,
+      "brier_score": 0.001783873141866912,
+      "f1": 0.1767176213673778,
+      "false_negative": 57,
+      "false_positive": 9745,
+      "model_name": "baseline_logistic",
+      "positive_rows": 1109,
+      "pr_auc": 0.627767659750359,
+      "precision": 0.09743447253866815,
+      "recall": 0.9486023444544635,
+      "roc_auc": 0.9865017807277153,
+      "rows": 368527,
+      "selected_model": false,
+      "threshold": 0.0037675561533959713,
+      "true_negative": 357673,
+      "true_positive": 1052,
+      "weighting_mode": "unweighted"
+    },
+    {
+      "accuracy_context_only": 0.9264558634781169,
+      "base_rate_pct": 0.300928,
+      "brier_score": 0.001756001275844732,
+      "f1": 0.07298970482607654,
+      "false_negative": 42,
+      "false_positive": 27061,
+      "model_name": "primary_hgb",
+      "positive_rows": 1109,
+      "pr_auc": 0.5996882141521162,
+      "precision": 0.03793373151308305,
+      "recall": 0.9621280432822362,
+      "roc_auc": 0.9848654268224347,
+      "rows": 368527,
+      "selected_model": true,
+      "threshold": 0.0008235475622282279,
+      "true_negative": 340357,
+      "true_positive": 1067,
+      "weighting_mode": "unweighted"
+    },
+    {
+      "accuracy_context_only": 0.8016508966778554,
+      "base_rate_pct": 0.300928,
+      "brier_score": 0.002206938782150179,
+      "f1": 0.028572567677116696,
+      "false_negative": 34,
+      "false_positive": 73063,
+      "model_name": "spark_logistic",
+      "positive_rows": 1109,
+      "pr_auc": 0.47228392101632033,
+      "precision": 0.014499986511640455,
+      "recall": 0.9693417493237151,
+      "roc_auc": 0.9731538928094915,
+      "rows": 368527,
+      "selected_model": false,
+      "threshold": 0.0037675561533959713,
+      "true_negative": 294355,
+      "true_positive": 1075,
+      "weighting_mode": "unweighted"
+    }
+  ],
+  "outputs": {
+    "page1_summary_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\page1_summary.csv",
+    "test_calibration_figure_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\test_calibration.png",
+    "test_calibration_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\test_calibration.csv",
+    "test_confusion_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\test_confusion_matrix.csv",
+    "test_cost_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\test_cost_summary.csv",
+    "test_filing_lag_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\test_filing_lag_sensitivity.csv",
+    "test_metrics_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\test_metrics.csv",
+    "test_notable_failures_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\test_notable_failures.csv",
+    "test_pr_curve_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\test_pr_curve.png",
+    "test_recall_at_k_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\test_recall_at_k.csv",
+    "test_roc_curve_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\test_roc_curve.png"
+  },
+  "schema_version": 1,
+  "single_evaluation": true,
+  "test_positive_rows": 1109,
+  "test_rows": 368527,
+  "thresholds": {
+    "baseline_logistic": 0.0037675561533959713,
+    "primary_hgb": 0.0008235475622282279,
+    "spark_logistic": 0.0037675561533959713
+  }
+}

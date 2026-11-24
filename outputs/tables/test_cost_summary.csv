@@ -1,0 +1,4 @@
+model_name,c_fn_thousands,c_fp_thousands,cost_ratio,expected_cost_median_thousands,expected_cost_asset_scaled_thousands,false_negative,false_positive
+baseline_logistic,8426.644,50.0,168.53288,967568.708,452881059.80401945,57,9745
+primary_hgb,8426.644,50.0,168.53288,1706969.048,451401355.217889,42,27061
+spark_logistic,8426.644,50.0,168.53288,3939655.896,453576692.5204061,34,73063

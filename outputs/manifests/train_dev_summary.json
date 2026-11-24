@@ -1,0 +1,37 @@
+{
+  "c_fn_thousands": 8426.644,
+  "c_fp_thousands": 50.0,
+  "cost_ratio": 168.53288,
+  "folds": 5,
+  "frozen_spec_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\manifests\\frozen_model_spec.json",
+  "oof_positive_rows": 24504,
+  "oof_rows": 3769308,
+  "selected_model": "primary_hgb",
+  "selected_threshold": 0.0008235475622282279,
+  "selected_weighting": {
+    "baseline_logistic": "unweighted",
+    "primary_hgb": "unweighted"
+  },
+  "variants": [
+    {
+      "model_name": "baseline_logistic",
+      "threshold": 0.0037675561533959713,
+      "weighting_mode": "unweighted"
+    },
+    {
+      "model_name": "baseline_logistic",
+      "threshold": 0.16567721713336475,
+      "weighting_mode": "balanced"
+    },
+    {
+      "model_name": "primary_hgb",
+      "threshold": 0.0008235475622282279,
+      "weighting_mode": "unweighted"
+    },
+    {
+      "model_name": "primary_hgb",
+      "threshold": 6.209034018450965e-05,
+      "weighting_mode": "balanced"
+    }
+  ]
+}

@@ -49,7 +49,7 @@ modelling:
   test_start_date: "2010-03-31"
   test_end_date: "2025-06-30"
   cv_embargo_quarters: 4
-  test_evaluation_locked: false         # Set true after freezing model & threshold
+  test_evaluation_locked: true          # The frozen spec is the authority for the single Test run
 
 benchmark:
   warmup_runs: 1
@@ -110,6 +110,72 @@ features:
   scale_features: true
   parquet_compression: "zstd"
   parquet_row_group_size: 65536
+
+# Phase 5 modelling contract. All model choices, folds, and cost assumptions
+# are fixed here before the single guarded Test evaluation. All monetary values
+# are in thousands of USD, matching the FDIC Call Report unit convention.
+model:
+  processed_dir: "data_processed/modelling"
+  oof_predictions_path: "data_processed/modelling/dev_oof_predictions.parquet"
+  baseline_artifact_path: "data_processed/modelling/baseline_model.joblib"
+  primary_artifact_path: "data_processed/modelling/primary_model.joblib"
+  spark_model_path: "data_processed/modelling/spark_logistic_model"
+  spark_demo_manifest_path: "outputs/manifests/spark_mllib_demo.json"
+  frozen_spec_path: "outputs/manifests/frozen_model_spec.json"
+  training_summary_path: "outputs/manifests/train_dev_summary.json"
+  test_evaluation_path: "outputs/manifests/test_evaluation.json"
+  cv_audit_path: "outputs/tables/cv_fold_audit.csv"
+  oof_metrics_path: "outputs/tables/dev_oof_metrics.csv"
+  oof_recall_at_k_path: "outputs/tables/dev_oof_recall_at_k.csv"
+  calibration_path: "outputs/tables/dev_calibration.csv"
+  importance_path: "outputs/tables/dev_permutation_importance.csv"
+  cost_sensitivity_path: "outputs/tables/dev_cost_sensitivity.csv"
+  test_metrics_path: "outputs/tables/test_metrics.csv"
+  test_recall_at_k_path: "outputs/tables/test_recall_at_k.csv"
+  test_confusion_path: "outputs/tables/test_confusion_matrix.csv"
+  test_calibration_path: "outputs/tables/test_calibration.csv"
+  test_cost_path: "outputs/tables/test_cost_summary.csv"
+  test_filing_lag_path: "outputs/tables/test_filing_lag_sensitivity.csv"
+  test_notable_failures_path: "outputs/tables/test_notable_failures.csv"
+  page1_summary_path: "outputs/tables/page1_summary.csv"
+  test_pr_curve_path: "outputs/figures/test_pr_curve.png"
+  test_roc_curve_path: "outputs/figures/test_roc_curve.png"
+  test_calibration_figure_path: "outputs/figures/test_calibration.png"
+  top_k_pct: [1, 5, 10]
+  notable_test_certs: [24735]
+  notable_top_n: 10
+  permutation_repeats: 3
+  candidate_weighting_modes: ["unweighted", "balanced"]
+  baseline:
+    C: 1.0
+    max_iter: 2000
+  hgb:
+    learning_rate: 0.05
+    max_iter: 200
+    max_leaf_nodes: 31
+    min_samples_leaf: 50
+    l2_regularization: 1.0
+  spark:
+    max_iter: 100
+    reg_param: 0.1
+  cost:
+    fp_base_thousands: 50.0       # $50k expressed in thousands of USD
+    ratio_grid: [10, 25, 50, 100]
+  # Five expanding Dev-only validation windows. Each train fold ends five
+  # quarter indices before validation start, leaving exactly four full embargo
+  # quarters. The last validation end is 2007Q4 so its 4Q label horizon stays
+  # inside Dev and does not consume the 2009 gap.
+  cv_folds:
+    - validation_start: "1988-03-31"
+      validation_end: "1991-12-31"
+    - validation_start: "1992-03-31"
+      validation_end: "1995-12-31"
+    - validation_start: "1996-03-31"
+      validation_end: "1999-12-31"
+    - validation_start: "2000-03-31"
+      validation_end: "2003-12-31"
+    - validation_start: "2004-03-31"
+      validation_end: "2007-12-31"
 
 # Phase 2 rulebook and artifact paths. Audit statistics are report-only; none
 # of these outputs are model parameters or preprocessing state.

@@ -39,7 +39,6 @@ PACKAGE_CHECKS: tuple[tuple[str, str], ...] = (
 )
 
 PLACEHOLDER_COMMANDS = (
-    "model",
     "report",
 )
 
@@ -591,6 +590,83 @@ def _command_transform_benchmark(args: argparse.Namespace) -> int:
     return 0
 
 
+# ----------------------------------------------------------------------
+# Phase 5 commands
+# ----------------------------------------------------------------------
+def _command_model_cv_audit(args: argparse.Namespace) -> int:
+    from bft65b.modelling.cv import run_cv_audit
+
+    config = load_config(args.config)
+    result = run_cv_audit(config, strict=args.strict)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    if args.strict and not result["passed"]:
+        return 1
+    return 0
+
+
+def _command_model_train_dev(args: argparse.Namespace) -> int:
+    from bft65b.modelling.train_dev import run_train_dev
+
+    config = load_config(args.config)
+    result = run_train_dev(config, root=PROJECT_ROOT)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_model_cost_sensitivity(args: argparse.Namespace) -> int:
+    import pandas as pd
+
+    from bft65b.modelling.cost import cost_sensitivity_rows, load_dev_cost_evidence
+    from bft65b.modelling.spec import ensure_model_dirs, resolve_model_path
+    from bft65b.utils.io import atomic_write_text
+
+    config = load_config(args.config)
+    ensure_model_dirs(config, root=PROJECT_ROOT)
+    oof_path = resolve_model_path(config, "oof_predictions_path", root=PROJECT_ROOT)
+    if not oof_path.exists():
+        LOGGER.error("Dev OOF predictions are missing; run 'bft65b model train-dev' first")
+        return 1
+    evidence = load_dev_cost_evidence(config, root=PROJECT_ROOT)
+    table = cost_sensitivity_rows(pd.read_parquet(oof_path), evidence)
+    target = resolve_model_path(config, "cost_sensitivity_path", root=PROJECT_ROOT)
+    atomic_write_text(target, table.to_csv(index=False))
+    print(
+        json.dumps(
+            {
+                "rows": len(table),
+                "c_fn_thousands": evidence.c_fn_thousands,
+                "c_fp_thousands": evidence.c_fp_thousands,
+                "empirical_cost_ratio": evidence.empirical_ratio,
+                "ratio_labels": table["ratio_label"].drop_duplicates().tolist(),
+                "output_path": str(target),
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def _command_model_spark_demo(args: argparse.Namespace) -> int:
+    from bft65b.modelling.spark_mllib_demo import run_spark_demo
+
+    config = load_config(args.config)
+    result = run_spark_demo(
+        config, split=args.split, force=args.force, root=PROJECT_ROOT
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_model_evaluate_test(args: argparse.Namespace) -> int:
+    from bft65b.modelling.evaluate_test import run_evaluate_test
+
+    config = load_config(args.config)
+    result = run_evaluate_test(config, root=PROJECT_ROOT, strict=args.strict)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="bft65b",
@@ -825,6 +901,41 @@ def build_parser() -> argparse.ArgumentParser:
         help="Comma-separated contiguous scale percentages",
     )
     transform_benchmark.set_defaults(func=_command_transform_benchmark)
+
+    model_parser = subparsers.add_parser(
+        "model", help="Dev-only validation, freezing, and single-test evaluation"
+    )
+    model_parser.set_defaults(func=lambda _: (model_parser.print_help(), 0)[1])
+    model_subparsers = model_parser.add_subparsers(dest="model_command")
+
+    model_cv = model_subparsers.add_parser(
+        "cv-audit", help="Verify the five Dev CV folds and four-quarter embargo"
+    )
+    model_cv.add_argument("--strict", action="store_true", help="Return non-zero on a failed gate")
+    model_cv.set_defaults(func=_command_model_cv_audit)
+
+    model_train = model_subparsers.add_parser(
+        "train-dev", help="Run Dev CV, select cost threshold, and freeze models"
+    )
+    model_train.set_defaults(func=_command_model_train_dev)
+
+    model_cost = model_subparsers.add_parser(
+        "cost-sensitivity", help="Write the Dev-only cost-ratio sensitivity table"
+    )
+    model_cost.set_defaults(func=_command_model_cost_sensitivity)
+
+    model_spark = model_subparsers.add_parser(
+        "spark-demo", help="Verify the frozen Spark MLlib pipeline on Dev"
+    )
+    model_spark.add_argument("--split", choices=["dev"], default="dev")
+    model_spark.add_argument("--force", action="store_true", help="Refit the Spark demo on Dev")
+    model_spark.set_defaults(func=_command_model_spark_demo)
+
+    model_test = model_subparsers.add_parser(
+        "evaluate-test", help="Run the single guarded Test evaluation"
+    )
+    model_test.add_argument("--strict", action="store_true", help="Require a frozen specification")
+    model_test.set_defaults(func=_command_model_evaluate_test)
 
     for name in PLACEHOLDER_COMMANDS:
         placeholder = subparsers.add_parser(name, help=f"Reserved for a later phase: {name}")
