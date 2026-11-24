@@ -14,7 +14,7 @@ course marker's judgement.
 | Part 4 — Feature Pipeline | PASS | `outputs/manifests/feature_summary.json`, `outputs/tables/feature_dictionary.csv`, leakage tests |
 | Part 5 — Modelling and Validation | PASS | `outputs/manifests/frozen_model_spec.json`, `outputs/manifests/test_evaluation.json`, Test tables |
 | Part 6 — Conclusions | PASS | `reports/final_report_bft65b.pdf`, body pages 15–18 |
-| Reproducibility | PASS with one external check | `README.md`, pinned `requirements.txt`, fixed seeds, `outputs/manifests/report_build.json` |
+| Reproducibility | PASS | `README.md`, pinned `requirements.txt`, fixed seeds, `outputs/manifests/report_build.json`; public GitHub visibility (`private: false`, `visibility: public`) and remote `reports/final_report_bft65b.pdf` verified at `https://github.com/DDDMinh/bft65b-bank-failure-pipeline` |
 | Leakage gate | PASS | Independent `leakage-reviewer` audit; frozen contracts and one-time Test lock |
 | Page 1 and format | PASS | `outputs/tables/page1_summary.csv`, PDF verification manifest |
 

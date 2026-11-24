@@ -159,10 +159,12 @@ Known, documented data properties are **warnings**, not failures: 488 failure ro
   exposes it, but it is not a precise allocator measurement.
 - Timings are warm-cache, single-machine, median of five runs after two warm-up runs. The sample
   dataset is small, so differences grow on the full 1.68-million-row panel.
-- CSV cannot prune columns or rows: projection and filtering happen after a full parse. Parquet
-  reads only requested column chunks and skips row groups using statistics. On this sample, gzip
-  CSV is smaller than Parquet because text floats compress well, but Parquet is roughly an order of
-  magnitude faster to read and to project.
+- CSV cannot prune columns or rows: projection and filtering happen after a full parse. On the
+  small 2023 sample, gzip CSV was slightly smaller than Parquet because short text floats compress
+  well, but Parquet was already faster to read and project. The verified full-panel result in
+  `outputs/tables/storage_benchmark.csv` reverses the size comparison: `single_zstd` is 158.2 MiB
+  versus 186.4 MiB for `gzip_csv`, and Parquet is 36–266× faster to read than raw CSV across full,
+  projected, and predicate scans (0.162 s / 0.042 s / 0.0237 s versus 5.879 s / 5.890 s / 6.295 s).
 
 ## 5. Phase 2 — data quality, exits, and point-in-time panel
 
@@ -519,7 +521,8 @@ outputs/benchmarks/
 - Label: failure in `(q, q + 4 quarters]`; mergers are never positive labels.
 - Modelling cutoff: `REPDTE <= 2025-06-30`.
 - Chronological split with at least a 4-quarter gap and at least 50 test failures.
-- Internal temporal CV must use the configured 4-quarter embargo; fold construction is Phase 5.
+- Internal temporal CV used the configured 4-quarter embargo; Phase 5 constructed and audited the
+  folds.
 - All preprocessing is fitted only on development training folds.
 - The test period is evaluated exactly once after freezing the model, features, and threshold.
 - `FAILDATE`, `ENDEFYMD`, `ACTIVE`, and `CHANGEC1` are never model features or preprocessing
@@ -529,7 +532,7 @@ The split is frozen as development `1984Q1–2008Q4`, gap `2009Q1–2009Q4`, and
 `2010Q1–2025Q2`. Phase 4 counted real `y_4q` rows after applying the four-quarter horizon, the
 canonical failure filters, and the 2025Q2 cutoff: Dev has 9,114 positive bank-quarters across 2,455
 failed banks; the audit-only gap has 670 across 276; Test has 1,109 across 341. Raw `FAILDATE`
-counts are not used as label counts. Phase 5 must not change this split or evaluate Test more than
+counts are not used as label counts. Phase 5 kept this split unchanged and evaluated Test exactly
 once.
 
 ## 12. Repository layout

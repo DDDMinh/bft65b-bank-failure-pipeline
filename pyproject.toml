@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Reproducible big-data pipeline for FDIC bank-failure early warning (BFT65B)."
 readme = "README.md"
 requires-python = ">=3.12,<3.15"
-authors = [{ name = "BFT65B student" }]
+authors = [{ name = "Nguyen Duc Minh" }]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.12",
