@@ -1,0 +1,180 @@
+{
+  "evaluation_rerun": false,
+  "figures": [
+    {
+      "bytes": 109879,
+      "key": "storage",
+      "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\storage_comparison.png",
+      "relative_path": "outputs/figures/storage_comparison.png",
+      "sha256": "cadbe8a773fc6f72e97c5d8b85a5c1424667fdaf09cfd62164ce88fb9990b8bf"
+    },
+    {
+      "bytes": 138214,
+      "key": "processing",
+      "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\engine_runtime_memory.png",
+      "relative_path": "outputs/figures/engine_runtime_memory.png",
+      "sha256": "40b8534d0277da274d7c00c9a3e1d109ea61f549d4f91ad814a7326c75d0ac7e"
+    },
+    {
+      "bytes": 78379,
+      "key": "test_pr",
+      "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\test_pr_curve.png",
+      "relative_path": "outputs/figures/test_pr_curve.png",
+      "sha256": "4c14ae86aa41fffe8d1cf04a2dff7e42a1a7bcf94267b09e4d70dc89b4c70d7b"
+    },
+    {
+      "bytes": 54431,
+      "key": "test_roc",
+      "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\test_roc_curve.png",
+      "relative_path": "outputs/figures/test_roc_curve.png",
+      "sha256": "fb24c6876d0eb7b298fc61467db5150123296b3b59521f158c7084eca0b32f48"
+    },
+    {
+      "bytes": 95426,
+      "key": "test_calibration",
+      "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\test_calibration.png",
+      "relative_path": "outputs/figures/test_calibration.png",
+      "sha256": "1f28f59e6a3faea8251b689497efabee9ae11cee58643ba139acc16c0557558d"
+    }
+  ],
+  "frozen_contract": {
+    "config_fingerprint": "be0e00f9e0b835a84d399addfc4d9e8c5fcf25f1b3ec3525bea8a81fefd69d42",
+    "feature_table_sha256": "6794efa4e170607d19da85cb5dd7238fcaa1b937dcf322d2bbb66879b6a96a3f",
+    "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\manifests\\frozen_model_spec.json",
+    "selected_model": "primary_hgb",
+    "selected_threshold": 0.0008235475622282279,
+    "sha256_after": "ada7c3e836b871544837d9ee78bf380a9087242825623e1253ecc3c8cb841fff",
+    "sha256_before": "ada7c3e836b871544837d9ee78bf380a9087242825623e1253ecc3c8cb841fff",
+    "test_evaluation_locked": true,
+    "test_evaluations": 1
+  },
+  "generated_at_utc": "2026-11-24T12:44:19.564296+00:00",
+  "identity": {
+    "appendix_page_limit": 10,
+    "author_name": "Nguyen Duc Minh",
+    "body_page_limit": 20,
+    "github_url": "https://github.com/DDDMinh/bft65b-bank-failure-pipeline",
+    "manifest_path": "outputs/manifests/report_build.json",
+    "output_dir": "reports",
+    "pdf_path": "reports/final_report_bft65b.pdf",
+    "student_id": "11230996"
+  },
+  "page1_summary": {
+    "after_sha256": "035316f6decc42b2af25797741dcb2a2d06d096fc9df48e2d87efe8294385729",
+    "before_sha256": "035316f6decc42b2af25797741dcb2a2d06d096fc9df48e2d87efe8294385729",
+    "changed_items": [],
+    "identity": {
+      "author_name": "Nguyen Duc Minh",
+      "github_url": "https://github.com/DDDMinh/bft65b-bank-failure-pipeline",
+      "student_id": "11230996"
+    },
+    "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\page1_summary.csv",
+    "rows": 27
+  },
+  "pdf": {
+    "appendix_limit": 10,
+    "appendix_marker": "APPENDIX A - SUPPORTING EVIDENCE",
+    "appendix_pages": 8,
+    "body_limit": 20,
+    "body_pages": 18,
+    "bytes": 619047,
+    "empty_pages": [],
+    "image_objects": 5,
+    "page_one_required_metadata_present": true,
+    "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\reports\\final_report_bft65b.pdf",
+    "pdf_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\reports\\final_report_bft65b.pdf",
+    "sha256": "bb5a42677b7b14668fa5875e5414f11bdac173606dbcc68b147fedcc2ca26608",
+    "total_pages": 26
+  },
+  "schema_version": 1,
+  "test_evaluation": {
+    "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\manifests\\test_evaluation.json",
+    "sha256_after": "d80216186a4c70125ff8d042406ed09b3c2f27b1809960af08e06b68cf7e7cee",
+    "sha256_before": "d80216186a4c70125ff8d042406ed09b3c2f27b1809960af08e06b68cf7e7cee",
+    "single_evaluation": true,
+    "test_positive_rows": 1109,
+    "test_rows": 368527
+  },
+  "traceability": [
+    {
+      "item": "Acquisition row counts",
+      "source": "outputs/manifests/acquisition_summary_full.json",
+      "value": "1,682,738 / 4,117 / 27,838"
+    },
+    {
+      "item": "Download method and date",
+      "source": "outputs/tables/page1_summary.csv",
+      "value": "FDIC public REST API (https://api.fdic.gov/banks) via bft65b acquire download (2026-11-24)"
+    },
+    {
+      "item": "Feature table rows",
+      "source": "outputs/manifests/feature_summary.json",
+      "value": "1,664,114"
+    },
+    {
+      "item": "Dev / Test split",
+      "source": "outputs/tables/split_audit.csv",
+      "value": "1984-03-31..2008-12-31; 2010-03-31..2025-06-30"
+    },
+    {
+      "item": "Dev positives / failed banks",
+      "source": "outputs/manifests/feature_summary.json",
+      "value": "9,114 / 2,455"
+    },
+    {
+      "item": "Test positives / failed banks",
+      "source": "outputs/manifests/feature_summary.json",
+      "value": "1,109 / 341"
+    },
+    {
+      "item": "Storage CSV vs Zstd Parquet",
+      "source": "outputs/tables/storage_benchmark.csv",
+      "value": "506,723,196 vs 165,850,606 bytes"
+    },
+    {
+      "item": "Engine full-panel median runtime",
+      "source": "outputs/manifests/benchmark_summary.json",
+      "value": "Polars / pandas / Spark from benchmark summary"
+    },
+    {
+      "item": "Frozen selected model and threshold",
+      "source": "outputs/manifests/frozen_model_spec.json",
+      "value": "primary_hgb; 0.0008235475622282279"
+    },
+    {
+      "item": "Test rows / positives",
+      "source": "outputs/manifests/test_evaluation.json",
+      "value": "368,527 / 1,109"
+    },
+    {
+      "item": "Test PR-AUC and confusion counts",
+      "source": "outputs/tables/test_metrics.csv",
+      "value": "All three frozen models"
+    },
+    {
+      "item": "Expected-cost comparison",
+      "source": "outputs/tables/test_cost_summary.csv",
+      "value": "Median expected cost in thousands USD"
+    },
+    {
+      "item": "Filing-lag sensitivity",
+      "source": "outputs/tables/test_filing_lag_sensitivity.csv",
+      "value": "162 positives in 1\u201330 days"
+    },
+    {
+      "item": "SVB / First Republic row-level days",
+      "source": "outputs/tables/test_notable_failures.csv",
+      "value": "69 / 31"
+    },
+    {
+      "item": "Cost sensitivity grid",
+      "source": "outputs/tables/dev_cost_sensitivity.csv",
+      "value": "24 Dev OOF rows"
+    },
+    {
+      "item": "Spark demo contract",
+      "source": "outputs/manifests/spark_mllib_demo.json",
+      "value": "Imputer -> VectorAssembler -> StandardScaler -> LogisticRegression"
+    }
+  ]
+}

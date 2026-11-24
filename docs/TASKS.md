@@ -81,8 +81,9 @@ mismatches. Full-panel median runtimes were 3.368 s (Polars), 17.789 s (pandas),
 
 **Gate passed:** no forbidden columns in features; 4-quarter `2009Q1–2009Q4` gap excluded from Dev
 and Test; 1,109 Test positive bank-quarters across 341 failed banks; preprocessing fit scope recorded
-as Dev-only. Sample build produced 18,798 rows and the full build produced 1,664,114 rows with 110
-frozen columns. The final `pytest -q` result after Phase 4 was 73 passed, 1 skipped.
+as Dev-only. Sample build produced 18,798 rows and the full build produced 1,664,114 rows with 103
+frozen features plus label and split columns. The final `pytest -q` result after Phase 4 was 73
+passed, 1 skipped.
 
 ## Phase 5 — Modelling and validation
 
@@ -104,21 +105,28 @@ scored models (Baseline, Primary, Spark), 368,527 Test rows, and 1,109 Test posi
 
 ## Phase 6 — Conclusions and report
 
-- [ ] Generate all report tables and figures from `outputs/` artifacts
-- [ ] Answer Q1, Q2, and Q3 with evidence
-- [ ] State limitations and Vietnam adaptation
-- [ ] Populate Page 1 from real manifests
-- [ ] Verify page limit: 20 pages plus 10-page appendix
-- [ ] Complete citations in report, README, and `docs/REFERENCES_REVIEW.md`
-- [ ] Run rubric audit and close gaps
+- [x] Generate all report tables and figures from `outputs/` artifacts
+- [x] Answer Q1, Q2, and Q3 with evidence
+- [x] State limitations and Vietnam adaptation
+- [x] Populate Page 1 from real manifests
+- [x] Verify page limit: 20 pages plus 10-page appendix
+- [x] Complete citations in report, README, and `docs/REFERENCES_REVIEW.md`
+- [x] Run rubric audit and close gaps
 
-**Gate:** every Page-1 number is traceable; report is English and within the page limit.
+**Gate passed:** `bft65b report build` regenerated Page 1 without rerunning the Test evaluation and
+produced `reports/final_report_bft65b.pdf` with 26 pages (18 body, 8 appendix) and all 5 required
+figures. Page 1 carries the supplied identity, download method/date, all three row counts, and both
+Dev/Test failure counts. The report records the honest no-retuning Test result, filing-lag and cost
+caveats, the analytical-only cluster crossover, the Dev-fitted Spark demo scope, row-level SVB/FRC
+day counts, limitations, and Vietnam/SBV adaptation. Final pinned-environment `pytest -q`:
+`88 passed, 1 skipped`, with `outputs/manifests/pytest_final_summary.txt` and
+`outputs/manifests/pytest_final.xml` as saved evidence.
 
 ## Reproducibility
 
-- [ ] README runs end to end from a clean environment
-- [ ] `requirements.txt` remains fully pinned
-- [ ] Seeds remain fixed in `configs/pipeline.yaml`
-- [ ] No data files are tracked by Git
-- [ ] AI tools and external sources are cited
-- [ ] Final repository is public until grades are released
+- [x] README runs end to end from a clean environment
+- [x] `requirements.txt` remains fully pinned
+- [x] Seeds remain fixed in `configs/pipeline.yaml`
+- [x] No data files are tracked by Git
+- [x] AI tools and external sources are cited
+- [ ] Final repository is public until grades are released (verify in GitHub settings)

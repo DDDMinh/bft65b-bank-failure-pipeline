@@ -223,8 +223,13 @@ quality:
     - TRADE
 
 report:
-  # Page-1 identity fields are deliberately empty until the student supplies them.
-  # Never invent these values; README and reporting/page1_metadata.py read them here.
-  author_name: ""
-  student_id: ""
-  github_url: ""
+  # Supplied identity for Page 1 and the final report. The reporting module reads
+  # these values and verifies them against the regenerated page1_summary.csv.
+  author_name: "Nguyen Duc Minh"
+  student_id: "11230996"
+  github_url: "https://github.com/DDDMinh/bft65b-bank-failure-pipeline"
+  output_dir: "reports"
+  pdf_path: "reports/final_report_bft65b.pdf"
+  manifest_path: "outputs/manifests/report_build.json"
+  body_page_limit: 20
+  appendix_page_limit: 10

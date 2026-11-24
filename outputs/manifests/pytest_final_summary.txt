@@ -1,0 +1,8 @@
+...........s............................................................ [ 80%]
+.................                                                        [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\test_acquisition.py:573: set BFT65B_ALLOW_NETWORK=1 to run network tests
+88 passed, 1 skipped in 40.45s
+SUCCESS: The process with PID 22804 (child process of PID 18092) has been terminated.
+SUCCESS: The process with PID 18092 (child process of PID 23448) has been terminated.
+SUCCESS: The process with PID 23448 (child process of PID 20648) has been terminated.

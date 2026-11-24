@@ -39,6 +39,9 @@ def test_config_enforces_hard_rules() -> None:
 def test_report_identity_is_not_fabricated() -> None:
     report = load_config()["report"]
     assert all(isinstance(report[key], str) for key in ("author_name", "student_id", "github_url"))
+    assert report["author_name"] == "Nguyen Duc Minh"
+    assert report["student_id"] == "11230996"
+    assert report["github_url"] == "https://github.com/DDDMinh/bft65b-bank-failure-pipeline"
 
 
 def test_logging_configuration(capsys: pytest.CaptureFixture[str]) -> None:
@@ -64,8 +67,11 @@ def test_cli_smoke() -> None:
     assert main(["smoke"]) == 0
 
 
-def test_placeholder_commands_are_not_implemented() -> None:
-    assert main(["report"]) == 2
+def test_report_help_without_subcommand(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["report"]) == 0
+    output = capsys.readouterr().out
+    for subcommand in ("refresh-page1", "build"):
+        assert subcommand in output
 
 
 def test_features_help_without_subcommand(capsys: pytest.CaptureFixture[str]) -> None:

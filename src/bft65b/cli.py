@@ -38,9 +38,7 @@ PACKAGE_CHECKS: tuple[tuple[str, str], ...] = (
     ("pytest", "pytest"),
 )
 
-PLACEHOLDER_COMMANDS = (
-    "report",
-)
+PLACEHOLDER_COMMANDS: tuple[str, ...] = ()
 
 
 def _distribution_version(distribution: str) -> str | None:
@@ -667,6 +665,26 @@ def _command_model_evaluate_test(args: argparse.Namespace) -> int:
     return 0
 
 
+# ----------------------------------------------------------------------
+# Phase 6 commands
+# ----------------------------------------------------------------------
+def _command_report_refresh_page1(args: argparse.Namespace) -> int:
+    from bft65b.reporting import refresh_page1_summary
+
+    config = load_config(args.config)
+    result = refresh_page1_summary(config, root=PROJECT_ROOT)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_report_build(args: argparse.Namespace) -> int:
+    from bft65b.reporting import run_report_build
+
+    config = load_config(args.config)
+    run_report_build(config, root=PROJECT_ROOT)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="bft65b",
@@ -936,6 +954,25 @@ def build_parser() -> argparse.ArgumentParser:
     )
     model_test.add_argument("--strict", action="store_true", help="Require a frozen specification")
     model_test.set_defaults(func=_command_model_evaluate_test)
+
+    report_parser = subparsers.add_parser(
+        "report", help="Regenerate Page 1 and build the verified final PDF"
+    )
+    report_parser.set_defaults(
+        func=lambda _: (report_parser.print_help(), 0)[1]
+    )
+    report_subparsers = report_parser.add_subparsers(dest="report_command")
+
+    report_refresh = report_subparsers.add_parser(
+        "refresh-page1",
+        help="Refresh Page 1 from the frozen spec without rerunning the Test evaluation",
+    )
+    report_refresh.set_defaults(func=_command_report_refresh_page1)
+
+    report_build = report_subparsers.add_parser(
+        "build", help="Build and verify reports/final_report_bft65b.pdf"
+    )
+    report_build.set_defaults(func=_command_report_build)
 
     for name in PLACEHOLDER_COMMANDS:
         placeholder = subparsers.add_parser(name, help=f"Reserved for a later phase: {name}")

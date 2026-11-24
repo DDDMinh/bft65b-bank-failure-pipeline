@@ -13,4 +13,5 @@ pytest
 psutil
 python-docx
 pypdf
+reportlab
 pip-tools
