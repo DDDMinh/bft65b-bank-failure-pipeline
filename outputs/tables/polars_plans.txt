@@ -1,0 +1,279 @@
+========================================================================================
+POLARS QUERY PLANS — scope=full — generated 2026-11-24T06:47:20.655937+00:00
+========================================================================================
+
+SECTION 1 — STANDARDIZED WORKLOAD, UNOPTIMIZED (optimized=False)
+----------------------------------------------------------------------------------------
+SORT BY [col("CERT"), col("REPDTE")]
+  SELECT [col("CERT"), col("REPDTE"), col("qidx"), col("BKCLASS"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA"), col("equity_asset_pct"), col("roa_calc_pct"), col("nclnls_gross_pct"), col("allowance_gross_pct"), col("deposit_asset_pct"), col("loans_deposit_pct"), col("asset_lag1"), col("eq_lag1"), col("roa_lag1"), col("equity_ratio_lag1"), col("nclnls_ratio_lag1"), col("asset_lag4"), col("eq_lag4"), col("roa_lag4"), col("equity_ratio_lag4"), col("nclnls_ratio_lag4"), col("asset_growth_1q_pct"), col("asset_growth_4q_pct"), col("equity_growth_4q_pct"), col("roa_delta_1q"), col("roa_delta_4q"), col("equity_ratio_delta_4q"), col("nclnls_ratio_delta_4q"), col("peer_mean_roa"), col("peer_mean_equity_asset_pct"), col("peer_mean_nclnls_gross_pct"), col("peer_bank_count"), col("roa_vs_peer_mean"), col("equity_ratio_vs_peer_mean")]
+    FILTER col("REPDTE") <= 2026-06-30
+    FROM
+      FILTER col("REPDTE") >= 1984-03-31
+      FROM
+         WITH_COLUMNS:
+         [(col("ROA") - col("peer_mean_roa")).alias("roa_vs_peer_mean"), (col("equity_asset_pct") - col("peer_mean_equity_asset_pct")).alias("equity_ratio_vs_peer_mean")] 
+           WITH_COLUMNS:
+           [when(((((col("ASSET") - col("asset_lag1"))).is_not_null() & ((col("ASSET") - col("asset_lag1"))).is_finite()) & (col("asset_lag1").is_not_null() & col("asset_lag1").is_finite())) & (col("asset_lag1") != 0.0)).then(((col("ASSET") - col("asset_lag1")) / col("asset_lag1")) * 100.0).otherwise(null.cast(Float64)).alias("asset_growth_1q_pct"), when(((((col("ASSET") - col("asset_lag4"))).is_not_null() & ((col("ASSET") - col("asset_lag4"))).is_finite()) & (col("asset_lag4").is_not_null() & col("asset_lag4").is_finite())) & (col("asset_lag4") != 0.0)).then(((col("ASSET") - col("asset_lag4")) / col("asset_lag4")) * 100.0).otherwise(null.cast(Float64)).alias("asset_growth_4q_pct"), when(((((col("EQ") - col("eq_lag4"))).is_not_null() & ((col("EQ") - col("eq_lag4"))).is_finite()) & (col("eq_lag4").is_not_null() & col("eq_lag4").is_finite())) & (col("eq_lag4") != 0.0)).then(((col("EQ") - col("eq_lag4")) / col("eq_lag4")) * 100.0).otherwise(null.cast(Float64)).alias("equity_growth_4q_pct"), (col("ROA") - col("roa_lag1")).alias("roa_delta_1q"), (col("ROA") - col("roa_lag4")).alias("roa_delta_4q"), (col("equity_asset_pct") - col("equity_ratio_lag4")).alias("equity_ratio_delta_4q"), (col("nclnls_gross_pct") - col("nclnls_ratio_lag4")).alias("nclnls_ratio_delta_4q"), col("ROA").mean().over([col("qidx")]).alias("peer_mean_roa"), col("equity_asset_pct").mean().over([col("qidx")]).alias("peer_mean_equity_asset_pct"), col("nclnls_gross_pct").mean().over([col("qidx")]).alias("peer_mean_nclnls_gross_pct"), len().over([col("qidx")]).strict_cast(Float64).alias("peer_bank_count")] 
+            LEFT JOIN:
+            LEFT PLAN ON: [col("CERT"), col("qidx")]
+              LEFT JOIN:
+              LEFT PLAN ON: [col("CERT"), col("qidx")]
+                 WITH_COLUMNS:
+                 [when(((col("EQ").is_not_null() & col("EQ").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("EQ") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("equity_asset_pct"), when(((col("NETINC").is_not_null() & col("NETINC").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("NETINC") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("roa_calc_pct"), when(((col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("NCLNLS") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("nclnls_gross_pct"), when(((col("LNATRES").is_not_null() & col("LNATRES").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("LNATRES") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("allowance_gross_pct"), when(((col("DEP").is_not_null() & col("DEP").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("DEP") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("deposit_asset_pct"), when(((col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()) & (col("DEP").is_not_null() & col("DEP").is_finite())) & (col("DEP") != 0.0)).then((col("LNLSNET") / col("DEP")) * 100.0).otherwise(null.cast(Float64)).alias("loans_deposit_pct")] 
+                  LEFT JOIN:
+                  LEFT PLAN ON: [col("CERT")]
+                    LEFT JOIN:
+                    LEFT PLAN ON: [col("CERT")]
+                      SELECT [col("CERT"), col("REPDTE"), col("qidx"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                        SELECT [col("CERT"), col("REPDTE"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA"), col("qidx")]
+                           WITH_COLUMNS:
+                           [(((col("year").cast(Int64) * 4) + col("quarter").cast(Int64)) - 1).alias("qidx")] 
+                             WITH_COLUMNS:
+                             [col("CERT"), col("REPDTE"), when(col("ASSET").is_not_null() & col("ASSET").is_finite()).then(col("ASSET")).otherwise(null.cast(Float64)), when(col("DEP").is_not_null() & col("DEP").is_finite()).then(col("DEP")).otherwise(null.cast(Float64)), when(col("EQ").is_not_null() & col("EQ").is_finite()).then(col("EQ")).otherwise(null.cast(Float64)), when(col("NETINC").is_not_null() & col("NETINC").is_finite()).then(col("NETINC")).otherwise(null.cast(Float64)), when(col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()).then(col("NCLNLS")).otherwise(null.cast(Float64)), when(col("LNLSGR").is_not_null() & col("LNLSGR").is_finite()).then(col("LNLSGR")).otherwise(null.cast(Float64)), when(col("LNATRES").is_not_null() & col("LNATRES").is_finite()).then(col("LNATRES")).otherwise(null.cast(Float64)), when(col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()).then(col("LNLSNET")).otherwise(null.cast(Float64)), when(col("ROA").is_not_null() & col("ROA").is_finite()).then(col("ROA")).otherwise(null.cast(Float64))] 
+                              FILTER col("REPDTE") <= 2026-06-30
+                              FROM
+                                FILTER col("REPDTE") >= 1984-03-31
+                                FROM
+                                  SELECT [col("CERT"), col("REPDTE"), col("year"), col("quarter"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                                    Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+                                    PROJECT */59 COLUMNS
+                                    ESTIMATED ROWS: 1682738
+                    RIGHT PLAN ON: [col("CERT")]
+                      UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                        SELECT [col("CERT"), col("BKCLASS")]
+                          Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/institutions/part-00000.parquet]
+                          PROJECT */9 COLUMNS
+                          ESTIMATED ROWS: 27838
+                    END LEFT JOIN
+                  RIGHT PLAN ON: [col("CERT")]
+                     WITH_COLUMNS:
+                     [true.alias("failure_meta_present")] 
+                      UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                        FILTER col("CERT").is_not_null()
+                        FROM
+                          SELECT [col("CERT")]
+                            Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/quality/bank_failure_events.parquet]
+                            PROJECT */10 COLUMNS
+                            ESTIMATED ROWS: 3036
+                  END LEFT JOIN
+              RIGHT PLAN ON: [col("_lag1_join_cert"), col("_lag1_join_qidx")]
+                SELECT [col("CERT").alias("_lag1_join_cert"), (col("qidx") + 1).alias("_lag1_join_qidx"), col("ASSET").alias("asset_lag1"), col("EQ").alias("eq_lag1"), col("ROA").alias("roa_lag1"), col("equity_asset_pct").alias("equity_ratio_lag1"), col("nclnls_gross_pct").alias("nclnls_ratio_lag1")]
+                   WITH_COLUMNS:
+                   [when(((col("EQ").is_not_null() & col("EQ").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("EQ") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("equity_asset_pct"), when(((col("NETINC").is_not_null() & col("NETINC").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("NETINC") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("roa_calc_pct"), when(((col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("NCLNLS") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("nclnls_gross_pct"), when(((col("LNATRES").is_not_null() & col("LNATRES").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("LNATRES") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("allowance_gross_pct"), when(((col("DEP").is_not_null() & col("DEP").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("DEP") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("deposit_asset_pct"), when(((col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()) & (col("DEP").is_not_null() & col("DEP").is_finite())) & (col("DEP") != 0.0)).then((col("LNLSNET") / col("DEP")) * 100.0).otherwise(null.cast(Float64)).alias("loans_deposit_pct")] 
+                    LEFT JOIN:
+                    LEFT PLAN ON: [col("CERT")]
+                      LEFT JOIN:
+                      LEFT PLAN ON: [col("CERT")]
+                        SELECT [col("CERT"), col("REPDTE"), col("qidx"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                          SELECT [col("CERT"), col("REPDTE"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA"), col("qidx")]
+                             WITH_COLUMNS:
+                             [(((col("year").cast(Int64) * 4) + col("quarter").cast(Int64)) - 1).alias("qidx")] 
+                               WITH_COLUMNS:
+                               [col("CERT"), col("REPDTE"), when(col("ASSET").is_not_null() & col("ASSET").is_finite()).then(col("ASSET")).otherwise(null.cast(Float64)), when(col("DEP").is_not_null() & col("DEP").is_finite()).then(col("DEP")).otherwise(null.cast(Float64)), when(col("EQ").is_not_null() & col("EQ").is_finite()).then(col("EQ")).otherwise(null.cast(Float64)), when(col("NETINC").is_not_null() & col("NETINC").is_finite()).then(col("NETINC")).otherwise(null.cast(Float64)), when(col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()).then(col("NCLNLS")).otherwise(null.cast(Float64)), when(col("LNLSGR").is_not_null() & col("LNLSGR").is_finite()).then(col("LNLSGR")).otherwise(null.cast(Float64)), when(col("LNATRES").is_not_null() & col("LNATRES").is_finite()).then(col("LNATRES")).otherwise(null.cast(Float64)), when(col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()).then(col("LNLSNET")).otherwise(null.cast(Float64)), when(col("ROA").is_not_null() & col("ROA").is_finite()).then(col("ROA")).otherwise(null.cast(Float64))] 
+                                FILTER col("REPDTE") <= 2026-06-30
+                                FROM
+                                  FILTER col("REPDTE") >= 1984-03-31
+                                  FROM
+                                    SELECT [col("CERT"), col("REPDTE"), col("year"), col("quarter"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                                      Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+                                      PROJECT */59 COLUMNS
+                                      ESTIMATED ROWS: 1682738
+                      RIGHT PLAN ON: [col("CERT")]
+                        UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                          SELECT [col("CERT"), col("BKCLASS")]
+                            Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/institutions/part-00000.parquet]
+                            PROJECT */9 COLUMNS
+                            ESTIMATED ROWS: 27838
+                      END LEFT JOIN
+                    RIGHT PLAN ON: [col("CERT")]
+                       WITH_COLUMNS:
+                       [true.alias("failure_meta_present")] 
+                        UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                          FILTER col("CERT").is_not_null()
+                          FROM
+                            SELECT [col("CERT")]
+                              Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/quality/bank_failure_events.parquet]
+                              PROJECT */10 COLUMNS
+                              ESTIMATED ROWS: 3036
+                    END LEFT JOIN
+              END LEFT JOIN
+            RIGHT PLAN ON: [col("_lag4_join_cert"), col("_lag4_join_qidx")]
+              SELECT [col("CERT").alias("_lag4_join_cert"), (col("qidx") + 4).alias("_lag4_join_qidx"), col("ASSET").alias("asset_lag4"), col("EQ").alias("eq_lag4"), col("ROA").alias("roa_lag4"), col("equity_asset_pct").alias("equity_ratio_lag4"), col("nclnls_gross_pct").alias("nclnls_ratio_lag4")]
+                LEFT JOIN:
+                LEFT PLAN ON: [col("CERT"), col("qidx")]
+                   WITH_COLUMNS:
+                   [when(((col("EQ").is_not_null() & col("EQ").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("EQ") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("equity_asset_pct"), when(((col("NETINC").is_not_null() & col("NETINC").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("NETINC") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("roa_calc_pct"), when(((col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("NCLNLS") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("nclnls_gross_pct"), when(((col("LNATRES").is_not_null() & col("LNATRES").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("LNATRES") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("allowance_gross_pct"), when(((col("DEP").is_not_null() & col("DEP").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("DEP") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("deposit_asset_pct"), when(((col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()) & (col("DEP").is_not_null() & col("DEP").is_finite())) & (col("DEP") != 0.0)).then((col("LNLSNET") / col("DEP")) * 100.0).otherwise(null.cast(Float64)).alias("loans_deposit_pct")] 
+                    LEFT JOIN:
+                    LEFT PLAN ON: [col("CERT")]
+                      LEFT JOIN:
+                      LEFT PLAN ON: [col("CERT")]
+                        SELECT [col("CERT"), col("REPDTE"), col("qidx"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                          SELECT [col("CERT"), col("REPDTE"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA"), col("qidx")]
+                             WITH_COLUMNS:
+                             [(((col("year").cast(Int64) * 4) + col("quarter").cast(Int64)) - 1).alias("qidx")] 
+                               WITH_COLUMNS:
+                               [col("CERT"), col("REPDTE"), when(col("ASSET").is_not_null() & col("ASSET").is_finite()).then(col("ASSET")).otherwise(null.cast(Float64)), when(col("DEP").is_not_null() & col("DEP").is_finite()).then(col("DEP")).otherwise(null.cast(Float64)), when(col("EQ").is_not_null() & col("EQ").is_finite()).then(col("EQ")).otherwise(null.cast(Float64)), when(col("NETINC").is_not_null() & col("NETINC").is_finite()).then(col("NETINC")).otherwise(null.cast(Float64)), when(col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()).then(col("NCLNLS")).otherwise(null.cast(Float64)), when(col("LNLSGR").is_not_null() & col("LNLSGR").is_finite()).then(col("LNLSGR")).otherwise(null.cast(Float64)), when(col("LNATRES").is_not_null() & col("LNATRES").is_finite()).then(col("LNATRES")).otherwise(null.cast(Float64)), when(col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()).then(col("LNLSNET")).otherwise(null.cast(Float64)), when(col("ROA").is_not_null() & col("ROA").is_finite()).then(col("ROA")).otherwise(null.cast(Float64))] 
+                                FILTER col("REPDTE") <= 2026-06-30
+                                FROM
+                                  FILTER col("REPDTE") >= 1984-03-31
+                                  FROM
+                                    SELECT [col("CERT"), col("REPDTE"), col("year"), col("quarter"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                                      Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+                                      PROJECT */59 COLUMNS
+                                      ESTIMATED ROWS: 1682738
+                      RIGHT PLAN ON: [col("CERT")]
+                        UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                          SELECT [col("CERT"), col("BKCLASS")]
+                            Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/institutions/part-00000.parquet]
+                            PROJECT */9 COLUMNS
+                            ESTIMATED ROWS: 27838
+                      END LEFT JOIN
+                    RIGHT PLAN ON: [col("CERT")]
+                       WITH_COLUMNS:
+                       [true.alias("failure_meta_present")] 
+                        UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                          FILTER col("CERT").is_not_null()
+                          FROM
+                            SELECT [col("CERT")]
+                              Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/quality/bank_failure_events.parquet]
+                              PROJECT */10 COLUMNS
+                              ESTIMATED ROWS: 3036
+                    END LEFT JOIN
+                RIGHT PLAN ON: [col("_lag1_join_cert"), col("_lag1_join_qidx")]
+                  SELECT [col("CERT").alias("_lag1_join_cert"), (col("qidx") + 1).alias("_lag1_join_qidx"), col("ASSET").alias("asset_lag1"), col("EQ").alias("eq_lag1"), col("ROA").alias("roa_lag1"), col("equity_asset_pct").alias("equity_ratio_lag1"), col("nclnls_gross_pct").alias("nclnls_ratio_lag1")]
+                     WITH_COLUMNS:
+                     [when(((col("EQ").is_not_null() & col("EQ").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("EQ") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("equity_asset_pct"), when(((col("NETINC").is_not_null() & col("NETINC").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("NETINC") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("roa_calc_pct"), when(((col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("NCLNLS") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("nclnls_gross_pct"), when(((col("LNATRES").is_not_null() & col("LNATRES").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("LNATRES") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("allowance_gross_pct"), when(((col("DEP").is_not_null() & col("DEP").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("DEP") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("deposit_asset_pct"), when(((col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()) & (col("DEP").is_not_null() & col("DEP").is_finite())) & (col("DEP") != 0.0)).then((col("LNLSNET") / col("DEP")) * 100.0).otherwise(null.cast(Float64)).alias("loans_deposit_pct")] 
+                      LEFT JOIN:
+                      LEFT PLAN ON: [col("CERT")]
+                        LEFT JOIN:
+                        LEFT PLAN ON: [col("CERT")]
+                          SELECT [col("CERT"), col("REPDTE"), col("qidx"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                            SELECT [col("CERT"), col("REPDTE"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA"), col("qidx")]
+                               WITH_COLUMNS:
+                               [(((col("year").cast(Int64) * 4) + col("quarter").cast(Int64)) - 1).alias("qidx")] 
+                                 WITH_COLUMNS:
+                                 [col("CERT"), col("REPDTE"), when(col("ASSET").is_not_null() & col("ASSET").is_finite()).then(col("ASSET")).otherwise(null.cast(Float64)), when(col("DEP").is_not_null() & col("DEP").is_finite()).then(col("DEP")).otherwise(null.cast(Float64)), when(col("EQ").is_not_null() & col("EQ").is_finite()).then(col("EQ")).otherwise(null.cast(Float64)), when(col("NETINC").is_not_null() & col("NETINC").is_finite()).then(col("NETINC")).otherwise(null.cast(Float64)), when(col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()).then(col("NCLNLS")).otherwise(null.cast(Float64)), when(col("LNLSGR").is_not_null() & col("LNLSGR").is_finite()).then(col("LNLSGR")).otherwise(null.cast(Float64)), when(col("LNATRES").is_not_null() & col("LNATRES").is_finite()).then(col("LNATRES")).otherwise(null.cast(Float64)), when(col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()).then(col("LNLSNET")).otherwise(null.cast(Float64)), when(col("ROA").is_not_null() & col("ROA").is_finite()).then(col("ROA")).otherwise(null.cast(Float64))] 
+                                  FILTER col("REPDTE") <= 2026-06-30
+                                  FROM
+                                    FILTER col("REPDTE") >= 1984-03-31
+                                    FROM
+                                      SELECT [col("CERT"), col("REPDTE"), col("year"), col("quarter"), col("ASSET"), col("DEP"), col("EQ"), col("NETINC"), col("NCLNLS"), col("LNLSGR"), col("LNATRES"), col("LNLSNET"), col("ROA")]
+                                        Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+                                        PROJECT */59 COLUMNS
+                                        ESTIMATED ROWS: 1682738
+                        RIGHT PLAN ON: [col("CERT")]
+                          UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                            SELECT [col("CERT"), col("BKCLASS")]
+                              Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/institutions/part-00000.parquet]
+                              PROJECT */9 COLUMNS
+                              ESTIMATED ROWS: 27838
+                        END LEFT JOIN
+                      RIGHT PLAN ON: [col("CERT")]
+                         WITH_COLUMNS:
+                         [true.alias("failure_meta_present")] 
+                          UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                            FILTER col("CERT").is_not_null()
+                            FROM
+                              SELECT [col("CERT")]
+                                Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/quality/bank_failure_events.parquet]
+                                PROJECT */10 COLUMNS
+                                ESTIMATED ROWS: 3036
+                      END LEFT JOIN
+                END LEFT JOIN
+            END LEFT JOIN
+
+SECTION 2 — STANDARDIZED WORKLOAD, OPTIMIZED (optimized=True)
+----------------------------------------------------------------------------------------
+SORT BY [col("CERT"), col("REPDTE")]
+  simple π 42/42 ["CERT", "REPDTE", "qidx", ... 39 other columns]
+     WITH_COLUMNS:
+     [(col("ROA") - col("peer_mean_roa")).alias("roa_vs_peer_mean"), (col("equity_asset_pct") - col("peer_mean_equity_asset_pct")).alias("equity_ratio_vs_peer_mean")] 
+      FILTER (col("REPDTE") >= 1984-03-31) & (col("REPDTE") <= 2026-06-30)
+      FROM
+        simple π 40/40 ["CERT", "REPDTE", "qidx", ... 37 other columns]
+           WITH_COLUMNS:
+           [when(((col("__POLARS_CSER_0x100000064").alias("ASSET").is_not_null() & col("__POLARS_CSER_0x100000064").alias("ASSET").is_finite()) & (col("asset_lag1").is_not_null() & col("asset_lag1").is_finite())) & (col("asset_lag1") != 0.0)).then((col("__POLARS_CSER_0x100000064") / col("asset_lag1")) * 100.0).otherwise(null.cast(Float64)).alias("asset_growth_1q_pct"), when(((col("__POLARS_CSER_0x100000071").alias("ASSET").is_not_null() & col("__POLARS_CSER_0x100000071").alias("ASSET").is_finite()) & (col("asset_lag4").is_not_null() & col("asset_lag4").is_finite())) & (col("asset_lag4") != 0.0)).then((col("__POLARS_CSER_0x100000071") / col("asset_lag4")) * 100.0).otherwise(null.cast(Float64)).alias("asset_growth_4q_pct"), when(((col("__POLARS_CSER_0x10000007e").alias("EQ").is_not_null() & col("__POLARS_CSER_0x10000007e").alias("EQ").is_finite()) & (col("eq_lag4").is_not_null() & col("eq_lag4").is_finite())) & (col("eq_lag4") != 0.0)).then((col("__POLARS_CSER_0x10000007e") / col("eq_lag4")) * 100.0).otherwise(null.cast(Float64)).alias("equity_growth_4q_pct"), (col("ROA") - col("roa_lag1")).alias("roa_delta_1q"), (col("ROA") - col("roa_lag4")).alias("roa_delta_4q"), (col("equity_asset_pct") - col("equity_ratio_lag4")).alias("equity_ratio_delta_4q"), (col("nclnls_gross_pct") - col("nclnls_ratio_lag4")).alias("nclnls_ratio_delta_4q"), col("ROA").mean().over([col("qidx")]).alias("peer_mean_roa"), col("equity_asset_pct").mean().over([col("qidx")]).alias("peer_mean_equity_asset_pct"), col("nclnls_gross_pct").mean().over([col("qidx")]).alias("peer_mean_nclnls_gross_pct"), len().over([col("qidx")]).strict_cast(Float64).alias("peer_bank_count")] 
+             WITH_COLUMNS:
+             [(col("ASSET") - col("asset_lag1")).alias("__POLARS_CSER_0x100000064"), (col("ASSET") - col("asset_lag4")).alias("__POLARS_CSER_0x100000071"), (col("EQ") - col("eq_lag4")).alias("__POLARS_CSER_0x10000007e")] 
+              LEFT JOIN:
+              LEFT PLAN ON: [col("CERT"), col("qidx")]
+                CACHE[id: 75aead7e-fa13-4973-9c75-3cad7a1760da]
+                  LEFT JOIN:
+                  LEFT PLAN ON: [col("CERT"), col("qidx")]
+                    simple π 19/19 ["CERT", "REPDTE", "qidx", ... 16 other columns]
+                       WITH_COLUMNS:
+                       [when(((col("EQ").is_not_null() & col("EQ").is_finite()) & col("__POLARS_CSER_0x100000004")) & col("__POLARS_CSER_0x10000002f")).then((col("EQ") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("equity_asset_pct"), when(((col("NETINC").is_not_null() & col("NETINC").is_finite()) & col("__POLARS_CSER_0x100000004")) & col("__POLARS_CSER_0x10000002f")).then((col("NETINC") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("roa_calc_pct"), when(((col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()) & col("__POLARS_CSER_0x100000018")) & col("__POLARS_CSER_0x100000039")).then((col("NCLNLS") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("nclnls_gross_pct"), when(((col("LNATRES").is_not_null() & col("LNATRES").is_finite()) & col("__POLARS_CSER_0x100000018")) & col("__POLARS_CSER_0x100000039")).then((col("LNATRES") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("allowance_gross_pct"), when((col("__POLARS_CSER_0x100000008") & col("__POLARS_CSER_0x100000004")) & col("__POLARS_CSER_0x10000002f")).then((col("DEP") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("deposit_asset_pct"), when(((col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()) & col("__POLARS_CSER_0x100000008")) & (col("DEP") != 0.0)).then((col("LNLSNET") / col("DEP")) * 100.0).otherwise(null.cast(Float64)).alias("loans_deposit_pct")] 
+                         WITH_COLUMNS:
+                         [(col("ASSET") != 0.0).alias("__POLARS_CSER_0x10000002f"), (col("ASSET").is_not_null() & col("ASSET").is_finite()).alias("__POLARS_CSER_0x100000004"), (col("LNLSGR") != 0.0).alias("__POLARS_CSER_0x100000039"), (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite()).alias("__POLARS_CSER_0x100000018"), (col("DEP").is_not_null() & col("DEP").is_finite()).alias("__POLARS_CSER_0x100000008")] 
+                          LEFT JOIN:
+                          LEFT PLAN ON: [col("CERT")]
+                            LEFT JOIN:
+                            BUILD SIDE: PreferRight
+                            LEFT PLAN ON: [col("CERT")]
+                              simple π 12/12 ["CERT", "REPDTE", "qidx", ... 9 other columns]
+                                 WITH_COLUMNS:
+                                 [col("CERT"), col("REPDTE"), when(col("ASSET").is_not_null() & col("ASSET").is_finite()).then(col("ASSET")).otherwise(null.cast(Float64)), when(col("DEP").is_not_null() & col("DEP").is_finite()).then(col("DEP")).otherwise(null.cast(Float64)), when(col("EQ").is_not_null() & col("EQ").is_finite()).then(col("EQ")).otherwise(null.cast(Float64)), when(col("NETINC").is_not_null() & col("NETINC").is_finite()).then(col("NETINC")).otherwise(null.cast(Float64)), when(col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()).then(col("NCLNLS")).otherwise(null.cast(Float64)), when(col("LNLSGR").is_not_null() & col("LNLSGR").is_finite()).then(col("LNLSGR")).otherwise(null.cast(Float64)), when(col("LNATRES").is_not_null() & col("LNATRES").is_finite()).then(col("LNATRES")).otherwise(null.cast(Float64)), when(col("LNLSNET").is_not_null() & col("LNLSNET").is_finite()).then(col("LNLSNET")).otherwise(null.cast(Float64)), when(col("ROA").is_not_null() & col("ROA").is_finite()).then(col("ROA")).otherwise(null.cast(Float64)), (((col("year").cast(Int64) * 4) + col("quarter").cast(Int64)) - 1).alias("qidx")] 
+                                  Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+                                  PROJECT 13/59 COLUMNS
+                                  SELECTION: (col("REPDTE") >= 1984-03-31) & (col("REPDTE") <= 2026-06-30)
+                                  ESTIMATED ROWS: 1682738
+                            RIGHT PLAN ON: [col("CERT")]
+                              UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                                Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/institutions/part-00000.parquet]
+                                PROJECT 2/9 COLUMNS
+                                ESTIMATED ROWS: 27838
+                            END LEFT JOIN
+                          RIGHT PLAN ON: [col("CERT")]
+                            UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                              Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/quality/bank_failure_events.parquet]
+                              PROJECT 1/10 COLUMNS
+                              SELECTION: col("CERT").is_not_null()
+                              ESTIMATED ROWS: 3036
+                          END LEFT JOIN
+                  RIGHT PLAN ON: [col("_lag1_join_cert"), col("_lag1_join_qidx")]
+                    SELECT [col("CERT").alias("_lag1_join_cert"), (col("qidx") + 1).alias("_lag1_join_qidx"), col("ASSET").alias("asset_lag1"), col("EQ").alias("eq_lag1"), col("ROA").alias("roa_lag1"), col("equity_asset_pct").alias("equity_ratio_lag1"), col("nclnls_gross_pct").alias("nclnls_ratio_lag1")]
+                      simple π 7/7 ["CERT", "qidx", "ASSET", "EQ", ... 3 other columns]
+                         WITH_COLUMNS:
+                         [when(((col("EQ").is_not_null() & col("EQ").is_finite()) & (col("ASSET").is_not_null() & col("ASSET").is_finite())) & (col("ASSET") != 0.0)).then((col("EQ") / col("ASSET")) * 100.0).otherwise(null.cast(Float64)).alias("equity_asset_pct"), when(((col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()) & (col("LNLSGR").is_not_null() & col("LNLSGR").is_finite())) & (col("LNLSGR") != 0.0)).then((col("NCLNLS") / col("LNLSGR")) * 100.0).otherwise(null.cast(Float64)).alias("nclnls_gross_pct")] 
+                          LEFT JOIN:
+                          LEFT PLAN ON: [col("CERT")]
+                            LEFT JOIN:
+                            BUILD SIDE: PreferRight
+                            LEFT PLAN ON: [col("CERT")]
+                              simple π 7/7 ["CERT", "qidx", "ASSET", "EQ", ... 3 other columns]
+                                 WITH_COLUMNS:
+                                 [col("CERT"), when(col("ASSET").is_not_null() & col("ASSET").is_finite()).then(col("ASSET")).otherwise(null.cast(Float64)), when(col("EQ").is_not_null() & col("EQ").is_finite()).then(col("EQ")).otherwise(null.cast(Float64)), when(col("NCLNLS").is_not_null() & col("NCLNLS").is_finite()).then(col("NCLNLS")).otherwise(null.cast(Float64)), when(col("LNLSGR").is_not_null() & col("LNLSGR").is_finite()).then(col("LNLSGR")).otherwise(null.cast(Float64)), when(col("ROA").is_not_null() & col("ROA").is_finite()).then(col("ROA")).otherwise(null.cast(Float64)), (((col("year").cast(Int64) * 4) + col("quarter").cast(Int64)) - 1).alias("qidx")] 
+                                  simple π 8/8 ["CERT", "year", "quarter", ... 5 other columns]
+                                    Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+                                    PROJECT 9/59 COLUMNS
+                                    SELECTION: (col("REPDTE") >= 1984-03-31) & (col("REPDTE") <= 2026-06-30)
+                                    ESTIMATED ROWS: 1682738
+                            RIGHT PLAN ON: [col("CERT")]
+                              UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                                Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/institutions/part-00000.parquet]
+                                PROJECT 1/9 COLUMNS
+                                ESTIMATED ROWS: 27838
+                            END LEFT JOIN
+                          RIGHT PLAN ON: [col("CERT")]
+                            UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT"])
+                              Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/quality/bank_failure_events.parquet]
+                              PROJECT 1/10 COLUMNS
+                              SELECTION: col("CERT").is_not_null()
+                              ESTIMATED ROWS: 3036
+                          END LEFT JOIN
+                  END LEFT JOIN
+              RIGHT PLAN ON: [col("_lag4_join_cert"), col("_lag4_join_qidx")]
+                SELECT [col("CERT").alias("_lag4_join_cert"), (col("qidx") + 4).alias("_lag4_join_qidx"), col("ASSET").alias("asset_lag4"), col("EQ").alias("eq_lag4"), col("ROA").alias("roa_lag4"), col("equity_asset_pct").alias("equity_ratio_lag4"), col("nclnls_gross_pct").alias("nclnls_ratio_lag4")]
+                  simple π 7/7 ["CERT", "qidx", "ASSET", "EQ", ... 3 other columns]
+                    CACHE[id: 75aead7e-fa13-4973-9c75-3cad7a1760da]
+              END LEFT JOIN
+
+SECTION 3 — RAW HIVE-PARTITIONED SCAN DEMO (optimized=True)
+----------------------------------------------------------------------------------------
+This separate demo is not part of the parity workload; it shows how
+predicate and projection pushdown apply to the raw quarter partitions.
+----------------------------------------------------------------------------------------
+Parquet SCAN [D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/financials/year=1984/quarter=1984-03-31/part-00000.parquet, ... 169 other sources]
+PROJECT 6/40 COLUMNS
+SELECTION: col("REPDTE") == 2023-03-31
+ESTIMATED ROWS: 1833078

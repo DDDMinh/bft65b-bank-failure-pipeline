@@ -77,6 +77,7 @@ def create_local_spark_session(
     *,
     master: str = "local[2]",
     shuffle_partitions: int = 8,
+    driver_memory: str | None = None,
 ):
     """Create or return a local SparkSession.
 
@@ -91,12 +92,14 @@ def create_local_spark_session(
     warehouse = PROJECT_ROOT / "data_processed" / "spark_tmp" / "warehouse"
     warehouse.mkdir(parents=True, exist_ok=True)
 
-    return (
+    builder = (
         SparkSession.builder.master(master)
         .appName(app_name)
         .config("spark.ui.enabled", "false")
         .config("spark.sql.shuffle.partitions", str(shuffle_partitions))
         .config("spark.sql.warehouse.dir", warehouse.as_posix())
         .config("spark.driver.host", "127.0.0.1")
-        .getOrCreate()
     )
+    if driver_memory:
+        builder = builder.config("spark.driver.memory", str(driver_memory))
+    return builder.getOrCreate()

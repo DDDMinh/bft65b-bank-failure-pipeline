@@ -56,15 +56,18 @@ all four checks true. `pytest -q` result after the final Phase 2 code change: 45
 
 ## Phase 3 — Scalable processing
 
-- [ ] Implement Polars `LazyFrame` core transforms
-- [ ] Implement the pandas baseline
-- [ ] Implement the local PySpark mirror
-- [ ] Implement cross-engine equivalence tests and tolerance policy
-- [ ] Run repeated benchmarks with configured warm-up and timed runs
-- [ ] Capture Polars and Spark execution plans
-- [ ] Write the measured cluster-justification argument
+- [x] Implement Polars `LazyFrame` core transforms
+- [x] Implement the pandas baseline
+- [x] Implement the local PySpark mirror
+- [x] Implement cross-engine equivalence tests and tolerance policy
+- [x] Run repeated benchmarks with configured warm-up and timed runs
+- [x] Capture Polars and Spark execution plans
+- [x] Write the measured cluster-justification argument
 
-**Gate:** engines match; benchmark and plan artifacts exist.
+**Gate:** engines match; benchmark and plan artifacts exist. Sample equivalence passed on 18,798
+rows and full equivalence passed on 1,682,738 rows, both with exact null masks and no numeric
+mismatches. Full-panel median runtimes were 3.368 s (Polars), 17.789 s (pandas), and 44.857 s
+(local Spark). The final `pytest -q` result after Phase 3 was 55 passed, 1 skipped.
 
 ## Phase 4 — Feature pipeline
 

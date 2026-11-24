@@ -39,7 +39,6 @@ PACKAGE_CHECKS: tuple[tuple[str, str], ...] = (
 )
 
 PLACEHOLDER_COMMANDS = (
-    "transform",
     "features",
     "model",
     "report",
@@ -387,6 +386,104 @@ def _command_quality_build(args: argparse.Namespace) -> int:
     return 0
 
 
+# ----------------------------------------------------------------------
+# Phase 3 commands
+# ----------------------------------------------------------------------
+def _command_transform_inputs(args: argparse.Namespace) -> int:
+    from bft65b.processing.spec import materialise_workload_inputs
+
+    config = load_config(args.config)
+    manifest = materialise_workload_inputs(config, root=PROJECT_ROOT)
+    print(json.dumps({
+        "sample": manifest["sample"],
+        "scales": [
+            {
+                "scale_percent": item["scale_percent"],
+                "quarter_count": item["quarter_count"],
+                "start": item["start"],
+                "end": item["end"],
+                "rows": item["rows"],
+            }
+            for item in manifest["scales"]
+        ],
+        "manifest_path": str(PROJECT_ROOT / str(config["processing"]["input_manifest_path"])),
+    }, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_transform_run(args: argparse.Namespace) -> int:
+    from bft65b.processing.pandas_engine import run_pandas
+    from bft65b.processing.polars_engine import run_polars
+    from bft65b.processing.spark_engine import run_spark
+    from bft65b.processing.spec import (
+        engine_output_path,
+        ensure_processing_directories,
+        resolve_processing_path,
+        scope_spec,
+    )
+    from bft65b.utils.io import atomic_write_json
+
+    config = load_config(args.config)
+    ensure_processing_directories(config, root=PROJECT_ROOT)
+    spec = scope_spec(config, args.scope, root=PROJECT_ROOT)
+    runners = {"polars": run_polars, "pandas": run_pandas, "spark": run_spark}
+    selected = list(runners) if args.engine == "all" else [args.engine]
+    results = []
+    for engine in selected:
+        target = engine_output_path(config, args.scope, engine, root=PROJECT_ROOT)
+        results.append(runners[engine](spec, config, target, root=PROJECT_ROOT))
+
+    manifest_path = resolve_processing_path(
+        config, "processing_manifest_path", root=PROJECT_ROOT
+    )
+    manifest: dict[str, Any] = {}
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest.setdefault("scopes", {})[args.scope] = {
+        "description": spec.description,
+        "input_path": str(spec.input_path),
+        "engines": {row["engine"]: row for row in results},
+    }
+    atomic_write_json(manifest_path, manifest)
+    print(json.dumps({
+        "scope": args.scope,
+        "engines": results,
+        "manifest_path": str(manifest_path),
+    }, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_transform_equivalence(args: argparse.Namespace) -> int:
+    from bft65b.processing.equivalence import run_equivalence
+
+    config = load_config(args.config)
+    result = run_equivalence(config, args.scope, root=PROJECT_ROOT)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    if args.strict and not result["passed"]:
+        LOGGER.error("Phase 3 engine equivalence failed for scope=%s", args.scope)
+        return 1
+    return 0
+
+
+def _command_transform_plans(args: argparse.Namespace) -> int:
+    from bft65b.processing.plans import capture_plans
+
+    config = load_config(args.config)
+    result = capture_plans(config, args.scope, root=PROJECT_ROOT)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_transform_benchmark(args: argparse.Namespace) -> int:
+    from bft65b.processing.benchmark import run_benchmark
+
+    config = load_config(args.config)
+    scales = [int(item) for item in args.scales.split(",") if item.strip()]
+    result = run_benchmark(config, scales=scales, root=PROJECT_ROOT)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="bft65b",
@@ -534,6 +631,56 @@ def build_parser() -> argparse.ArgumentParser:
         "--strict", action="store_true", help="Return non-zero if any Phase 2 check fails"
     )
     quality_build.set_defaults(func=_command_quality_build)
+
+    transform_parser = subparsers.add_parser(
+        "transform", help="Standardized Polars, pandas, and Spark processing"
+    )
+    transform_parser.set_defaults(
+        func=lambda _: (transform_parser.print_help(), 0)[1]
+    )
+    transform_subparsers = transform_parser.add_subparsers(dest="transform_command")
+
+    transform_inputs = transform_subparsers.add_parser(
+        "inputs", help="Materialize the sample and contiguous scale input windows"
+    )
+    transform_inputs.set_defaults(func=_command_transform_inputs)
+
+    transform_run = transform_subparsers.add_parser(
+        "run", help="Run the standardized workload on the sample or full panel"
+    )
+    transform_run.add_argument("--scope", choices=["sample", "full"], required=True)
+    transform_run.add_argument(
+        "--engine",
+        choices=["all", "polars", "pandas", "spark"],
+        default="all",
+        help="Engine artifact to write (default: all)",
+    )
+    transform_run.set_defaults(func=_command_transform_run)
+
+    transform_equivalence = transform_subparsers.add_parser(
+        "equivalence", help="Compare engine outputs with exact null masks and numeric tolerance"
+    )
+    transform_equivalence.add_argument("--scope", choices=["sample", "full"], required=True)
+    transform_equivalence.add_argument(
+        "--strict", action="store_true", help="Return non-zero when equivalence fails"
+    )
+    transform_equivalence.set_defaults(func=_command_transform_equivalence)
+
+    transform_plans = transform_subparsers.add_parser(
+        "plans", help="Capture and interpret Polars and Spark query plans"
+    )
+    transform_plans.add_argument("--scope", choices=["sample", "full"], default="full")
+    transform_plans.set_defaults(func=_command_transform_plans)
+
+    transform_benchmark = transform_subparsers.add_parser(
+        "benchmark", help="Run isolated multi-scale engine benchmarks"
+    )
+    transform_benchmark.add_argument(
+        "--scales",
+        default="10,25,50,100",
+        help="Comma-separated contiguous scale percentages",
+    )
+    transform_benchmark.set_defaults(func=_command_transform_benchmark)
 
     for name in PLACEHOLDER_COMMANDS:
         placeholder = subparsers.add_parser(name, help=f"Reserved for a later phase: {name}")

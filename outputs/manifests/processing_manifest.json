@@ -1,0 +1,56 @@
+{
+  "scopes": {
+    "full": {
+      "description": "Full 1984Q1-2026Q2 point-in-time panel",
+      "engines": {
+        "spark": {
+          "columns": 42,
+          "engine": "spark",
+          "failure_match_count": 89985,
+          "input_rows": 1682738,
+          "institution_match_count": 1671928,
+          "output_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\processing\\outputs\\full\\spark",
+          "rows": 1682738,
+          "scope": "full"
+        }
+      },
+      "input_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\panel\\bank_quarter.parquet"
+    },
+    "sample": {
+      "description": "2023Q1-2023Q4 output with 2022Q1-2022Q4 lookback for exact calendar-quarter lags",
+      "engines": {
+        "pandas": {
+          "columns": 42,
+          "engine": "pandas",
+          "failure_match_count": 89,
+          "input_rows": 38083,
+          "institution_match_count": 37673,
+          "output_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\processing\\outputs\\sample\\pandas",
+          "rows": 18798,
+          "scope": "sample"
+        },
+        "polars": {
+          "columns": 42,
+          "engine": "polars",
+          "failure_match_count": 89,
+          "input_rows": 38083,
+          "institution_match_count": 37673,
+          "output_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\processing\\outputs\\sample\\polars",
+          "rows": 18798,
+          "scope": "sample"
+        },
+        "spark": {
+          "columns": 42,
+          "engine": "spark",
+          "failure_match_count": 89,
+          "input_rows": 38083,
+          "institution_match_count": 37673,
+          "output_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\processing\\outputs\\sample\\spark",
+          "rows": 18798,
+          "scope": "sample"
+        }
+      },
+      "input_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\data_processed\\processing\\sample_workload.parquet"
+    }
+  }
+}

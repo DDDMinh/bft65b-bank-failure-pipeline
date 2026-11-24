@@ -64,8 +64,15 @@ def test_cli_smoke() -> None:
 
 
 def test_placeholder_commands_are_not_implemented() -> None:
-    for command in ("transform", "features", "model", "report"):
+    for command in ("features", "model", "report"):
         assert main([command]) == 2
+
+
+def test_transform_help_without_subcommand(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["transform"]) == 0
+    output = capsys.readouterr().out
+    for subcommand in ("inputs", "run", "equivalence", "plans", "benchmark"):
+        assert subcommand in output
 
 
 def test_quality_help_without_subcommand(capsys: pytest.CaptureFixture[str]) -> None:

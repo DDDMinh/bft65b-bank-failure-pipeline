@@ -1,0 +1,70 @@
+{
+  "full_end": "2026-06-30",
+  "full_panel_path": "data_processed/panel/bank_quarter.parquet",
+  "full_panel_rows": 1682738,
+  "full_panel_sha256": "00b422413f883d23e24b32761100ec0e3c99056bdd1d6be743cf8aa103fae628",
+  "full_quarters": 170,
+  "full_start": "1984-03-31",
+  "generated_at_utc": "2026-11-24T06:39:46.517023+00:00",
+  "notes": [
+    "Sample input includes four lookback quarters so 2023 output rows have 1Q and 4Q lags.",
+    "Scale windows are contiguous trailing quarters; no evenly spaced sampling is used.",
+    "Calendar lags are exact left self-joins on (CERT, qidx) shifted by +1 and +4."
+  ],
+  "sample": {
+    "input_end": "2023-12-31",
+    "input_start": "2022-03-31",
+    "lookback_quarters": 4,
+    "output_end": "2023-12-31",
+    "output_start": "2023-03-31",
+    "path": "data_processed/processing/sample_workload.parquet",
+    "rows": 38083,
+    "sha256": "349879f73ebed24025fcb3fb073056e475ce17abc2c5ee1496bdbd25b1035f0c"
+  },
+  "scales": [
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_010.parquet",
+      "quarter_count": 17,
+      "rows": 78180,
+      "scale_percent": 10,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "74f967f26a29d49f8016d1d4c0ec52ebd678a8c00bed9d8357907e7827789e13",
+      "start": "2022-06-30"
+    },
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_025.parquet",
+      "quarter_count": 43,
+      "rows": 221064,
+      "scale_percent": 25,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "da43393a892d5151cd5e86a298bd024f967a48a21d96b516d24908cb268bd82c",
+      "start": "2015-12-31"
+    },
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_050.parquet",
+      "quarter_count": 85,
+      "rows": 550011,
+      "scale_percent": 50,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "5e1d398d06e9a3306c8d7fb70feac6cf34800387c37cf61d0e61cc8fbaa58492",
+      "start": "2005-06-30"
+    },
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_100.parquet",
+      "quarter_count": 170,
+      "rows": 1682738,
+      "scale_percent": 100,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "a77fe0fd5bc648fac06ac191c1380bbde2a5266326e0cbf09b37a28541b94d80",
+      "start": "1984-03-31"
+    }
+  ]
+}

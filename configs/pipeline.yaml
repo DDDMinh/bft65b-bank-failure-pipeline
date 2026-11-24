@@ -53,6 +53,38 @@ benchmark:
   warmup_runs: 1
   timed_runs: 5
   spark_shuffle_partitions: 8
+  spark_driver_memory: "3g"
+  memory_sample_interval_seconds: 0.02
+
+# Phase 3 workload, equivalence, plans, and scaling benchmark. The shared
+# workload reads the Phase 2 panel; failure metadata is joined only for a
+# report-only row-count diagnostic and no failure-derived column is exported.
+processing:
+  processed_dir: "data_processed/processing"
+  sample_input_path: "data_processed/processing/sample_workload.parquet"
+  scale_inputs_dir: "data_processed/processing/scale_inputs"
+  outputs_dir: "data_processed/processing/outputs"
+  input_manifest_path: "outputs/manifests/processing_inputs.json"
+  processing_manifest_path: "outputs/manifests/processing_manifest.json"
+  polars_plans_path: "outputs/tables/polars_plans.txt"
+  spark_plan_path: "outputs/tables/spark_physical_plan.txt"
+  spark_plan_interpretation_path: "outputs/tables/spark_plan_interpretation.md"
+  equivalence_report_path: "outputs/tables/engine_equivalence_report.csv"
+  equivalence_summary_path: "outputs/manifests/engine_equivalence_summary.json"
+  benchmark_results_path: "outputs/tables/benchmark_results.csv"
+  benchmark_summary_path: "outputs/manifests/benchmark_summary.json"
+  benchmark_figure_path: "outputs/figures/engine_runtime_memory.png"
+  cluster_crossover_path: "outputs/tables/cluster_crossover.csv"
+  cluster_crossover_note_path: "outputs/tables/cluster_crossover_note.md"
+  scales: [10, 25, 50, 100]
+  lookback_quarters: 4
+  numeric_rtol: 1.0e-6
+  numeric_atol: 1.0e-8
+  parquet_compression: "zstd"
+  parquet_row_group_size: 65536
+  # Spark's dictionary encoder can retain one hash entry per distinct double in
+  # a row group; disable it for the wide float output on the full panel.
+  spark_parquet_dictionary_enabled: false
 
 # Phase 2 rulebook and artifact paths. Audit statistics are report-only; none
 # of these outputs are model parameters or preprocessing state.

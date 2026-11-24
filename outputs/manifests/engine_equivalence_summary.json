@@ -1,0 +1,78 @@
+{
+  "canonical_report_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\engine_equivalence_report.csv",
+  "column_comparisons": 126,
+  "columns_equal": true,
+  "engines": [
+    "polars",
+    "pandas",
+    "spark"
+  ],
+  "failures": [],
+  "generated_at_utc": "2026-11-24T07:18:28.314384+00:00",
+  "latest_scope": "full",
+  "passed": true,
+  "report_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\engine_equivalence_report_full.csv",
+  "row_counts": {
+    "pandas": 1682738,
+    "polars": 1682738,
+    "spark": 1682738
+  },
+  "row_counts_equal": true,
+  "scope": "full",
+  "scopes": {
+    "full": {
+      "canonical_report_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\engine_equivalence_report.csv",
+      "column_comparisons": 126,
+      "columns_equal": true,
+      "engines": [
+        "polars",
+        "pandas",
+        "spark"
+      ],
+      "failures": [],
+      "generated_at_utc": "2026-11-24T07:18:28.314384+00:00",
+      "passed": true,
+      "report_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\engine_equivalence_report_full.csv",
+      "row_counts": {
+        "pandas": 1682738,
+        "polars": 1682738,
+        "spark": 1682738
+      },
+      "row_counts_equal": true,
+      "scope": "full",
+      "tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      }
+    },
+    "sample": {
+      "canonical_report_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\engine_equivalence_report.csv",
+      "column_comparisons": 126,
+      "columns_equal": true,
+      "engines": [
+        "polars",
+        "pandas",
+        "spark"
+      ],
+      "failures": [],
+      "generated_at_utc": "2026-11-24T07:18:12.947268+00:00",
+      "passed": true,
+      "report_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\engine_equivalence_report_sample.csv",
+      "row_counts": {
+        "pandas": 18798,
+        "polars": 18798,
+        "spark": 18798
+      },
+      "row_counts_equal": true,
+      "scope": "sample",
+      "tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      }
+    }
+  },
+  "tolerance": {
+    "atol": 1e-08,
+    "rtol": 1e-06
+  }
+}

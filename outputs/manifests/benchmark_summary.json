@@ -1,0 +1,309 @@
+{
+  "cluster_crossover": {
+    "csv_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\cluster_crossover.csv",
+    "exchange_count": 8,
+    "first_scenario_beating_local": {
+      "analysis_type": "illustrative_cluster_projection",
+      "basis": "measured Spark local median / (32 x 0.8) + 8 observed Exchange nodes x assumed overhead",
+      "engine": "spark",
+      "interpretation": "Scenario only: no cluster was benchmarked; overhead and efficiency are assumptions, not measurements.",
+      "parameter": "workers=32;overhead_s_per_exchange=0.1",
+      "r_squared": null,
+      "value": 2.5522210507812018
+    },
+    "local_best_engine": "polars",
+    "local_best_runtime_s": 3.368298199999117,
+    "note_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\cluster_crossover_note.md",
+    "scaling_fits": {
+      "pandas": {
+        "exponent": 0.6232713030000727,
+        "intercept": -6.1806537779959,
+        "r_squared": 0.9673659049710789
+      },
+      "polars": {
+        "exponent": 0.16157393250348817,
+        "intercept": -1.1992222937245165,
+        "r_squared": 0.7809321003230449
+      },
+      "spark": {
+        "exponent": 0.16053864063797033,
+        "intercept": 1.414233684132101,
+        "r_squared": 0.7864233035769388
+      }
+    },
+    "spark_full_runtime_s": 44.85685889999877
+  },
+  "environment": {
+    "captured_at_utc": "2026-11-24T07:17:11.641345+00:00",
+    "engine_settings": {
+      "parquet_compression": "zstd",
+      "parquet_row_group_size": 65536,
+      "spark_driver_memory": "3g",
+      "spark_master": "local[*]",
+      "spark_shuffle_partitions": 8
+    },
+    "hardware": {
+      "available_memory_bytes_at_start": 6702555136,
+      "logical_cpu_count": 12,
+      "machine": "AMD64",
+      "os_platform": "Windows-11-10.0.26200-SP0",
+      "os_release": "11",
+      "physical_cpu_count": 6,
+      "processor": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+      "total_memory_bytes": 17009004544
+    },
+    "protocol": {
+      "engines": [
+        "polars",
+        "pandas",
+        "spark"
+      ],
+      "fresh_process_per_run": true,
+      "memory_sample_interval_seconds": 0.02,
+      "memory_scope": "worker process plus live descendants, including the Spark JVM",
+      "timed_runs": 5,
+      "warmup_runs": 1
+    },
+    "software": {
+      "matplotlib": "3.11.2",
+      "numpy": "2.5.5",
+      "pandas": "2.3.3",
+      "polars": "2.1.0",
+      "psutil": "7.2.2",
+      "pyarrow": "26.0.1",
+      "pyspark": "4.3.0",
+      "python_version": "3.14.0"
+    }
+  },
+  "figure_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\figures\\engine_runtime_memory.png",
+  "generated_at_utc": "2026-11-24T07:17:11.641139+00:00",
+  "results_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\outputs\\tables\\benchmark_results.csv",
+  "scales": [
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_010.parquet",
+      "quarter_count": 17,
+      "rows": 78180,
+      "scale_percent": 10,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "74f967f26a29d49f8016d1d4c0ec52ebd678a8c00bed9d8357907e7827789e13",
+      "start": "2022-06-30"
+    },
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_025.parquet",
+      "quarter_count": 43,
+      "rows": 221064,
+      "scale_percent": 25,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "da43393a892d5151cd5e86a298bd024f967a48a21d96b516d24908cb268bd82c",
+      "start": "2015-12-31"
+    },
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_050.parquet",
+      "quarter_count": 85,
+      "rows": 550011,
+      "scale_percent": 50,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "5e1d398d06e9a3306c8d7fb70feac6cf34800387c37cf61d0e61cc8fbaa58492",
+      "start": "2005-06-30"
+    },
+    {
+      "end": "2026-06-30",
+      "lag_seed_quarters": 4,
+      "path": "data_processed/processing/scale_inputs/scale_100.parquet",
+      "quarter_count": 170,
+      "rows": 1682738,
+      "scale_percent": 100,
+      "selection": "contiguous trailing quarters ending at the full-panel end",
+      "sha256": "a77fe0fd5bc648fac06ac191c1380bbde2a5266326e0cbf09b37a28541b94d80",
+      "start": "1984-03-31"
+    }
+  ],
+  "summary_records": [
+    {
+      "engine": "pandas",
+      "peak_rss_iqr_mib": 21.547000000000025,
+      "peak_rss_median_mib": 273.859,
+      "peak_rss_q1_mib": 256.387,
+      "peak_rss_q3_mib": 277.934,
+      "runtime_iqr_s": 0.2505388999979914,
+      "runtime_max_s": 2.9933110999991186,
+      "runtime_median_s": 2.655037700000321,
+      "runtime_min_s": 2.5483344000003854,
+      "runtime_q1_s": 2.616332400000829,
+      "runtime_q3_s": 2.86687129999882,
+      "scale_percent": 10,
+      "timed_runs": 5
+    },
+    {
+      "engine": "polars",
+      "peak_rss_iqr_mib": 2.281000000000006,
+      "peak_rss_median_mib": 326.934,
+      "peak_rss_q1_mib": 325.578,
+      "peak_rss_q3_mib": 327.859,
+      "runtime_iqr_s": 0.23588089999975637,
+      "runtime_max_s": 2.2175724000007904,
+      "runtime_median_s": 2.048348399999668,
+      "runtime_min_s": 1.8246990999996342,
+      "runtime_q1_s": 1.8837411000004067,
+      "runtime_q3_s": 2.119622000000163,
+      "scale_percent": 10,
+      "timed_runs": 5
+    },
+    {
+      "engine": "spark",
+      "peak_rss_iqr_mib": 9.363000000000056,
+      "peak_rss_median_mib": 1277.426,
+      "peak_rss_q1_mib": 1277.387,
+      "peak_rss_q3_mib": 1286.75,
+      "runtime_iqr_s": 2.8552810000001045,
+      "runtime_max_s": 28.753454300000158,
+      "runtime_median_s": 27.75715669999954,
+      "runtime_min_s": 25.332145399999717,
+      "runtime_q1_s": 25.71300069999961,
+      "runtime_q3_s": 28.568281699999716,
+      "scale_percent": 10,
+      "timed_runs": 5
+    },
+    {
+      "engine": "pandas",
+      "peak_rss_iqr_mib": 28.889999999999986,
+      "peak_rss_median_mib": 519.582,
+      "peak_rss_q1_mib": 515.465,
+      "peak_rss_q3_mib": 544.355,
+      "runtime_iqr_s": 0.04676850000032573,
+      "runtime_max_s": 3.9370589000009204,
+      "runtime_median_s": 3.868948700001056,
+      "runtime_min_s": 3.825845400000617,
+      "runtime_q1_s": 3.865870499999801,
+      "runtime_q3_s": 3.9126390000001265,
+      "scale_percent": 25,
+      "timed_runs": 5
+    },
+    {
+      "engine": "polars",
+      "peak_rss_iqr_mib": 7.213999999999999,
+      "peak_rss_median_mib": 513.988,
+      "peak_rss_q1_mib": 508.266,
+      "peak_rss_q3_mib": 515.48,
+      "runtime_iqr_s": 0.04109710000011546,
+      "runtime_max_s": 2.0428106999988813,
+      "runtime_median_s": 2.0206067000017356,
+      "runtime_min_s": 1.9858124000002135,
+      "runtime_q1_s": 1.9867831999999908,
+      "runtime_q3_s": 2.027880300000106,
+      "scale_percent": 25,
+      "timed_runs": 5
+    },
+    {
+      "engine": "spark",
+      "peak_rss_iqr_mib": 36.274000000000115,
+      "peak_rss_median_mib": 1551.371,
+      "peak_rss_q1_mib": 1527.07,
+      "peak_rss_q3_mib": 1563.344,
+      "runtime_iqr_s": 0.4440261999989161,
+      "runtime_max_s": 27.114000199999282,
+      "runtime_median_s": 26.63992259999941,
+      "runtime_min_s": 26.537675300000046,
+      "runtime_q1_s": 26.62382230000003,
+      "runtime_q3_s": 27.067848499998945,
+      "scale_percent": 25,
+      "timed_runs": 5
+    },
+    {
+      "engine": "pandas",
+      "peak_rss_iqr_mib": 40.60900000000015,
+      "peak_rss_median_mib": 1172.387,
+      "peak_rss_q1_mib": 1157.715,
+      "peak_rss_q3_mib": 1198.324,
+      "runtime_iqr_s": 0.08802749999813386,
+      "runtime_max_s": 7.214733400000114,
+      "runtime_median_s": 6.924898500001291,
+      "runtime_min_s": 6.880233699999735,
+      "runtime_q1_s": 6.886838500000522,
+      "runtime_q3_s": 6.974865999998656,
+      "scale_percent": 50,
+      "timed_runs": 5
+    },
+    {
+      "engine": "polars",
+      "peak_rss_iqr_mib": 10.832000000000107,
+      "peak_rss_median_mib": 909.016,
+      "peak_rss_q1_mib": 900.531,
+      "peak_rss_q3_mib": 911.363,
+      "runtime_iqr_s": 0.027048899999499554,
+      "runtime_max_s": 2.4842759000002843,
+      "runtime_median_s": 2.2910217000007833,
+      "runtime_min_s": 2.2793126000015036,
+      "runtime_q1_s": 2.28658329999962,
+      "runtime_q3_s": 2.3136321999991196,
+      "scale_percent": 50,
+      "timed_runs": 5
+    },
+    {
+      "engine": "spark",
+      "peak_rss_iqr_mib": 65.59400000000005,
+      "peak_rss_median_mib": 1982.969,
+      "peak_rss_q1_mib": 1933.648,
+      "peak_rss_q3_mib": 1999.242,
+      "runtime_iqr_s": 1.1588143999997556,
+      "runtime_max_s": 33.1322825999996,
+      "runtime_median_s": 31.669337200000882,
+      "runtime_min_s": 31.45317419999992,
+      "runtime_q1_s": 31.65897810000024,
+      "runtime_q3_s": 32.817792499999996,
+      "scale_percent": 50,
+      "timed_runs": 5
+    },
+    {
+      "engine": "pandas",
+      "peak_rss_iqr_mib": 70.84299999999985,
+      "peak_rss_median_mib": 2991.805,
+      "peak_rss_q1_mib": 2938.766,
+      "peak_rss_q3_mib": 3009.609,
+      "runtime_iqr_s": 0.39625709999927494,
+      "runtime_max_s": 18.197600800000146,
+      "runtime_median_s": 17.788715599999705,
+      "runtime_min_s": 17.401104500000656,
+      "runtime_q1_s": 17.570080600000438,
+      "runtime_q3_s": 17.966337699999713,
+      "scale_percent": 100,
+      "timed_runs": 5
+    },
+    {
+      "engine": "polars",
+      "peak_rss_iqr_mib": 46.1400000000001,
+      "peak_rss_median_mib": 1827.758,
+      "peak_rss_q1_mib": 1822.895,
+      "peak_rss_q3_mib": 1869.035,
+      "runtime_iqr_s": 0.091784700000062,
+      "runtime_max_s": 3.5297589999991033,
+      "runtime_median_s": 3.368298199999117,
+      "runtime_min_s": 3.3443248000003223,
+      "runtime_q1_s": 3.362619100000302,
+      "runtime_q3_s": 3.454403800000364,
+      "scale_percent": 100,
+      "timed_runs": 5
+    },
+    {
+      "engine": "spark",
+      "peak_rss_iqr_mib": 38.57400000000007,
+      "peak_rss_median_mib": 2813.801,
+      "peak_rss_q1_mib": 2807.508,
+      "peak_rss_q3_mib": 2846.082,
+      "runtime_iqr_s": 0.5457292000010057,
+      "runtime_max_s": 45.31143020000127,
+      "runtime_median_s": 44.85685889999877,
+      "runtime_min_s": 43.22249159999956,
+      "runtime_q1_s": 44.38462769999933,
+      "runtime_q3_s": 44.930356900000334,
+      "scale_percent": 100,
+      "timed_runs": 5
+    }
+  ]
+}

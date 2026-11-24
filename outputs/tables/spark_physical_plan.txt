@@ -1,0 +1,272 @@
+========================================================================================
+SPARK FORMATTED PHYSICAL PLAN — scope=full
+generated 2026-11-24T06:47:34.720780+00:00
+========================================================================================
+== Physical Plan ==
+AdaptiveSparkPlan (47)
++- Sort (46)
+   +- Exchange (45)
+      +- Project (44)
+         +- Window (43)
+            +- Sort (42)
+               +- Exchange (41)
+                  +- Project (40)
+                     +- SortMergeJoin LeftOuter (39)
+                        :- Project (23)
+                        :  +- SortMergeJoin LeftOuter (22)
+                        :     :- Sort (15)
+                        :     :  +- Exchange (14)
+                        :     :     +- Project (13)
+                        :     :        +- BroadcastHashJoin LeftOuter BuildRight (12)
+                        :     :           :- Project (3)
+                        :     :           :  +- Filter (2)
+                        :     :           :     +- Scan parquet  (1)
+                        :     :           +- BroadcastExchange (11)
+                        :     :              +- SortAggregate (10)
+                        :     :                 +- Sort (9)
+                        :     :                    +- Exchange (8)
+                        :     :                       +- SortAggregate (7)
+                        :     :                          +- Sort (6)
+                        :     :                             +- Filter (5)
+                        :     :                                +- Scan parquet  (4)
+                        :     +- Sort (21)
+                        :        +- Exchange (20)
+                        :           +- Project (19)
+                        :              +- Project (18)
+                        :                 +- Filter (17)
+                        :                    +- Scan parquet  (16)
+                        +- Sort (38)
+                           +- Exchange (37)
+                              +- Project (36)
+                                 +- SortMergeJoin LeftOuter (35)
+                                    :- Sort (29)
+                                    :  +- Exchange (28)
+                                    :     +- Project (27)
+                                    :        +- Project (26)
+                                    :           +- Filter (25)
+                                    :              +- Scan parquet  (24)
+                                    +- Sort (34)
+                                       +- Exchange (33)
+                                          +- Project (32)
+                                             +- Filter (31)
+                                                +- Scan parquet  (30)
+
+
+(1) Scan parquet 
+Output [13]: [CERT#0L, REPDTE#1, ASSET#3, DEP#4, EQ#6, LNLSGR#10, LNLSNET#11, LNATRES#15, NCLNLS#16, NETINC#22, ROA#28, year#40, quarter#41]
+Batched: true
+Location: InMemoryFileIndex [file:/D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+PushedFilters: [IsNotNull(REPDTE), GreaterThanOrEqual(REPDTE,1984-03-31), LessThanOrEqual(REPDTE,2026-06-30)]
+ReadSchema: struct<CERT:bigint,REPDTE:date,ASSET:double,DEP:double,EQ:double,LNLSGR:double,LNLSNET:double,LNATRES:double,NCLNLS:double,NETINC:double,ROA:double,year:int,quarter:tinyint>
+
+(2) Filter
+Input [13]: [CERT#0L, REPDTE#1, ASSET#3, DEP#4, EQ#6, LNLSGR#10, LNLSNET#11, LNATRES#15, NCLNLS#16, NETINC#22, ROA#28, year#40, quarter#41]
+Condition : ((isnotnull(REPDTE#1) AND (REPDTE#1 >= 1984-03-31)) AND (REPDTE#1 <= 2026-06-30))
+
+(3) Project
+Output [12]: [CERT#0L, REPDTE#1, (((cast(year#40 as bigint) * 4) + cast(quarter#41 as bigint)) - 1) AS qidx#62L, CASE WHEN ((isnotnull(ASSET#3) AND NOT isnan(ASSET#3)) AND (abs(ASSET#3) < Infinity)) THEN ASSET#3 END AS ASSET#63, CASE WHEN ((isnotnull(DEP#4) AND NOT isnan(DEP#4)) AND (abs(DEP#4) < Infinity)) THEN DEP#4 END AS DEP#64, CASE WHEN ((isnotnull(EQ#6) AND NOT isnan(EQ#6)) AND (abs(EQ#6) < Infinity)) THEN EQ#6 END AS EQ#65, CASE WHEN ((isnotnull(NETINC#22) AND NOT isnan(NETINC#22)) AND (abs(NETINC#22) < Infinity)) THEN NETINC#22 END AS NETINC#66, CASE WHEN ((isnotnull(NCLNLS#16) AND NOT isnan(NCLNLS#16)) AND (abs(NCLNLS#16) < Infinity)) THEN NCLNLS#16 END AS NCLNLS#67, CASE WHEN ((isnotnull(LNLSGR#10) AND NOT isnan(LNLSGR#10)) AND (abs(LNLSGR#10) < Infinity)) THEN LNLSGR#10 END AS LNLSGR#68, CASE WHEN ((isnotnull(LNATRES#15) AND NOT isnan(LNATRES#15)) AND (abs(LNATRES#15) < Infinity)) THEN LNATRES#15 END AS LNATRES#69, CASE WHEN ((isnotnull(LNLSNET#11) AND NOT isnan(LNLSNET#11)) AND (abs(LNLSNET#11) < Infinity)) THEN LNLSNET#11 END AS LNLSNET#70, CASE WHEN ((isnotnull(ROA#28) AND NOT isnan(ROA#28)) AND (abs(ROA#28) < Infinity)) THEN ROA#28 END AS ROA#71]
+Input [13]: [CERT#0L, REPDTE#1, ASSET#3, DEP#4, EQ#6, LNLSGR#10, LNLSNET#11, LNATRES#15, NCLNLS#16, NETINC#22, ROA#28, year#40, quarter#41]
+
+(4) Scan parquet 
+Output [2]: [CERT#72L, BKCLASS#75]
+Batched: true
+Location: InMemoryFileIndex [file:/D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_raw/fdic/institutions/part-00000.parquet]
+PushedFilters: [IsNotNull(CERT)]
+ReadSchema: struct<CERT:bigint,BKCLASS:string>
+
+(5) Filter
+Input [2]: [CERT#72L, BKCLASS#75]
+Condition : isnotnull(CERT#72L)
+
+(6) Sort
+Input [2]: [CERT#72L, BKCLASS#75]
+Arguments: [CERT#72L ASC NULLS FIRST], false, 0
+
+(7) SortAggregate
+Input [2]: [CERT#72L, BKCLASS#75]
+Keys [1]: [CERT#72L]
+Functions [1]: [partial_first(BKCLASS#75, false)]
+Aggregate Attributes [2]: [first#580, valueSet#581]
+Results [3]: [CERT#72L, first#582, valueSet#583]
+
+(8) Exchange
+Input [3]: [CERT#72L, first#582, valueSet#583]
+Arguments: hashpartitioning(CERT#72L, 8), ENSURE_REQUIREMENTS, [plan_id=113]
+
+(9) Sort
+Input [3]: [CERT#72L, first#582, valueSet#583]
+Arguments: [CERT#72L ASC NULLS FIRST], false, 0
+
+(10) SortAggregate
+Input [3]: [CERT#72L, first#582, valueSet#583]
+Keys [1]: [CERT#72L]
+Functions [1]: [first(BKCLASS#75, false)]
+Aggregate Attributes [1]: [first(BKCLASS#75)()#572]
+Results [2]: [CERT#72L, first(BKCLASS#75)()#572 AS BKCLASS#573]
+
+(11) BroadcastExchange
+Input [2]: [CERT#72L, BKCLASS#573]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=117]
+
+(12) BroadcastHashJoin
+Left keys [1]: [CERT#0L]
+Right keys [1]: [CERT#72L]
+Join type: LeftOuter
+Join condition: None
+
+(13) Project
+Output [19]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, CASE WHEN ((((isnotnull(EQ#65) AND NOT isnan(EQ#65)) AND (abs(EQ#65) < Infinity)) AND ((isnotnull(ASSET#63) AND NOT isnan(ASSET#63)) AND (abs(ASSET#63) < Infinity))) AND NOT (ASSET#63 = 0.0)) THEN ((EQ#65 / ASSET#63) * 100.0) END AS equity_asset_pct#97, CASE WHEN ((((isnotnull(NETINC#66) AND NOT isnan(NETINC#66)) AND (abs(NETINC#66) < Infinity)) AND ((isnotnull(ASSET#63) AND NOT isnan(ASSET#63)) AND (abs(ASSET#63) < Infinity))) AND NOT (ASSET#63 = 0.0)) THEN ((NETINC#66 / ASSET#63) * 100.0) END AS roa_calc_pct#98, CASE WHEN ((((isnotnull(NCLNLS#67) AND NOT isnan(NCLNLS#67)) AND (abs(NCLNLS#67) < Infinity)) AND ((isnotnull(LNLSGR#68) AND NOT isnan(LNLSGR#68)) AND (abs(LNLSGR#68) < Infinity))) AND NOT (LNLSGR#68 = 0.0)) THEN ((NCLNLS#67 / LNLSGR#68) * 100.0) END AS nclnls_gross_pct#99, CASE WHEN ((((isnotnull(LNATRES#69) AND NOT isnan(LNATRES#69)) AND (abs(LNATRES#69) < Infinity)) AND ((isnotnull(LNLSGR#68) AND NOT isnan(LNLSGR#68)) AND (abs(LNLSGR#68) < Infinity))) AND NOT (LNLSGR#68 = 0.0)) THEN ((LNATRES#69 / LNLSGR#68) * 100.0) END AS allowance_gross_pct#100, CASE WHEN ((((isnotnull(DEP#64) AND NOT isnan(DEP#64)) AND (abs(DEP#64) < Infinity)) AND ((isnotnull(ASSET#63) AND NOT isnan(ASSET#63)) AND (abs(ASSET#63) < Infinity))) AND NOT (ASSET#63 = 0.0)) THEN ((DEP#64 / ASSET#63) * 100.0) END AS deposit_asset_pct#101, CASE WHEN ((((isnotnull(LNLSNET#70) AND NOT isnan(LNLSNET#70)) AND (abs(LNLSNET#70) < Infinity)) AND ((isnotnull(DEP#64) AND NOT isnan(DEP#64)) AND (abs(DEP#64) < Infinity))) AND NOT (DEP#64 = 0.0)) THEN ((LNLSNET#70 / DEP#64) * 100.0) END AS loans_deposit_pct#102]
+Input [14]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, CERT#72L, BKCLASS#573]
+
+(14) Exchange
+Input [19]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102]
+Arguments: hashpartitioning(CERT#0L, qidx#62L, 8), ENSURE_REQUIREMENTS, [plan_id=122]
+
+(15) Sort
+Input [19]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102]
+Arguments: [CERT#0L ASC NULLS FIRST, qidx#62L ASC NULLS FIRST], false, 0
+
+(16) Scan parquet 
+Output [9]: [CERT#110L, REPDTE#111, ASSET#113, EQ#116, LNLSGR#120, NCLNLS#126, ROA#138, year#150, quarter#151]
+Batched: true
+Location: InMemoryFileIndex [file:/D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+PushedFilters: [IsNotNull(REPDTE), GreaterThanOrEqual(REPDTE,1984-03-31), LessThanOrEqual(REPDTE,2026-06-30), IsNotNull(CERT)]
+ReadSchema: struct<CERT:bigint,REPDTE:date,ASSET:double,EQ:double,LNLSGR:double,NCLNLS:double,ROA:double,year:int,quarter:tinyint>
+
+(17) Filter
+Input [9]: [CERT#110L, REPDTE#111, ASSET#113, EQ#116, LNLSGR#120, NCLNLS#126, ROA#138, year#150, quarter#151]
+Condition : ((((isnotnull(REPDTE#111) AND (REPDTE#111 >= 1984-03-31)) AND (REPDTE#111 <= 2026-06-30)) AND isnotnull(CERT#110L)) AND isnotnull(((((cast(year#150 as bigint) * 4) + cast(quarter#151 as bigint)) - 1) + 1)))
+
+(18) Project
+Output [7]: [CERT#110L, (((cast(year#150 as bigint) * 4) + cast(quarter#151 as bigint)) - 1) AS qidx#171L, CASE WHEN ((isnotnull(ASSET#113) AND NOT isnan(ASSET#113)) AND (abs(ASSET#113) < Infinity)) THEN ASSET#113 END AS ASSET#172, CASE WHEN ((isnotnull(EQ#116) AND NOT isnan(EQ#116)) AND (abs(EQ#116) < Infinity)) THEN EQ#116 END AS EQ#174, CASE WHEN ((isnotnull(NCLNLS#126) AND NOT isnan(NCLNLS#126)) AND (abs(NCLNLS#126) < Infinity)) THEN NCLNLS#126 END AS NCLNLS#176, CASE WHEN ((isnotnull(LNLSGR#120) AND NOT isnan(LNLSGR#120)) AND (abs(LNLSGR#120) < Infinity)) THEN LNLSGR#120 END AS LNLSGR#177, CASE WHEN ((isnotnull(ROA#138) AND NOT isnan(ROA#138)) AND (abs(ROA#138) < Infinity)) THEN ROA#138 END AS ROA#180]
+Input [9]: [CERT#110L, REPDTE#111, ASSET#113, EQ#116, LNLSGR#120, NCLNLS#126, ROA#138, year#150, quarter#151]
+
+(19) Project
+Output [7]: [CERT#110L AS _lag1_join_cert#103L, (qidx#171L + 1) AS _lag1_join_qidx#104L, ASSET#172 AS asset_lag1#105, EQ#174 AS eq_lag1#106, ROA#180 AS roa_lag1#107, CASE WHEN ((((isnotnull(EQ#174) AND NOT isnan(EQ#174)) AND (abs(EQ#174) < Infinity)) AND ((isnotnull(ASSET#172) AND NOT isnan(ASSET#172)) AND (abs(ASSET#172) < Infinity))) AND NOT (ASSET#172 = 0.0)) THEN ((EQ#174 / ASSET#172) * 100.0) END AS equity_ratio_lag1#108, CASE WHEN ((((isnotnull(NCLNLS#176) AND NOT isnan(NCLNLS#176)) AND (abs(NCLNLS#176) < Infinity)) AND ((isnotnull(LNLSGR#177) AND NOT isnan(LNLSGR#177)) AND (abs(LNLSGR#177) < Infinity))) AND NOT (LNLSGR#177 = 0.0)) THEN ((NCLNLS#176 / LNLSGR#177) * 100.0) END AS nclnls_ratio_lag1#109]
+Input [7]: [CERT#110L, qidx#171L, ASSET#172, EQ#174, NCLNLS#176, LNLSGR#177, ROA#180]
+
+(20) Exchange
+Input [7]: [_lag1_join_cert#103L, _lag1_join_qidx#104L, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109]
+Arguments: hashpartitioning(_lag1_join_cert#103L, _lag1_join_qidx#104L, 8), ENSURE_REQUIREMENTS, [plan_id=123]
+
+(21) Sort
+Input [7]: [_lag1_join_cert#103L, _lag1_join_qidx#104L, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109]
+Arguments: [_lag1_join_cert#103L ASC NULLS FIRST, _lag1_join_qidx#104L ASC NULLS FIRST], false, 0
+
+(22) SortMergeJoin
+Left keys [2]: [CERT#0L, qidx#62L]
+Right keys [2]: [_lag1_join_cert#103L, _lag1_join_qidx#104L]
+Join type: LeftOuter
+Join condition: None
+
+(23) Project
+Output [24]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109]
+Input [26]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, _lag1_join_cert#103L, _lag1_join_qidx#104L, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109]
+
+(24) Scan parquet 
+Output [9]: [CERT#245L, REPDTE#246, ASSET#248, EQ#251, LNLSGR#255, NCLNLS#261, ROA#273, year#285, quarter#286]
+Batched: true
+Location: InMemoryFileIndex [file:/D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+PushedFilters: [IsNotNull(REPDTE), GreaterThanOrEqual(REPDTE,1984-03-31), LessThanOrEqual(REPDTE,2026-06-30), IsNotNull(CERT)]
+ReadSchema: struct<CERT:bigint,REPDTE:date,ASSET:double,EQ:double,LNLSGR:double,NCLNLS:double,ROA:double,year:int,quarter:tinyint>
+
+(25) Filter
+Input [9]: [CERT#245L, REPDTE#246, ASSET#248, EQ#251, LNLSGR#255, NCLNLS#261, ROA#273, year#285, quarter#286]
+Condition : ((((isnotnull(REPDTE#246) AND (REPDTE#246 >= 1984-03-31)) AND (REPDTE#246 <= 2026-06-30)) AND isnotnull(CERT#245L)) AND isnotnull(((((cast(year#285 as bigint) * 4) + cast(quarter#286 as bigint)) - 1) + 4)))
+
+(26) Project
+Output [7]: [CERT#245L, (((cast(year#285 as bigint) * 4) + cast(quarter#286 as bigint)) - 1) AS qidx#306L, CASE WHEN ((isnotnull(ASSET#248) AND NOT isnan(ASSET#248)) AND (abs(ASSET#248) < Infinity)) THEN ASSET#248 END AS ASSET#307, CASE WHEN ((isnotnull(EQ#251) AND NOT isnan(EQ#251)) AND (abs(EQ#251) < Infinity)) THEN EQ#251 END AS EQ#309, CASE WHEN ((isnotnull(NCLNLS#261) AND NOT isnan(NCLNLS#261)) AND (abs(NCLNLS#261) < Infinity)) THEN NCLNLS#261 END AS NCLNLS#311, CASE WHEN ((isnotnull(LNLSGR#255) AND NOT isnan(LNLSGR#255)) AND (abs(LNLSGR#255) < Infinity)) THEN LNLSGR#255 END AS LNLSGR#312, CASE WHEN ((isnotnull(ROA#273) AND NOT isnan(ROA#273)) AND (abs(ROA#273) < Infinity)) THEN ROA#273 END AS ROA#315]
+Input [9]: [CERT#245L, REPDTE#246, ASSET#248, EQ#251, LNLSGR#255, NCLNLS#261, ROA#273, year#285, quarter#286]
+
+(27) Project
+Output [7]: [CERT#245L, qidx#306L, ASSET#307, EQ#309, ROA#315, CASE WHEN ((((isnotnull(EQ#309) AND NOT isnan(EQ#309)) AND (abs(EQ#309) < Infinity)) AND ((isnotnull(ASSET#307) AND NOT isnan(ASSET#307)) AND (abs(ASSET#307) < Infinity))) AND NOT (ASSET#307 = 0.0)) THEN ((EQ#309 / ASSET#307) * 100.0) END AS equity_asset_pct#339, CASE WHEN ((((isnotnull(NCLNLS#311) AND NOT isnan(NCLNLS#311)) AND (abs(NCLNLS#311) < Infinity)) AND ((isnotnull(LNLSGR#312) AND NOT isnan(LNLSGR#312)) AND (abs(LNLSGR#312) < Infinity))) AND NOT (LNLSGR#312 = 0.0)) THEN ((NCLNLS#311 / LNLSGR#312) * 100.0) END AS nclnls_gross_pct#341]
+Input [7]: [CERT#245L, qidx#306L, ASSET#307, EQ#309, NCLNLS#311, LNLSGR#312, ROA#315]
+
+(28) Exchange
+Input [7]: [CERT#245L, qidx#306L, ASSET#307, EQ#309, ROA#315, equity_asset_pct#339, nclnls_gross_pct#341]
+Arguments: hashpartitioning(CERT#245L, qidx#306L, 8), ENSURE_REQUIREMENTS, [plan_id=129]
+
+(29) Sort
+Input [7]: [CERT#245L, qidx#306L, ASSET#307, EQ#309, ROA#315, equity_asset_pct#339, nclnls_gross_pct#341]
+Arguments: [CERT#245L ASC NULLS FIRST, qidx#306L ASC NULLS FIRST], false, 0
+
+(30) Scan parquet 
+Output [4]: [CERT#345L, REPDTE#346, year#385, quarter#386]
+Batched: true
+Location: InMemoryFileIndex [file:/D:/zalo/Sem 7/big_data_analysis4Fin-main/bft65b-bank-failure-pipeline/data_processed/panel/bank_quarter.parquet]
+PushedFilters: [IsNotNull(REPDTE), GreaterThanOrEqual(REPDTE,1984-03-31), LessThanOrEqual(REPDTE,2026-06-30), IsNotNull(CERT)]
+ReadSchema: struct<CERT:bigint,REPDTE:date,year:int,quarter:tinyint>
+
+(31) Filter
+Input [4]: [CERT#345L, REPDTE#346, year#385, quarter#386]
+Condition : ((((isnotnull(REPDTE#346) AND (REPDTE#346 >= 1984-03-31)) AND (REPDTE#346 <= 2026-06-30)) AND isnotnull(CERT#345L)) AND isnotnull(((((cast(year#385 as bigint) * 4) + cast(quarter#386 as bigint)) - 1) + 1)))
+
+(32) Project
+Output [2]: [CERT#345L AS _lag1_join_cert#445L, ((((cast(year#385 as bigint) * 4) + cast(quarter#386 as bigint)) - 1) + 1) AS _lag1_join_qidx#446L]
+Input [4]: [CERT#345L, REPDTE#346, year#385, quarter#386]
+
+(33) Exchange
+Input [2]: [_lag1_join_cert#445L, _lag1_join_qidx#446L]
+Arguments: hashpartitioning(_lag1_join_cert#445L, _lag1_join_qidx#446L, 8), ENSURE_REQUIREMENTS, [plan_id=130]
+
+(34) Sort
+Input [2]: [_lag1_join_cert#445L, _lag1_join_qidx#446L]
+Arguments: [_lag1_join_cert#445L ASC NULLS FIRST, _lag1_join_qidx#446L ASC NULLS FIRST], false, 0
+
+(35) SortMergeJoin
+Left keys [2]: [CERT#245L, qidx#306L]
+Right keys [2]: [_lag1_join_cert#445L, _lag1_join_qidx#446L]
+Join type: LeftOuter
+Join condition: None
+
+(36) Project
+Output [7]: [CERT#245L AS _lag4_join_cert#238L, (qidx#306L + 4) AS _lag4_join_qidx#239L, ASSET#307 AS asset_lag4#240, EQ#309 AS eq_lag4#241, ROA#315 AS roa_lag4#242, equity_asset_pct#339 AS equity_ratio_lag4#243, nclnls_gross_pct#341 AS nclnls_ratio_lag4#244]
+Input [9]: [CERT#245L, qidx#306L, ASSET#307, EQ#309, ROA#315, equity_asset_pct#339, nclnls_gross_pct#341, _lag1_join_cert#445L, _lag1_join_qidx#446L]
+
+(37) Exchange
+Input [7]: [_lag4_join_cert#238L, _lag4_join_qidx#239L, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244]
+Arguments: hashpartitioning(_lag4_join_cert#238L, _lag4_join_qidx#239L, 8), ENSURE_REQUIREMENTS, [plan_id=137]
+
+(38) Sort
+Input [7]: [_lag4_join_cert#238L, _lag4_join_qidx#239L, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244]
+Arguments: [_lag4_join_cert#238L ASC NULLS FIRST, _lag4_join_qidx#239L ASC NULLS FIRST], false, 0
+
+(39) SortMergeJoin
+Left keys [2]: [CERT#0L, qidx#62L]
+Right keys [2]: [_lag4_join_cert#238L, _lag4_join_qidx#239L]
+Join type: LeftOuter
+Join condition: None
+
+(40) Project
+Output [36]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, CASE WHEN ((((isnotnull((ASSET#63 - asset_lag1#105)) AND NOT isnan((ASSET#63 - asset_lag1#105))) AND (abs((ASSET#63 - asset_lag1#105)) < Infinity)) AND ((isnotnull(asset_lag1#105) AND NOT isnan(asset_lag1#105)) AND (abs(asset_lag1#105) < Infinity))) AND NOT (asset_lag1#105 = 0.0)) THEN (((ASSET#63 - asset_lag1#105) / asset_lag1#105) * 100.0) END AS asset_growth_1q_pct#513, CASE WHEN ((((isnotnull((ASSET#63 - asset_lag4#240)) AND NOT isnan((ASSET#63 - asset_lag4#240))) AND (abs((ASSET#63 - asset_lag4#240)) < Infinity)) AND ((isnotnull(asset_lag4#240) AND NOT isnan(asset_lag4#240)) AND (abs(asset_lag4#240) < Infinity))) AND NOT (asset_lag4#240 = 0.0)) THEN (((ASSET#63 - asset_lag4#240) / asset_lag4#240) * 100.0) END AS asset_growth_4q_pct#514, CASE WHEN ((((isnotnull((EQ#65 - eq_lag4#241)) AND NOT isnan((EQ#65 - eq_lag4#241))) AND (abs((EQ#65 - eq_lag4#241)) < Infinity)) AND ((isnotnull(eq_lag4#241) AND NOT isnan(eq_lag4#241)) AND (abs(eq_lag4#241) < Infinity))) AND NOT (eq_lag4#241 = 0.0)) THEN (((EQ#65 - eq_lag4#241) / eq_lag4#241) * 100.0) END AS equity_growth_4q_pct#515, (ROA#71 - roa_lag1#107) AS roa_delta_1q#516, (ROA#71 - roa_lag4#242) AS roa_delta_4q#517, (equity_asset_pct#97 - equity_ratio_lag4#243) AS equity_ratio_delta_4q#518, (nclnls_gross_pct#99 - nclnls_ratio_lag4#244) AS nclnls_ratio_delta_4q#519]
+Input [31]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, _lag4_join_cert#238L, _lag4_join_qidx#239L, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244]
+
+(41) Exchange
+Input [36]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519]
+Arguments: hashpartitioning(qidx#62L, 8), ENSURE_REQUIREMENTS, [plan_id=142]
+
+(42) Sort
+Input [36]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519]
+Arguments: [qidx#62L ASC NULLS FIRST], false, 0
+
+(43) Window
+Input [36]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519]
+Arguments: [avg(ROA#71) windowspecdefinition(qidx#62L, specifiedwindowframe(RowFrame, unboundedpreceding$(), unboundedfollowing$())) AS _we0#528, avg(equity_asset_pct#97) windowspecdefinition(qidx#62L, specifiedwindowframe(RowFrame, unboundedpreceding$(), unboundedfollowing$())) AS _we1#529, avg(nclnls_gross_pct#99) windowspecdefinition(qidx#62L, specifiedwindowframe(RowFrame, unboundedpreceding$(), unboundedfollowing$())) AS _we2#530, count(1) windowspecdefinition(qidx#62L, specifiedwindowframe(RowFrame, unboundedpreceding$(), unboundedfollowing$())) AS _we3#531L], [qidx#62L]
+
+(44) Project
+Output [42]: [CERT#0L, REPDTE#1, qidx#62L, BKCLASS#573, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519, _we0#528 AS peer_mean_roa#520, _we1#529 AS peer_mean_equity_asset_pct#521, _we2#530 AS peer_mean_nclnls_gross_pct#522, cast(_we3#531L as double) AS peer_bank_count#523, (ROA#71 - _we0#528) AS roa_vs_peer_mean#532, (equity_asset_pct#97 - _we1#529) AS equity_ratio_vs_peer_mean#533]
+Input [40]: [CERT#0L, REPDTE#1, qidx#62L, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, BKCLASS#573, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519, _we0#528, _we1#529, _we2#530, _we3#531L]
+
+(45) Exchange
+Input [42]: [CERT#0L, REPDTE#1, qidx#62L, BKCLASS#573, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519, peer_mean_roa#520, peer_mean_equity_asset_pct#521, peer_mean_nclnls_gross_pct#522, peer_bank_count#523, roa_vs_peer_mean#532, equity_ratio_vs_peer_mean#533]
+Arguments: rangepartitioning(CERT#0L ASC NULLS FIRST, REPDTE#1 ASC NULLS FIRST, 8), ENSURE_REQUIREMENTS, [plan_id=147]
+
+(46) Sort
+Input [42]: [CERT#0L, REPDTE#1, qidx#62L, BKCLASS#573, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519, peer_mean_roa#520, peer_mean_equity_asset_pct#521, peer_mean_nclnls_gross_pct#522, peer_bank_count#523, roa_vs_peer_mean#532, equity_ratio_vs_peer_mean#533]
+Arguments: [CERT#0L ASC NULLS FIRST, REPDTE#1 ASC NULLS FIRST], true, 0
+
+(47) AdaptiveSparkPlan
+Output [42]: [CERT#0L, REPDTE#1, qidx#62L, BKCLASS#573, ASSET#63, DEP#64, EQ#65, NETINC#66, NCLNLS#67, LNLSGR#68, LNATRES#69, LNLSNET#70, ROA#71, equity_asset_pct#97, roa_calc_pct#98, nclnls_gross_pct#99, allowance_gross_pct#100, deposit_asset_pct#101, loans_deposit_pct#102, asset_lag1#105, eq_lag1#106, roa_lag1#107, equity_ratio_lag1#108, nclnls_ratio_lag1#109, asset_lag4#240, eq_lag4#241, roa_lag4#242, equity_ratio_lag4#243, nclnls_ratio_lag4#244, asset_growth_1q_pct#513, asset_growth_4q_pct#514, equity_growth_4q_pct#515, roa_delta_1q#516, roa_delta_4q#517, equity_ratio_delta_4q#518, nclnls_ratio_delta_4q#519, peer_mean_roa#520, peer_mean_equity_asset_pct#521, peer_mean_nclnls_gross_pct#522, peer_bank_count#523, roa_vs_peer_mean#532, equity_ratio_vs_peer_mean#533]
+Arguments: isFinalPlan=false
+
+

@@ -4,9 +4,9 @@ Reproducible big-data pipeline for the BFT65B final report. The pipeline uses pu
 data to build a point-in-time bank–quarter panel, a leak-free feature table, and an honestly
 validated early-warning model.
 
-This repository is currently at **Phase 1: acquisition and storage**. The FDIC download,
-dictionary validation, completeness verification, and storage benchmark are implemented. Data
-quality, processing, features, and modelling are implemented in later phases.
+This repository currently implements **Phases 1–3**: acquisition and storage, data quality and
+the point-in-time panel, and scalable Polars/pandas/PySpark processing. Feature engineering,
+modelling, and report generation are implemented in later phases.
 
 ## 1. Prerequisites
 
@@ -206,16 +206,68 @@ The panel contains no `ACTIVE`, `ENDEFYMD`, `CHANGEC1`, `FAILDATE`, `FAILYR`, ev
 failure-proximity columns. Failure proximity is computed only in `audit.py` and stored only in
 `dq_extremes_triage.csv`.
 
+## 6. Phase 3 — scalable processing
+
+Phase 3 runs one frozen workload through Polars, an idiomatic pandas baseline, and local
+PySpark. Always validate the 2023 sample before the full panel:
+
+```powershell
+bft65b transform inputs
+bft65b transform run --scope sample --engine all
+bft65b transform equivalence --scope sample --strict
+
+bft65b transform run --scope full --engine all
+bft65b transform equivalence --scope full --strict
+bft65b transform plans --scope full
+bft65b transform benchmark --scales 10,25,50,100
+```
+
+The workload computes CAMELS-style ratios, exact 1Q/4Q calendar lags via `(CERT, qidx)` self-joins,
+growth and deltas, and quarterly peer aggregates. Missing quarters produce null lags; rows are
+never shifted across a gap. Only `BKCLASS` is taken from Institutions, and only a report-only
+count of failure-key matches is taken from the failures table. No failure-derived column enters
+the 42-column canonical output.
+
+Benchmark scales are contiguous trailing windows of 17, 43, 85, and 170 quarters rather than
+evenly spaced samples, so exact calendar lags remain meaningful. Each engine/run is launched in a
+fresh process with one warm-up and five timed runs. Peak RSS is sampled for the worker process
+and its descendants, including the Spark JVM. See `docs/scalable_processing.md` for the workload
+contract, plan interpretation, equivalence rules, and cluster-crossover method.
+
+| Path | Content |
+|---|---|
+| `outputs/manifests/processing_inputs.json` | Sample/scale windows, row counts, and SHA-256 hashes |
+| `outputs/manifests/processing_manifest.json` | Per-scope, per-engine run results |
+| `outputs/manifests/engine_equivalence_summary.json` | Pass/fail summary and tolerance |
+| `outputs/tables/engine_equivalence_report.csv` | Pairwise column-level equivalence report |
+| `outputs/tables/polars_plans.txt` | Unoptimized, optimized, and raw-partition scan plans |
+| `outputs/tables/spark_physical_plan.txt` | Spark 4.3 formatted physical plan |
+| `outputs/tables/spark_plan_interpretation.md` | Interpretation of observed plan nodes |
+| `outputs/tables/benchmark_results.csv` | Per-run runtime and peak RSS |
+| `outputs/manifests/benchmark_summary.json` | Median/IQR summary, host metadata, and crossover |
+| `outputs/figures/engine_runtime_memory.png` | Runtime and memory scaling figure |
+| `outputs/tables/cluster_crossover.csv` | Measured scaling and labelled cluster scenarios |
+| `outputs/tables/cluster_crossover_note.md` | Crossover assumptions and interpretation |
+| `outputs/tables/engine_equivalence_report_sample.csv`, `engine_equivalence_report_full.csv` | Preserved per-scope equivalence reports |
+
+Verified full run: sample equivalence passed with 18,798 rows per engine and full equivalence passed
+with 1,682,738 rows per engine; both had identical 42-column schemas, exact null masks, and zero
+numeric mismatches at `rtol=1e-6` / `atol=1e-8`. The 72-run benchmark (60 timed) found full-panel
+median runtimes of 3.368 s for Polars, 17.789 s for pandas, and 44.857 s for local Spark, with peak
+RSS of 1,827.8 MiB, 2,991.8 MiB, and 2,813.8 MiB respectively. The captured Spark plan has 8
+`Exchange` nodes; under labelled cluster assumptions, a cluster is not justified for this panel.
+See `docs/scalable_processing.md` for the full tables and interpretation. The final
+`pytest -q` result after Phase 3 was `55 passed, 1 skipped` (network-gated test).
+
 These commands still exit with status `2` until their phases are implemented:
 
 ```text
-bft65b transform    # Phase 3: Polars, pandas, and PySpark processing
 bft65b features     # Phase 4: leak-free features, labels, split, preprocessing
 bft65b model        # Phase 5: development-only tuning and single test evaluation
 bft65b report       # Phase 6: tables, figures, Page-1 metadata, report
 ```
 
-## 6. Data policy
+## 7. Data policy
 
 All raw and processed data live under:
 
@@ -235,7 +287,7 @@ outputs/spark_plans/
 outputs/benchmarks/
 ```
 
-## 7. Modelling discipline
+## 8. Modelling discipline
 
 - Label: failure in `(q, q + 4 quarters]`; mergers are never positive labels.
 - Modelling cutoff: `REPDTE <= 2025-06-30`.
@@ -250,7 +302,7 @@ The current split candidate is development `1984Q1–2008Q4`, gap `2009Q1–2009
 (`acquisition_summary.json`). These are **not** label counts: Phase 4 will count `y = 1` rows per
 quarter after applying the four-quarter horizon and the 2025Q2 cutoff, then freeze the split.
 
-## 8. Repository layout
+## 9. Repository layout
 
 ```text
 configs/pipeline.yaml     Single source of truth for paths, seeds, split, and benchmark settings
@@ -262,7 +314,7 @@ outputs/                  Report-ready tables, figures, manifests, and plans
 reports/                  Report source and final PDF/DOCX
 ```
 
-## 9. Report identity placeholders
+## 10. Report identity placeholders
 
 The Page-1 identity fields in `configs/pipeline.yaml` are intentionally empty:
 
@@ -275,7 +327,7 @@ report:
 
 They must be filled with real values by the student. Do not invent them.
 
-## 10. Data source and citations
+## 11. Data source and citations
 
 Data source:
 
@@ -284,16 +336,23 @@ Data source:
 - FDIC field dictionary: `https://api.fdic.gov/banks/docs/`
 - FDIC bulk downloads: `https://banks.data.fdic.gov/bankfind-suite/bulkData`
 
+Library documentation used for implementation choices: Polars lazy plans
+(`https://docs.pola.rs/user-guide/lazy/`), Spark SQL `EXPLAIN`
+(`https://spark.apache.org/docs/latest/sql-ref-syntax-qry-explain.html`), pandas
+(`https://pandas.pydata.org/docs/`), psutil (`https://psutil.readthedocs.io/`), and PyArrow Parquet
+(`https://arrow.apache.org/docs/python/parquet.html`). Exact versions are pinned in
+`requirements.txt`.
+
 AI assistance used so far: the OpenCode coding agent (`https://opencode.ai/`), with
 DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`) for earlier phases and Big Pickle
-(`opencode/big-pickle`) for Phase 2 implementation and verification. These tools assisted with code,
-tests, and documentation; all reported numbers were produced by deterministic local runs on real
-FDIC data.
+(`opencode/big-pickle`) for Phase 2 and Phase 3 implementation and verification. These tools
+assisted with code, tests, and documentation; all reported numbers were produced by deterministic
+local runs on real FDIC data.
 
 The final report and `docs/REFERENCES_REVIEW.md` must cite every external repository, paper,
 documentation page, library, AI tool, and language model used.
 
-## 11. Academic integrity
+## 12. Academic integrity
 
 This is an individual academic project. All copied or adapted code, data definitions, methodological
 choices, and AI assistance must be cited in the report and repository. Uncited copying is
