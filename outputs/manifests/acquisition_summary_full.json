@@ -1,0 +1,300 @@
+{
+  "api": {
+    "base_url": "https://api.fdic.gov/banks",
+    "max_retries": 6,
+    "page_size": 10000,
+    "parquet_compression": "zstd"
+  },
+  "checks": [
+    {
+      "detail": "170 of 170 expected quarters present",
+      "name": "financial_quarters_complete",
+      "passed": true
+    },
+    {
+      "detail": "0 schema mismatches",
+      "name": "financial_schema_stable",
+      "passed": true
+    },
+    {
+      "detail": "0 duplicate (CERT, REPDTE) rows",
+      "name": "financial_keys_unique",
+      "passed": true
+    },
+    {
+      "detail": "1,682,738 rows vs 1,682,738 API total",
+      "name": "financial_rows_match_api_total",
+      "passed": true
+    },
+    {
+      "detail": "4,117 rows",
+      "name": "failures_rows_match_api_total",
+      "passed": true
+    },
+    {
+      "detail": "0 duplicate (CERT, FAILDATE) rows; 488 null CERT rows retained",
+      "name": "failures_cert_events_distinct",
+      "passed": true
+    },
+    {
+      "detail": "27,838 rows",
+      "name": "institutions_rows_match_api_total",
+      "passed": true
+    },
+    {
+      "detail": "0 duplicate CERT rows",
+      "name": "institutions_cert_unique",
+      "passed": true
+    },
+    {
+      "detail": "0 failure CERTs missing from institutions",
+      "name": "failure_certs_link_to_institutions",
+      "passed": true
+    },
+    {
+      "detail": {
+        "ASSET_median": 86111.0,
+        "COST_median": 11304.0879,
+        "NIMY_median": 4.0464,
+        "RBC1AAJ_median": 9.096,
+        "RBCRWAJ_median": 13.2754,
+        "ROA_median": 0.9745,
+        "ROE_median": 10.34
+      },
+      "name": "unit_sanity",
+      "passed": true
+    }
+  ],
+  "download": {
+    "date": "2026-11-24",
+    "first_table_downloaded_utc": "2026-11-23T19:42:57.118818+00:00",
+    "last_table_downloaded_utc": "2026-11-24T04:33:11.052027+00:00",
+    "latest_run_finished_utc": "2026-11-24T04:33:11.066580+00:00",
+    "latest_run_started_utc": "2026-11-24T04:15:42.564378+00:00",
+    "latest_run_status": "complete"
+  },
+  "failures": {
+    "api_total": 4117,
+    "duplicate_cert_groups": 44,
+    "duplicate_cert_rows": 44,
+    "duplicate_cert_same_event_rows": 0,
+    "max_faildate": "2026-07-17",
+    "min_faildate": "1934-04-19",
+    "null_cert": 488,
+    "restype_counts": {
+      "ASSISTANCE": 593,
+      "FAILURE": 3524
+    },
+    "rows": 4117
+  },
+  "field_dictionary": {
+    "available": true,
+    "fields": 58,
+    "missing_from_metadata": 0,
+    "unit_conflicts": 0,
+    "units_from_curated_convention": 50,
+    "units_verified_from_metadata": 8
+  },
+  "financials": {
+    "api_total_sum": 1682738,
+    "duplicate_keys": 0,
+    "quarters": 170,
+    "rows": 1682738,
+    "schema_mismatches": 0
+  },
+  "generated_at_utc": "2026-11-24T04:46:03.787274+00:00",
+  "institutions": {
+    "active_counts": {
+      "0": 23632,
+      "1": 4206
+    },
+    "api_total": 27838,
+    "duplicate_cert_groups": 0,
+    "duplicate_cert_rows": 0,
+    "rows": 27838
+  },
+  "method": "FDIC BankFind REST API (https://api.fdic.gov/banks)",
+  "passed": true,
+  "raw_failure_counts": {
+    "available": true,
+    "dev": 2727,
+    "test": 339,
+    "window_basis": "Raw counts of failures.FAILDATE inside each window. These are not model labels; Phase 4 builds y_{i,q} for the four-quarter horizon."
+  },
+  "report_page1": {
+    "dev_period": [
+      "1984-03-31",
+      "2008-12-31"
+    ],
+    "download_date": "2026-11-24",
+    "download_date_basis": "UTC date of the last completed table download recorded in the acquisition manifest; a resumed run that skips tables does not change it",
+    "download_method": "FDIC BankFind REST API (https://api.fdic.gov/banks)",
+    "failures_rows": 4117,
+    "financials_quarters": 170,
+    "financials_rows": 1682738,
+    "institutions_rows": 27838,
+    "raw_failure_count_basis": "Raw counts of failures.FAILDATE inside each window. These are not model labels; Phase 4 builds y_{i,q} for the four-quarter horizon.",
+    "raw_failures_in_dev": 2727,
+    "raw_failures_in_test": 339,
+    "test_period": [
+      "2010-03-31",
+      "2025-06-30"
+    ]
+  },
+  "schema_version": 1,
+  "scope": "full",
+  "storage": {
+    "available": true,
+    "compression": "zstd",
+    "compression_ratio": 2.126343546830871,
+    "disk_bytes": 2786933,
+    "layout": "partitioned_zstd",
+    "mib": 2.6578264236450195
+  },
+  "verification": {
+    "checks": [
+      {
+        "detail": "170 of 170 expected quarters present",
+        "name": "financial_quarters_complete",
+        "passed": true
+      },
+      {
+        "detail": "0 schema mismatches",
+        "name": "financial_schema_stable",
+        "passed": true
+      },
+      {
+        "detail": "0 duplicate (CERT, REPDTE) rows",
+        "name": "financial_keys_unique",
+        "passed": true
+      },
+      {
+        "detail": "1,682,738 rows vs 1,682,738 API total",
+        "name": "financial_rows_match_api_total",
+        "passed": true
+      },
+      {
+        "detail": "4,117 rows",
+        "name": "failures_rows_match_api_total",
+        "passed": true
+      },
+      {
+        "detail": "0 duplicate (CERT, FAILDATE) rows; 488 null CERT rows retained",
+        "name": "failures_cert_events_distinct",
+        "passed": true
+      },
+      {
+        "detail": "27,838 rows",
+        "name": "institutions_rows_match_api_total",
+        "passed": true
+      },
+      {
+        "detail": "0 duplicate CERT rows",
+        "name": "institutions_cert_unique",
+        "passed": true
+      },
+      {
+        "detail": "0 failure CERTs missing from institutions",
+        "name": "failure_certs_link_to_institutions",
+        "passed": true
+      },
+      {
+        "detail": {
+          "ASSET_median": 86111.0,
+          "COST_median": 11304.0879,
+          "NIMY_median": 4.0464,
+          "RBC1AAJ_median": 9.096,
+          "RBCRWAJ_median": 13.2754,
+          "ROA_median": 0.9745,
+          "ROE_median": 10.34
+        },
+        "name": "unit_sanity",
+        "passed": true
+      }
+    ],
+    "cross_table": {
+      "examples": [],
+      "failure_certs_missing_from_institutions": 0
+    },
+    "failures": {
+      "api_total": 4117,
+      "duplicate_cert_groups": 44,
+      "duplicate_cert_rows": 44,
+      "duplicate_cert_same_event_rows": 0,
+      "max_faildate": "2026-07-17",
+      "min_faildate": "1934-04-19",
+      "null_cert": 488,
+      "restype_counts": {
+        "ASSISTANCE": 593,
+        "FAILURE": 3524
+      },
+      "rows": 4117
+    },
+    "financials": {
+      "api_total_sum": 1682738,
+      "duplicate_keys": 0,
+      "rows": 1682738,
+      "schema_mismatches": 0
+    },
+    "institutions": {
+      "active_counts": {
+        "0": 23632,
+        "1": 4206
+      },
+      "api_total": 27838,
+      "change_code_top10": {
+        "211": 2538,
+        "213": 567,
+        "217": 666,
+        "221": 816,
+        "223": 17705,
+        "230": 236,
+        "240": 575,
+        "520": 202,
+        "810": 305,
+        "None": 3476
+      },
+      "duplicate_cert_groups": 0,
+      "duplicate_cert_rows": 0,
+      "rows": 27838
+    },
+    "passed": true,
+    "quarters": {
+      "expected": 170,
+      "incomplete": [],
+      "missing": [],
+      "present": 170
+    },
+    "scope": "full",
+    "unit_sanity": {
+      "ASSET_median": 86111.0,
+      "COST_median": 11304.087929500001,
+      "NIMY_median": 4.046387746832741,
+      "RBC1AAJ_median": 9.096027505839933,
+      "RBCRWAJ_median": 13.275363770932536,
+      "ROA_median": 0.974537535228286,
+      "ROE_median": 10.34,
+      "passed": true,
+      "rules": {
+        "ASSET_median_positive": true,
+        "COST_median_non_negative": true,
+        "NIMY_median_in_range": true,
+        "RBC1AAJ_median_in_range": true,
+        "RBCRWAJ_median_in_range": true,
+        "ROA_median_in_range": true,
+        "ROE_median_in_range": true
+      },
+      "scope": "full"
+    },
+    "violations": [],
+    "warnings": [
+      "Failures table has 488 null CERT values (mostly pre-1934 records); they are retained and excluded from label joins",
+      "Failures table has 44 rows in 44 CERT groups with multiple events; all have distinct FAILDATE values"
+    ]
+  },
+  "violations": [],
+  "warnings": [
+    "Failures table has 488 null CERT values (mostly pre-1934 records); they are retained and excluded from label joins",
+    "Failures table has 44 rows in 44 CERT groups with multiple events; all have distinct FAILDATE values"
+  ]
+}
