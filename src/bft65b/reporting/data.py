@@ -9,6 +9,7 @@ for the final PDF.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -71,6 +72,104 @@ def _read_text(path: Path, *, max_lines: int | None = None) -> str:
     if max_lines is not None:
         lines = lines[:max_lines]
     return "\n".join(lines)
+
+
+def _markdown_to_plain(text: str) -> str:
+    """Convert generated Markdown notes to plain, citation-safe report prose."""
+    pieces: list[str] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or set(line) <= set("|-: "):
+            continue
+        if line.startswith("#"):
+            heading = line.lstrip("#").strip()
+            if not heading:
+                continue
+            if len(heading.split()) <= 6 and not heading.endswith((".", ":", "!", "?")):
+                continue
+            line = heading
+        if line.startswith("|") and line.endswith("|"):
+            cells = [cell.strip() for cell in line.strip("|").split("|")]
+            if len(cells) >= 3:
+                line = f"{cells[0]}: {cells[-1]}"
+        line = line.replace("`", "")
+        if line.startswith("- "):
+            line = line[2:]
+        if line:
+            pieces.append(line)
+    return " ".join(pieces)
+
+
+def _complete_sentence_excerpt(text: str, max_chars: int) -> str:
+    """Clip generated prose at a sentence boundary, never inside a word."""
+    plain = _markdown_to_plain(text)
+    sentences = [
+        sentence.strip()
+        for sentence in re.split(r"(?<=[.!?])\s+", plain)
+        if sentence.strip()
+    ]
+    excerpt = ""
+    for sentence in sentences:
+        candidate = sentence if not excerpt else f"{excerpt} {sentence}"
+        if len(candidate) > max_chars and excerpt:
+            break
+        excerpt = candidate
+    return excerpt or (sentences[0] if sentences else "")
+
+
+def _compact_scan_line(line: str) -> str:
+    match = re.match(r"Parquet SCAN \[(.*)\]", line)
+    if match is None:
+        return line
+    first = match.group(1).split(", ")[0]
+    name = first.rstrip("/").rsplit("/", 1)[-1]
+    suffix = ", ..." if ", " in match.group(1) else ""
+    return f"Parquet SCAN [{name}{suffix}]"
+
+
+def _polars_plan_excerpt(text: str) -> str:
+    """Select comparable unoptimized/optimized lines from the captured plans."""
+    lines = text.splitlines()
+    starts = [i for i, line in enumerate(lines) if line.startswith("SECTION ")]
+    if len(starts) < 2:
+        raise ReportDataError("polars_plans.txt is missing SECTION 1 or SECTION 2")
+    second_end = starts[2] if len(starts) > 2 else len(lines)
+
+    def section(start: int, stop: int) -> str:
+        selected: list[str] = []
+        seen_filters = 0
+        seen_projections = 0
+        for raw in lines[start:stop]:
+            line = _compact_scan_line(raw.strip())
+            if line.startswith("SECTION "):
+                selected.append(line)
+            elif line.startswith("SORT BY"):
+                selected.append(line)
+            elif line.startswith("simple π") and not any(
+                item.startswith("simple π") for item in selected
+            ):
+                selected.append(line)
+            elif 'FILTER col("REPDTE")' in line and seen_filters < 2:
+                selected.append(line)
+                seen_filters += 1
+            elif line.startswith("SELECTION:") and not any(
+                item.startswith("SELECTION:") for item in selected
+            ):
+                selected.append(line)
+            elif line.startswith("Parquet SCAN") and not any(
+                item.startswith("Parquet SCAN") for item in selected
+            ):
+                selected.append(line)
+            elif line.startswith("PROJECT") and seen_projections < 1:
+                selected.append(line)
+                seen_projections += 1
+            elif line.startswith("ESTIMATED ROWS") and not any(
+                item.startswith("ESTIMATED ROWS") for item in selected
+            ):
+                selected.append(line)
+        return "\n".join(selected)
+
+    return f"{section(starts[0], starts[1])}\n\n{section(starts[1], second_end)}"
 
 
 def _require_mapping(value: Any, name: str) -> Mapping[str, Any]:
@@ -233,12 +332,16 @@ def collect_report_data(
             "bytes": path.stat().st_size,
         }
 
-    polars_plan = _read_text(outputs / "tables" / "polars_plans.txt", max_lines=42)
-    spark_plan = _read_text(outputs / "tables" / "spark_physical_plan.txt", max_lines=42)
-    spark_interpretation = _read_text(
-        outputs / "tables" / "spark_plan_interpretation.md", max_lines=60
+    polars_plan = _polars_plan_excerpt(
+        _read_text(outputs / "tables" / "polars_plans.txt")
     )
-    cluster_note = _read_text(outputs / "tables" / "cluster_crossover_note.md", max_lines=60)
+    spark_plan = _read_text(outputs / "tables" / "spark_physical_plan.txt", max_lines=42)
+    spark_interpretation = _complete_sentence_excerpt(
+        _read_text(outputs / "tables" / "spark_plan_interpretation.md"), max_chars=1500
+    )
+    cluster_note = _complete_sentence_excerpt(
+        _read_text(outputs / "tables" / "cluster_crossover_note.md"), max_chars=600
+    )
     references = _read_text(root / "docs" / "REFERENCES_REVIEW.md")
 
     full = _require_mapping(feature_summary.get("scopes", {}).get("full", {}), "feature_summary.full")

@@ -409,6 +409,28 @@ def _cost_rows(data: Mapping[str, Any]) -> list[list[str]]:
     ]
 
 
+def _full_cost_rows(data: Mapping[str, Any]) -> list[list[str]]:
+    """Return the full Dev cost grid with explicit weighting and diagnostic labels."""
+    return [
+        [
+            str(row.model_name),
+            str(row.weighting_mode),
+            str(row.ratio_label),
+            (
+                "asset-scaled"
+                if row.c_fn_thousands != row.c_fn_thousands
+                else fmt_float(row.c_fn_thousands, 1)
+            ),
+            fmt_float(row.c_fp_thousands, 1),
+            fmt_float(row.threshold, 6),
+            fmt_int(row.false_negative),
+            fmt_int(row.false_positive),
+            fmt_float(row.expected_cost_thousands, 1),
+        ]
+        for row in data["cost_sensitivity"].itertuples()
+    ]
+
+
 def _exit_rows(data: Mapping[str, Any]) -> list[list[str]]:
     frame = data["quality"]["rows"]
     exit_summary = data.get("exit_summary")
@@ -711,25 +733,32 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
         "caption",
     ))
     story.append(table(
-        ["Engine", "Median runtime s", "IQR s", "Peak RSS MiB"],
+        ["Engine", "Median runtime s", "IQR s", "Peak RSS (MiB)"],
         _full_benchmark_rows(data),
         [120, 145, 115, 131],
         align_right=(1, 2, 3),
     ))
+    engines = list(data["equivalence"].get("engines", ["polars", "pandas", "spark"]))
+    engine_pairs = len(engines) * (len(engines) - 1) // 2
+    comparisons = int(data["equivalence"].get("column_comparisons", 126))
+    compared_columns = comparisons // engine_pairs
     story.append(p(
-        "Engine equivalence is checked on all {rows:,} rows and {cols} compared columns with exact "
-        "null masks and numeric tolerance; the manifest reports no failures. These are local "
-        "measurements on one laptop, not a multi-node cluster benchmark."
+        "Engine equivalence is checked on all {rows:,} rows and {cols} columns across {pairs} "
+        "engine pairs ({comparisons:,} column comparisons) with exact null masks and numeric "
+        "tolerance; the manifest reports no failures. These are local measurements on one laptop, "
+        "not a multi-node cluster benchmark."
     ).format(
         rows=int(data["equivalence"].get("rows", data["acquisition"]["financials"]["rows"])),
-        cols=int(data["equivalence"].get("columns_compared", 126)),
+        cols=compared_columns,
+        pairs=engine_pairs,
+        comparisons=comparisons,
     ))
     story.append(PageBreak())
 
     # ------------------------------------------------------------------ page 6
     story.append(p("Part 3 - Execution plans and when a cluster is justified", "h1"))
-    story.append(p("Polars plan excerpt", "h2"))
-    story.append(_code(data["polars_plan"][:1200], styles))
+    story.append(p("Polars plan excerpt - unoptimized vs optimized", "h2"))
+    story.append(_code(data["polars_plan"], styles))
     story.append(p("Spark physical-plan excerpt", "h2"))
     story.append(_code(data["spark_plan"][:1200], styles))
     crossover = benchmark["cluster_crossover"]
@@ -738,8 +767,8 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
         "<font face='Courier'>BroadcastHashJoin</font> / <font face='Courier'>SortMergeJoin</font>, "
         "<font face='Courier'>Exchange</font>, <font face='Courier'>Sort</font> and "
         "<font face='Courier'>Window</font> nodes under "
-        "<font face='Courier'>AdaptiveSparkPlan</font>. Broadcasts are efficient for small failure "
-        "metadata; shuffles and window sorts dominate the wide panel. Polars avoids that exchange "
+        "<font face='Courier'>AdaptiveSparkPlan</font>. Broadcasts are efficient for small "
+        "Institutions metadata; shuffles and window sorts dominate the wide panel. Polars avoids that exchange "
         "cost on one machine."
     ))
     story.append(p(
@@ -1156,7 +1185,8 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
     ))
     story.append(p("Clean-room reproduction", "h2"))
     story.append(_code(
-        "python -m venv .venv && .\\.venv\\Scripts\\Activate.ps1\n"
+        "python -m venv .venv\n"
+        ".\\.venv\\Scripts\\Activate.ps1\n"
         "python -m pip install -r requirements.txt\n"
         "python -m pip install -e .\n"
         "bft65b doctor --skip-spark\n"
@@ -1198,20 +1228,23 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
         f"The dictionary records {fmt_int(len(field))} selected fields across "
         f"{field['table'].nunique()} FDIC tables, including unit provenance and role. "
         f"{fmt_int((field['is_key'] == True).sum())} fields are keys and "
-        f"{fmt_int((field['in_starter_set'] == True).sum())} are in the curated starter set."
+        f"{fmt_int((field['in_starter_set'] == True).sum())} are in the curated starter set. "
+        "Meaning is verified for all selected fields (9/40/9 across Failures, Financials and "
+        "Institutions); API-tagged unit counts are reported separately."
     ))
     story.append(table(
-        ["Table", "Fields", "Keys", "Units verified"],
+        ["Table", "Fields", "Meaning verified", "Keys", "API-tagged units"],
         [
-            [str(row.table), fmt_int(row.fields), fmt_int(row.keys),
-             fmt_int(row.units_verified)]
+            [str(row.table), fmt_int(row.fields), fmt_int(row.meaning_verified),
+             fmt_int(row.keys), fmt_int(row.units_verified)]
             for row in field.groupby("table", as_index=False).agg(
                 fields=("field", "count"),
+                meaning_verified=("meaning_verified", "sum"),
                 keys=("is_key", "sum"),
                 units_verified=("unit_verified", "sum"),
             ).itertuples()
         ],
-        [180, 110, 110, 111],
+        [115, 65, 105, 65, 105],
     ))
     story.append(PageBreak())
 
@@ -1227,7 +1260,7 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
         ["Rule", "Category", "Rows affected", "Treatment", "Justification"],
         [
             [str(row.rule_id), str(row.category), fmt_int(row.rows_affected),
-             str(row.treatment_code), str(row.justification)[:105]]
+             str(row.treatment_code), str(row.justification)]
             for row in dq_top.itertuples()
         ],
         [72, 68, 68, 82, 211],
@@ -1243,12 +1276,13 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
     story.append(PageBreak())
 
     # ---------------------------------------------------------------- appendix 3
-    story.append(p("A4. Polars query-plan excerpt", "h1"))
-    story.append(_code(data["polars_plan"][:4200], styles))
+    story.append(p("A4. Polars query-plan excerpts: unoptimized and optimized", "h1"))
+    story.append(_code(data["polars_plan"], styles))
     story.append(p(
-        "Full plan: <font face='Courier'>outputs/tables/polars_plans.txt</font>. The optimizer "
-        "pushes date filters and column projections into the Parquet scan before the lag join and "
-        "grouped aggregations.",
+        "Full plan: <font face='Courier'>outputs/tables/polars_plans.txt</font>. SECTION 1 keeps "
+        "date filters above scans that project all 59 panel columns. SECTION 2 pushes the same "
+        "range into <font face='Courier'>SELECTION</font> and projects only 13 of 59 columns at "
+        "the panel scan, directly showing predicate and projection pushdown.",
         "small",
     ))
     story.append(PageBreak())
@@ -1257,10 +1291,10 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
     story.append(p("A5. Spark physical-plan excerpt", "h1"))
     story.append(_code(data["spark_plan"][:3600], styles))
     story.append(p("Plan interpretation (generated artifact)", "h2"))
-    story.append(_code(data["spark_interpretation"][:1400], styles))
+    story.append(_code(data["spark_interpretation"], styles))
     story.append(p(
         "Full plan: <font face='Courier'>outputs/tables/spark_physical_plan.txt</font>. "
-        "Cluster crossover note: " + data["cluster_note"][:300].replace("\n", " "),
+        "Cluster crossover note: " + data["cluster_note"].replace("\n", " "),
         "small",
     ))
     story.append(PageBreak())
@@ -1295,23 +1329,16 @@ def build_pdf(data: Mapping[str, Any], config: Mapping[str, Any], *, root: Path)
     # ---------------------------------------------------------------- appendix 6
     story.append(p("A7. Cost-sensitivity table (Dev OOF only)", "h1"))
     story.append(table(
-        ["Model", "Ratio", "C_FN", "C_FP", "Threshold", "FN", "FP", "Expected cost"],
-        [
-            [
-                str(row.model_name), str(row.ratio_label), fmt_float(row.c_fn_thousands, 1),
-                fmt_float(row.c_fp_thousands, 1), fmt_float(row.threshold, 6),
-                fmt_int(row.false_negative), fmt_int(row.false_positive),
-                fmt_float(row.expected_cost_thousands, 1),
-            ]
-            for row in data["cost_sensitivity"].itertuples()
-        ],
-        [82, 88, 56, 45, 68, 40, 55, 77],
+        ["Model", "Weighting", "Ratio", "C_FN", "C_FP", "Threshold", "FN", "FP", "Expected cost"],
+        _full_cost_rows(data),
+        [78, 55, 78, 45, 38, 55, 34, 36, 74],
         font_size=6.2,
-        align_right=(2, 3, 4, 5, 6, 7),
+        align_right=(3, 4, 5, 6, 7, 8),
     ))
     story.append(p(
-        "The asset-scaled rows are diagnostics. Frozen thresholds use the unweighted empirical-base "
-        "rows only.",
+        "The asset-scaled rows are diagnostics; their C_FN is per asset rather than a constant "
+        "dollar amount, so it is labelled instead of shown as a missing value. Frozen thresholds "
+        "use the unweighted empirical-base rows only.",
         "small",
     ))
     story.append(PageBreak())
