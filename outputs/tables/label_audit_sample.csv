@@ -1,0 +1,9 @@
+scope,check,value,expected,passed
+sample,canonical_restype_filter,"failure_restype == ""FAILURE""",FAILURE only,True
+sample,stale_pre_panel_event_filter,"event_timing != ""stale_pre_panel""",no stale_pre_panel events,True
+sample,stale_pre_panel_certs_never_positive,0,0,True
+sample,post_failure_exclusion_catalogue_present,1095,> 0,True
+sample,merger_only_exit_never_positive,0,0,True
+sample,assistance_only_exit_never_positive,0,0,True
+sample,modelling_cutoff_respected,2023-12-31,<= 2025-06-30,True
+sample,no_multiple_failure_matches_per_row,1,<= 1,True

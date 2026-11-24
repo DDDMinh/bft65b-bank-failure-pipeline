@@ -71,15 +71,18 @@ mismatches. Full-panel median runtimes were 3.368 s (Polars), 17.789 s (pandas),
 
 ## Phase 4 — Feature pipeline
 
-- [ ] Define CAMELS-inspired features and document each field
-- [ ] Build trailing-only, point-in-time feature table
-- [ ] Build the 4-quarter failure label; mergers remain `y = 0`
-- [ ] Enforce `REPDTE <= 2025-06-30`
-- [ ] Confirm and freeze the chronological split with at least a 4-quarter gap and 50 test failures
-- [ ] Implement the train-only preprocessing pipeline
-- [ ] Run adversarial leakage tests
+- [x] Define CAMELS-inspired features and document each field
+- [x] Build trailing-only, point-in-time feature table
+- [x] Build the 4-quarter failure label; mergers remain `y = 0`
+- [x] Enforce `REPDTE <= 2025-06-30`
+- [x] Confirm and freeze the chronological split with at least a 4-quarter gap and 50 test failures
+- [x] Implement the train-only preprocessing pipeline
+- [x] Run adversarial leakage tests
 
-**Gate:** no forbidden columns in features; split constraints pass; preprocessing fit scope recorded.
+**Gate passed:** no forbidden columns in features; 4-quarter `2009Q1–2009Q4` gap excluded from Dev
+and Test; 1,109 Test positive bank-quarters across 341 failed banks; preprocessing fit scope recorded
+as Dev-only. Sample build produced 18,798 rows and the full build produced 1,664,114 rows with 110
+frozen columns. The final `pytest -q` result after Phase 4 was 73 passed, 1 skipped.
 
 ## Phase 5 — Modelling and validation
 

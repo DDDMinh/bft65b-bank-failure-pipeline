@@ -27,6 +27,7 @@ def test_config_enforces_hard_rules() -> None:
     assert summary["label_horizon_quarters"] == 4
     assert summary["modelling_cutoff_date"] == "2025-06-30"
     assert summary["min_gap_quarters"] >= 4
+    assert summary["cv_embargo_quarters"] >= 4
     assert summary["min_test_failures"] >= 50
 
     modelling = config["modelling"]
@@ -64,8 +65,15 @@ def test_cli_smoke() -> None:
 
 
 def test_placeholder_commands_are_not_implemented() -> None:
-    for command in ("features", "model", "report"):
+    for command in ("model", "report"):
         assert main([command]) == 2
+
+
+def test_features_help_without_subcommand(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["features"]) == 0
+    output = capsys.readouterr().out
+    for subcommand in ("dictionary", "build", "split-audit", "preprocess-fit"):
+        assert subcommand in output
 
 
 def test_transform_help_without_subcommand(capsys: pytest.CaptureFixture[str]) -> None:

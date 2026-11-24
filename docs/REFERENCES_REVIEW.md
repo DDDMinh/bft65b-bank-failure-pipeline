@@ -22,6 +22,8 @@ with the final report and `README.md`.
 - Apache Spark SQL `EXPLAIN` and physical plans:
   `https://spark.apache.org/docs/latest/sql-ref-syntax-qry-explain.html`
 - pandas merging, grouping, and Parquet I/O documentation: `https://pandas.pydata.org/docs/`
+- scikit-learn pipelines and composite estimators:
+  `https://scikit-learn.org/stable/modules/compose.html`
 - psutil process and system monitoring documentation: `https://psutil.readthedocs.io/`
 - PyArrow Parquet documentation: `https://arrow.apache.org/docs/python/parquet.html`
 
@@ -39,8 +41,10 @@ with the final report and `README.md`.
 - OpenCode coding agent: `https://opencode.ai/`. Used for code, tests, and documentation under
   human review.
 - DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`) — model used for earlier phases.
-- Big Pickle (`opencode/big-pickle`) — model used for Phase 2 and Phase 3 implementation,
-  verification, and documentation.
+- Big Pickle (`opencode/big-pickle`) — model used for Phase 2–4 implementation, verification, and
+  documentation.
+- OpenCode `leakage-reviewer` subagent — independent read-only temporal-leakage and point-in-time
+  audit of the Phase 4 feature pipeline. Used under human review; it made no repository changes.
 
 All numeric results attributed to these sessions were recomputed by deterministic local commands on
 the acquired FDIC data; no AI-generated result is presented as a measurement.

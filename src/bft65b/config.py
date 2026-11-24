@@ -87,6 +87,13 @@ def validate_config(config: dict[str, Any]) -> None:
     if not isinstance(min_gap, int) or min_gap < 4:
         raise ConfigError("'modelling.min_gap_quarters' must be an integer >= 4")
 
+    cv_embargo = modelling.get("cv_embargo_quarters")
+    if not isinstance(cv_embargo, int) or cv_embargo < min_gap:
+        raise ConfigError(
+            "'modelling.cv_embargo_quarters' must be an integer >= min_gap_quarters "
+            "so Phase 5 temporal folds cannot leak across the embargo"
+        )
+
     min_test_failures = modelling.get("min_test_failures")
     if not isinstance(min_test_failures, int) or min_test_failures < 50:
         raise ConfigError("'modelling.min_test_failures' must be an integer >= 50")
@@ -183,6 +190,7 @@ def config_summary(config: dict[str, Any]) -> dict[str, Any]:
         "dev_period": [modelling["dev_start_date"], modelling["dev_end_date"]],
         "test_period": [modelling["test_start_date"], modelling["test_end_date"]],
         "min_gap_quarters": modelling["min_gap_quarters"],
+        "cv_embargo_quarters": modelling["cv_embargo_quarters"],
         "min_test_failures": modelling["min_test_failures"],
         "test_evaluation_locked": modelling.get("test_evaluation_locked", False),
     }

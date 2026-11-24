@@ -41,10 +41,12 @@ modelling:
   modelling_cutoff_date: "2025-06-30"   # Mandatory: later labels are incomplete
   min_gap_quarters: 4                   # Mandatory: >= 4 quarters between dev and test
   min_test_failures: 50                 # Mandatory: >= 50 failures in test period
-  # Confirm exact split dates after Phase 1 & Phase 2 empirical failure-by-year audit:
+  # Phase 4 empirical failure tabulation confirmed this split. The four full
+  # quarters from 2009Q1-2009Q4 are explicitly labelled split="gap" and are
+  # excluded from both development training and the single test evaluation.
   dev_start_date: "1984-03-31"
   dev_end_date: "2008-12-31"
-  test_start_date: "2010-03-31"         # Leaves 2009Q1-2009Q4 (4 full quarters) gap
+  test_start_date: "2010-03-31"
   test_end_date: "2025-06-30"
   cv_embargo_quarters: 4
   test_evaluation_locked: false         # Set true after freezing model & threshold
@@ -85,6 +87,29 @@ processing:
   # Spark's dictionary encoder can retain one hash entry per distinct double in
   # a row group; disable it for the wide float output on the full panel.
   spark_parquet_dictionary_enabled: false
+
+# Phase 4 label, CAMELS feature, split, and train-only preprocessing contract.
+# Feature artifacts are stored per scope under data_processed/features; the
+# frozen column lists and coverage audit are exported to feature_summary.json.
+features:
+  processed_dir: "data_processed/features"
+  preprocessor_path: "data_processed/features/preprocessor_dev.joblib"
+  dictionary_path: "outputs/tables/feature_dictionary.csv"
+  summary_path: "outputs/manifests/feature_summary.json"
+  preprocessing_fit_path: "outputs/manifests/preprocessing_fit.json"
+  label_audit_path: "outputs/tables/label_audit.csv"
+  filing_lag_audit_path: "outputs/tables/label_filing_lag_audit.csv"
+  failures_by_quarter_path: "outputs/tables/failures_by_quarter.csv"
+  split_audit_path: "outputs/tables/split_audit.csv"
+  sample_lookback_start_date: "2022-03-31"  # Gives 2023Q1 an exact 4Q lag seed
+  sample_output_start_date: "2023-03-31"
+  sample_output_end_date: "2023-12-31"
+  clipping_lower_quantile: 0.01
+  clipping_upper_quantile: 0.99
+  imputation_strategy: "median"
+  scale_features: true
+  parquet_compression: "zstd"
+  parquet_row_group_size: 65536
 
 # Phase 2 rulebook and artifact paths. Audit statistics are report-only; none
 # of these outputs are model parameters or preprocessing state.

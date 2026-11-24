@@ -1,0 +1,10 @@
+check,value,expected,passed
+gap_quarters,4,>= 4,True
+test_period_strictly_after_development,2008-12-31 < 2010-03-31,True,True
+test_positive_bank_quarters,1109,>= 50,True
+test_distinct_failed_banks,341,>= 50,True
+gap_rows_present,32916,> 0,True
+gap_rows_excluded_from_dev_and_test,0,0,True
+no_dev_label_window_into_test,0,0,True
+no_test_label_window_into_dev,0,0,True
+cutoff_respected,2025-06-30,<= 2025-06-30,True

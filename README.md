@@ -4,9 +4,9 @@ Reproducible big-data pipeline for the BFT65B final report. The pipeline uses pu
 data to build a point-in-time bank–quarter panel, a leak-free feature table, and an honestly
 validated early-warning model.
 
-This repository currently implements **Phases 1–3**: acquisition and storage, data quality and
-the point-in-time panel, and scalable Polars/pandas/PySpark processing. Feature engineering,
-modelling, and report generation are implemented in later phases.
+This repository currently implements **Phases 1–4**: acquisition and storage, data quality and
+the point-in-time panel, scalable Polars/pandas/PySpark processing, and the leak-free feature
+pipeline. Modelling and report generation are implemented in later phases.
 
 ## 1. Prerequisites
 
@@ -259,15 +259,76 @@ RSS of 1,827.8 MiB, 2,991.8 MiB, and 2,813.8 MiB respectively. The captured Spar
 See `docs/scalable_processing.md` for the full tables and interpretation. The final
 `pytest -q` result after Phase 3 was `55 passed, 1 skipped` (network-gated test).
 
-These commands still exit with status `2` until their phases are implemented:
+The following commands still exit with status `2` until their phases are implemented:
 
 ```text
-bft65b features     # Phase 4: leak-free features, labels, split, preprocessing
 bft65b model        # Phase 5: development-only tuning and single test evaluation
 bft65b report       # Phase 6: tables, figures, Page-1 metadata, report
 ```
 
-## 7. Data policy
+## 7. Phase 4 — feature pipeline
+
+Always validate the sample scope first. It reads `2022Q1–2023Q4` to provide exact lag seeds and
+exports only `2023Q1–2023Q4`:
+
+```powershell
+bft65b features build --scope sample --strict
+bft65b features build --scope full --strict
+bft65b features split-audit --scope full --strict
+bft65b features dictionary
+bft65b features preprocess-fit --scope full
+pytest -q
+```
+
+The table has 110 frozen columns in this order: six metadata columns, 103 features (102 numeric and
+one categorical), and `y_4q`. The label is positive only for a canonical `FAILURE` in
+`(REPDTE, REPDTE + 4 quarters]`; mergers, assistance-only exits, voluntary closures, stale pre-panel
+events, and post-failure rows are never positives. Exact `q-1`/`q-4` lags and backward-only 4Q
+rolling windows use `(CERT, qidx)` left self-joins with `RHS.qidx + k == LHS.qidx`; missing quarters
+produce null instead of borrowing an adjacent quarter.
+
+Verified full build:
+
+| Item | Result |
+|---|---:|
+| Output rows | 1,664,114 |
+| Sample output rows | 18,798 |
+| Features | 103 (102 numeric + `capital_regime`) |
+| Canonical failure events | 3,034 of 3,036 raw events |
+| Stale pre-panel events removed | 2 |
+| Post-failure rows excluded | 1,095 |
+| Positive bank-quarters | 10,893 |
+| Distinct positive failed banks | 2,837 |
+| Positive rows with failure 1–30 days after `REPDTE` | 691 |
+| Dev / Gap / Test rows | 1,262,671 / 32,916 / 368,527 |
+| Dev / Gap / Test positive rows | 9,114 / 670 / 1,109 |
+| Dev / Gap / Test distinct failed banks | 2,455 / 276 / 341 |
+| Gap length | 4 quarters (`2009Q1–2009Q4`) |
+| Label-window overlap Dev↔Test | 0 |
+| Dev preprocessing fit rows | 1,262,671 |
+| Transformed preprocessing width | 106 |
+
+The 691 positives in the 1–30 day filing-lag window are reported as a transparency audit only; they
+are not used as a feature, filter, or preprocessing input. Full design notes, formulas, and the
+feature dictionary contract are in `docs/feature_pipeline.md` and
+`outputs/tables/feature_dictionary.csv`.
+
+| Path | Content |
+|---|---|
+| `data_processed/features/sample/bank_quarter_features.parquet` | 2023 sample feature/label table |
+| `data_processed/features/full/bank_quarter_features.parquet` | Full 1984Q1–2025Q2 feature/label table |
+| `outputs/manifests/feature_summary.json` | Frozen column lists, Dev coverage, and scope audits |
+| `outputs/manifests/preprocessing_fit.json` | Dev-only preprocessing fit manifest |
+| `data_processed/features/preprocessor_dev.joblib` | Reference Dev-fitted preprocessor artifact |
+| `outputs/tables/feature_dictionary.csv` | Formula, fields, units, pillar, interpretation, Dev coverage |
+| `outputs/tables/label_audit.csv` | Canonical-filter, merger, assistance, stale-event, and cutoff checks |
+| `outputs/tables/label_filing_lag_audit.csv` | Positive-label filing-lag buckets |
+| `outputs/tables/split_audit.csv` | Empirical Dev/Gap/Test checks |
+| `outputs/tables/failures_by_quarter.csv` | Canonical events and positive rows by calendar quarter |
+
+Final Phase 4 test result: `73 passed, 1 skipped` (the skip is the network-gated acquisition test).
+
+## 8. Data policy
 
 All raw and processed data live under:
 
@@ -287,22 +348,25 @@ outputs/spark_plans/
 outputs/benchmarks/
 ```
 
-## 8. Modelling discipline
+## 9. Modelling discipline
 
 - Label: failure in `(q, q + 4 quarters]`; mergers are never positive labels.
 - Modelling cutoff: `REPDTE <= 2025-06-30`.
 - Chronological split with at least a 4-quarter gap and at least 50 test failures.
+- Internal temporal CV must use the configured 4-quarter embargo; fold construction is Phase 5.
 - All preprocessing is fitted only on development training folds.
 - The test period is evaluated exactly once after freezing the model, features, and threshold.
 - `FAILDATE`, `ENDEFYMD`, `ACTIVE`, and `CHANGEC1` are never model features or preprocessing
   inputs. `FAILDATE` is used only to construct the label.
 
-The current split candidate is development `1984Q1–2008Q4`, gap `2009Q1–2009Q4`, and test
-`2010Q1–2025Q2`. Raw `FAILDATE` rows inside those windows are 2,727 and 339 respectively
-(`acquisition_summary.json`). These are **not** label counts: Phase 4 will count `y = 1` rows per
-quarter after applying the four-quarter horizon and the 2025Q2 cutoff, then freeze the split.
+The split is frozen as development `1984Q1–2008Q4`, gap `2009Q1–2009Q4`, and test
+`2010Q1–2025Q2`. Phase 4 counted real `y_4q` rows after applying the four-quarter horizon, the
+canonical failure filters, and the 2025Q2 cutoff: Dev has 9,114 positive bank-quarters across 2,455
+failed banks; the audit-only gap has 670 across 276; Test has 1,109 across 341. Raw `FAILDATE`
+counts are not used as label counts. Phase 5 must not change this split or evaluate Test more than
+once.
 
-## 9. Repository layout
+## 10. Repository layout
 
 ```text
 configs/pipeline.yaml     Single source of truth for paths, seeds, split, and benchmark settings
@@ -314,7 +378,7 @@ outputs/                  Report-ready tables, figures, manifests, and plans
 reports/                  Report source and final PDF/DOCX
 ```
 
-## 10. Report identity placeholders
+## 11. Report identity placeholders
 
 The Page-1 identity fields in `configs/pipeline.yaml` are intentionally empty:
 
@@ -327,7 +391,7 @@ report:
 
 They must be filled with real values by the student. Do not invent them.
 
-## 11. Data source and citations
+## 12. Data source and citations
 
 Data source:
 
@@ -339,20 +403,23 @@ Data source:
 Library documentation used for implementation choices: Polars lazy plans
 (`https://docs.pola.rs/user-guide/lazy/`), Spark SQL `EXPLAIN`
 (`https://spark.apache.org/docs/latest/sql-ref-syntax-qry-explain.html`), pandas
-(`https://pandas.pydata.org/docs/`), psutil (`https://psutil.readthedocs.io/`), and PyArrow Parquet
+(`https://pandas.pydata.org/docs/`), scikit-learn pipelines and preprocessing
+(`https://scikit-learn.org/stable/modules/compose.html`), psutil
+(`https://psutil.readthedocs.io/`), and PyArrow Parquet
 (`https://arrow.apache.org/docs/python/parquet.html`). Exact versions are pinned in
 `requirements.txt`.
 
 AI assistance used so far: the OpenCode coding agent (`https://opencode.ai/`), with
-DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`) for earlier phases and Big Pickle
-(`opencode/big-pickle`) for Phase 2 and Phase 3 implementation and verification. These tools
-assisted with code, tests, and documentation; all reported numbers were produced by deterministic
-local runs on real FDIC data.
+DeepSeek V4.1 Flash Free (`opencode/deepseek-v4.1-flash-free`) for earlier phases, Big Pickle
+(`opencode/big-pickle`) for Phase 2–4 implementation and verification, and the OpenCode
+`leakage-reviewer` subagent for the independent Phase 4 temporal-leakage audit. These tools assisted
+with code, tests, and documentation; all reported numbers were produced by deterministic local runs
+on real FDIC data.
 
 The final report and `docs/REFERENCES_REVIEW.md` must cite every external repository, paper,
 documentation page, library, AI tool, and language model used.
 
-## 12. Academic integrity
+## 13. Academic integrity
 
 This is an individual academic project. All copied or adapted code, data definitions, methodological
 choices, and AI assistance must be cited in the report and repository. Uncited copying is

@@ -1,0 +1,7 @@
+scope,bucket,positive_bank_quarters,distinct_failed_banks,min_days,max_days,is_filing_lag_window_1_to_30_days
+full,00_same_day_or_earlier,0,0,,,False
+full,01_1_to_30_days,691,691,1.0,30.0,True
+full,02_31_to_90_days,1822,1822,31.0,90.0,False
+full,03_91_to_180_days,2781,2781,91.0,180.0,False
+full,04_181_to_365_days,5592,2791,181.0,365.0,False
+full,05_over_365_days,7,7,366.0,366.0,False

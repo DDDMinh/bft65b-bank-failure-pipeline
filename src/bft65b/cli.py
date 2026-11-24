@@ -39,7 +39,6 @@ PACKAGE_CHECKS: tuple[tuple[str, str], ...] = (
 )
 
 PLACEHOLDER_COMMANDS = (
-    "features",
     "model",
     "report",
 )
@@ -387,6 +386,114 @@ def _command_quality_build(args: argparse.Namespace) -> int:
 
 
 # ----------------------------------------------------------------------
+# Phase 4 commands
+# ----------------------------------------------------------------------
+def _command_features_dictionary(_: argparse.Namespace) -> int:
+    from bft65b.features.registry import write_feature_dictionary
+    from bft65b.features.spec import resolve_feature_path
+
+    config = load_config(_.config)
+    summary_path = resolve_feature_path(config, "summary_path", root=PROJECT_ROOT)
+    if not summary_path.exists():
+        LOGGER.error("Run the full feature build before exporting the dictionary")
+        return 1
+    payload = json.loads(summary_path.read_text(encoding="utf-8"))
+    full_scope = payload.get("scopes", {}).get("full", {})
+    coverage = full_scope.get("dev_coverage_pct")
+    if not isinstance(coverage, dict):
+        LOGGER.error("Full-scope Dev coverage is missing from the feature summary")
+        return 1
+    path = write_feature_dictionary(
+        resolve_feature_path(config, "dictionary_path", root=PROJECT_ROOT),
+        dev_coverage_pct=coverage,
+    )
+    print(json.dumps({
+        "dictionary_rows": len(payload.get("feature_columns", [])),
+        "zero_dev_coverage_features": full_scope.get("zero_dev_coverage_features", []),
+        "dictionary_path": str(path),
+    }, indent=2, sort_keys=True))
+    return 0
+
+
+def _command_features_build(args: argparse.Namespace) -> int:
+    from bft65b.features.build import build_feature_table
+
+    config = load_config(args.config)
+    result = build_feature_table(config, args.scope, root=PROJECT_ROOT)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    if args.strict and not result["passed"]:
+        LOGGER.error("Phase 4 feature build failed for scope=%s", args.scope)
+        return 1
+    return 0
+
+
+def _command_features_split_audit(args: argparse.Namespace) -> int:
+    import polars as pl
+
+    from bft65b.features.build import load_labelled_panel
+    from bft65b.features.labels import apply_exclusions, load_exclusions
+    from bft65b.features.split import (
+        add_split_column,
+        build_failures_by_quarter,
+        verify_split,
+    )
+    from bft65b.features.spec import resolve_feature_path
+
+    config = load_config(args.config)
+    if args.scope != "full":
+        LOGGER.error("Chronological split audit is defined only for scope=full")
+        return 2
+    labelled, _ = load_labelled_panel(config, "full", root=PROJECT_ROOT)
+    labelled = apply_exclusions(labelled, load_exclusions(config, root=PROJECT_ROOT))
+    labelled = add_split_column(labelled, config)
+    result = verify_split(config, labelled, scope="full", root=PROJECT_ROOT)
+    failures_path = resolve_feature_path(
+        config, "failures_by_quarter_path", root=PROJECT_ROOT
+    )
+    failures_path.parent.mkdir(parents=True, exist_ok=True)
+    failures_path.write_text(
+        build_failures_by_quarter(config, labelled, root=PROJECT_ROOT).to_csv(
+            index=False, lineterminator="\n"
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    if args.strict and not result["passed"]:
+        LOGGER.error("Phase 4 split verification failed")
+        return 1
+    return 0
+
+
+def _command_features_preprocess_fit(args: argparse.Namespace) -> int:
+    import polars as pl
+
+    from bft65b.features.preprocessing import fit_dev_preprocessor
+    from bft65b.features.spec import feature_output_path
+
+    config = load_config(args.config)
+    if args.scope != "full":
+        LOGGER.error("Development preprocessing must be fitted on the full scope")
+        return 2
+    path = feature_output_path(config, "full", root=PROJECT_ROOT)
+    if not path.exists():
+        LOGGER.error("Full feature table has not been built: %s", path)
+        return 1
+    frame = pl.read_parquet(path).filter(pl.col("split") == "dev")
+    manifest = fit_dev_preprocessor(config, frame, root=PROJECT_ROOT)
+    print(json.dumps({
+        "rows": manifest["fit_guard"]["rows"],
+        "zero_dev_coverage_features": manifest["zero_dev_coverage_features"],
+        "transformed_columns": manifest["width"]["transformed_columns"],
+        "artifact_path": manifest["artifact_path"],
+        "manifest_path": str(
+            PROJECT_ROOT / str(config["features"]["preprocessing_fit_path"])
+        ),
+    }, indent=2, sort_keys=True))
+    return 0
+
+
+# ----------------------------------------------------------------------
 # Phase 3 commands
 # ----------------------------------------------------------------------
 def _command_transform_inputs(args: argparse.Namespace) -> int:
@@ -631,6 +738,43 @@ def build_parser() -> argparse.ArgumentParser:
         "--strict", action="store_true", help="Return non-zero if any Phase 2 check fails"
     )
     quality_build.set_defaults(func=_command_quality_build)
+
+    features_parser = subparsers.add_parser(
+        "features", help="Exact labels, point-in-time CAMELS features, and train-only preprocessing"
+    )
+    features_parser.set_defaults(
+        func=lambda _: (features_parser.print_help(), 0)[1]
+    )
+    features_subparsers = features_parser.add_subparsers(dest="features_command")
+
+    features_dictionary = features_subparsers.add_parser(
+        "dictionary", help="Rebuild the full feature table and export the feature dictionary"
+    )
+    features_dictionary.set_defaults(func=_command_features_dictionary)
+
+    features_build = features_subparsers.add_parser(
+        "build", help="Build the labelled point-in-time feature table"
+    )
+    features_build.add_argument("--scope", choices=["sample", "full"], required=True)
+    features_build.add_argument(
+        "--strict", action="store_true", help="Return non-zero if a hard gate fails"
+    )
+    features_build.set_defaults(func=_command_features_build)
+
+    features_split = features_subparsers.add_parser(
+        "split-audit", help="Verify chronological split counts and failure-tabulation evidence"
+    )
+    features_split.add_argument("--scope", choices=["full"], default="full")
+    features_split.add_argument(
+        "--strict", action="store_true", help="Return non-zero if a hard gate fails"
+    )
+    features_split.set_defaults(func=_command_features_split_audit)
+
+    features_preprocess = features_subparsers.add_parser(
+        "preprocess-fit", help="Fit preprocessing on development rows only"
+    )
+    features_preprocess.add_argument("--scope", choices=["full"], default="full")
+    features_preprocess.set_defaults(func=_command_features_preprocess_fit)
 
     transform_parser = subparsers.add_parser(
         "transform", help="Standardized Polars, pandas, and Spark processing"
