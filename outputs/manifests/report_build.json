@@ -48,7 +48,7 @@
     "test_evaluation_locked": true,
     "test_evaluations": 1
   },
-  "generated_at_utc": "2026-11-24T13:42:11.640627+00:00",
+  "generated_at_utc": "2026-11-26T13:39:01.122755+00:00",
   "identity": {
     "appendix_page_limit": 10,
     "author_name": "Nguyen Duc Minh",
@@ -77,13 +77,13 @@
     "appendix_pages": 8,
     "body_limit": 20,
     "body_pages": 18,
-    "bytes": 619095,
+    "bytes": 620125,
     "empty_pages": [],
     "image_objects": 5,
     "page_one_required_metadata_present": true,
     "path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\reports\\final_report_bft65b.pdf",
     "pdf_path": "D:\\zalo\\Sem 7\\big_data_analysis4Fin-main\\bft65b-bank-failure-pipeline\\reports\\final_report_bft65b.pdf",
-    "sha256": "eec74b814fb9e20c5ed5b1c8ba48bca3a46ea07abce5d755bd48c1b372cd6c1b",
+    "sha256": "f06e27246787d435f410d5c1b8cb456f3216b46b0251ee491eed6ee23f8d4335",
     "total_pages": 26
   },
   "schema_version": 1,
